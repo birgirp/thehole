@@ -10,19 +10,57 @@ const dbdata = require('./oracleService')
 // GET ALL MEMOS
 // ---------------------------------------------------------------------
 router.get("/api/getMemos", (req, res) => {
-    
-     
-    fs.readFile(fileLocation, "utf8", (err, memos) => {
-        res.send(memos)
+  
+  /*  fs.readFile(fileLocation, "utf8", (err, memos) => {
+        console.log("Frá file: \n")
+    })*/
+   
+   
+
+    dbdata.getAllNotes().then((data) => {
+      //  console.log(JSON.stringify(data.rows));  
+        res.json(data.rows)
+    }).catch((error) => {
+        console.log(error)
+         res.status(500);
+         res.json({error: error});
     });
+     
+
 });
 
 // ---------------------------------------------------------------------
 // DELETE MEMOS
 // ---------------------------------------------------------------------
 router.delete("/api/deleteMemos", (req, res) => {
-    let idsToDelete = req.body;
+    let idsToDelete =  req.body;
+    ids = idsToDelete.map(item => {
+        return	item = [item];
+    }); 
 
+
+    ids.map(item => {
+        console.log(item)
+    })
+
+    console.log("ids to delete: "+ ids);
+
+    dbdata.deleteNotes(ids).then((data) => {
+        console.log(JSON.stringify(data));  
+        res.json(data)
+    }).catch((error) => {
+        console.log(error)
+         res.status(500);
+         res.json({error: error});
+    });
+
+
+
+
+   // res.send("allt i godu");
+
+
+/*
     fs.readFile(fileLocation, "utf8", (err, memos) => {
         let parsedMemos = JSON.parse(memos);
 
@@ -43,7 +81,7 @@ router.delete("/api/deleteMemos", (req, res) => {
             }
         });
 
-    });
+    });*/
 });
 
 
@@ -56,28 +94,16 @@ router.post("/api/createMemo", (req, res) => {
     console.log("about to insert0");
     dbdata.addNewNote(req.body.title, req.body.contents ).then((data) => {
         console.log(JSON.stringify(data));  
-        //res.json(data)
+        res.json("allt i godu")
     }).catch((error) => {
         console.log(error)
-         //res.status(500);
-         //res.json({error: error});
+         res.status(500);
+         res.json({error: error});
     })
 
-    /* dbdata.insertNote(req.body.title, req.body.contents , (err, data)=> {
-        if (err){
-            console.log(error)
-           //res.status(500);
-            //res.json({error: error});
-            return
-        }
-    
-        //res.json(data)
-        console.log(JSON.stringify(data));    
-    })
-*/
 
 //---------------------------------------------------------------------------------
-    fs.readFile(fileLocation, "utf8", (err, memos) => {
+   /* fs.readFile(fileLocation, "utf8", (err, memos) => {
         let parsedMemos = JSON.parse(memos);
         let lastMemo = parsedMemos[parsedMemos.length - 1];
 
@@ -90,15 +116,15 @@ router.post("/api/createMemo", (req, res) => {
        // addMemo(newMemo);
          parsedMemos.push(newMemo);
          res.send("allt i godu");
-      /* fs.writeFile(fileLocation, JSON.stringify(parsedMemos), (err) => {
+       fs.writeFile(fileLocation, JSON.stringify(parsedMemos), (err) => {
             if (err) {
                 throw err;
             } else {
                 res.send("allt i godu");
             }
-        });*/
+        });
 
-    });
+    });*/
 });
 
 // ---------------------------------------------------------------------
@@ -121,26 +147,26 @@ router.post("/api/createMemo", (req, res) => {
     //    console.log(JSON.stringify(data));    
     //})
 
-    dbdata.getNotebyId(1).then((data) => {
-        console.log(JSON.stringify(data));  
-        //res.json(data)
+    dbdata.getNotebyId(parseInt(req.params.id)).then((data) => {
+        console.log(JSON.stringify(data.rows));  
+        res.json(data.rows)
     }).catch((error) => {
         console.log(error)
-         //res.status(500);
-         //res.json({error: error});
-    })
+         res.status(500);
+         res.json({error: error});
+    });
     
     
     
     
-    fs.readFile(fileLocation, "utf8", (err, memos) => {
+   /* fs.readFile(fileLocation, "utf8", (err, memos) => {
        let jdata = JSON.parse(memos);
       
        var filtered = _.where(jdata, {id: parseInt(req.params.id)});
 
 
        res.send(filtered);
-    });
+    });*/
 
 
 });
@@ -154,14 +180,14 @@ router.post("/api/createMemo", (req, res) => {
  // You would usually use a PUT for :id but let's use a HTTP GET for simplicity's sake
 router.put("/api/updateMemo", (req, res) => {
 
-    console.log("about to update0");
-    dbdata.updateNote(22, req.body.title, req.body.contents ).then((data) => {
-        console.log(JSON.stringify(data));  
-        //res.json(data)
+    console.log("about to update");
+    dbdata.updateNote( parseInt(req.body.id), req.body.title, req.body.contents ).then((data) => {
+        //console.log(JSON.stringify(data));  
+        res.json("ok")
     }).catch((error) => {
         console.log(error)
-         //res.status(500);
-         //res.json({error: error});
+         res.status(500);
+         res.json({error: error});
          
     })
         
@@ -170,7 +196,7 @@ router.put("/api/updateMemo", (req, res) => {
     
     
     //--------------------------------------------------------
-    fs.readFile(fileLocation, "utf8", (err, memos) => {  
+    /* fs.readFile(fileLocation, "utf8", (err, memos) => {  
     let parsedMemos = JSON.parse(memos);
     
 
@@ -190,16 +216,16 @@ router.put("/api/updateMemo", (req, res) => {
         // add the new version of the note
 
 
-     /*  fs.writeFile(fileLocation, JSON.stringify(parsedMemos), (err) => {
+      fs.writeFile(fileLocation, JSON.stringify(parsedMemos), (err) => {
             if (err) {
                 throw err;
             } else {
                 res.send("allt i godu");
             }
-        });*/
+        });
 
     });
-    res.send("allt i godu");
+    */
    
 });
 //-----------------------------------------------------------------------------

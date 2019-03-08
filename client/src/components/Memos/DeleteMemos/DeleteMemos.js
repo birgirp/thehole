@@ -105,13 +105,13 @@ class DeleteMemos extends Component {
             <Table.Body>
               {data.map(memo => {
                 return (
-                  <Table.Row key={memo.id}>
+                  <Table.Row key={memo[0]}>
                     <Table.Cell collapsing>
-                      <Checkbox onClick={() => this.appendToDelete(memo.id)} style={{ padding: 0, marginTop: 0, marginBottom: 0, marginLeft: "30%" }} />
+                      <Checkbox onClick={() => this.appendToDelete(memo[0])} style={{ padding: 0, marginTop: 0, marginBottom: 0, marginLeft: "30%" }} />
                     </Table.Cell>
-                    <Table.Cell collapsing>{memo.id}</Table.Cell>
-                    <Table.Cell collapsing>{memo.name}</Table.Cell>
-                    <Table.Cell>{memo.contents}</Table.Cell>
+                    <Table.Cell collapsing>{memo[0]}</Table.Cell>
+                    <Table.Cell collapsing>{memo[1]}</Table.Cell>
+                    <Table.Cell>{memo[2]}</Table.Cell>
                   </Table.Row>
                 );
               })}

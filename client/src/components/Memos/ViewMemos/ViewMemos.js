@@ -15,6 +15,7 @@ class ViewMemos extends Component {
     axios.get("/api/getMemos")
       .then(res => {
         this.setState({ notes: res.data })
+
       })
       .catch(err => {
         console.log(err);
@@ -29,6 +30,7 @@ class ViewMemos extends Component {
       )
     } else {
       const data = this.state.notes;
+      console.log(data);
       return (
         <div>
           <Table celled>
@@ -43,10 +45,10 @@ class ViewMemos extends Component {
             <Table.Body>
               {data.map(function (memo) {
                 return (
-                  <Table.Row key={memo.id}>
-                    <Table.Cell collapsing>{memo.id}</Table.Cell>
-                    <Table.Cell collapsing>{memo.name}</Table.Cell>
-                    <Table.Cell>{memo.contents}</Table.Cell>
+                  <Table.Row key={memo[0]}>
+                    <Table.Cell collapsing>{memo[0]}</Table.Cell>
+                    <Table.Cell collapsing>{memo[1]}</Table.Cell>
+                    <Table.Cell>{memo[2]}</Table.Cell>
                   </Table.Row>
                 );
               })}

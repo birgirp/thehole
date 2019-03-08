@@ -44,10 +44,10 @@ class UpdateMemo extends Component {
             <Table.Body>
               {data.map(function (memo) {
                 return (
-                  <Table.Row key={memo.id}>
-                    <Table.Cell collapsing><a href={`/ViewMemo/${memo.id}`}>{memo.id}</a></Table.Cell>
-                    <Table.Cell collapsing>{memo.name}</Table.Cell>
-                    <Table.Cell>{memo.contents}</Table.Cell>
+                  <Table.Row key={memo[0]}>
+                    <Table.Cell collapsing><a href={`/ViewMemo/${memo[0]}`}>{memo[0]}</a></Table.Cell>
+                    <Table.Cell collapsing>{memo[1]}</Table.Cell>
+                    <Table.Cell>{memo[2]}</Table.Cell>
                   </Table.Row>
                 );
               })}

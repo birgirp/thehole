@@ -1,4 +1,4 @@
-import React, { Component, Link } from "react";
+import React, { Component } from "react";
 import axios from "axios";
 import { Input, TextArea, Button, Form } from "semantic-ui-react";
 import { Redirect } from "react-router-dom";
@@ -13,15 +13,15 @@ class ViewMemo extends Component {
   }
 
   componentDidMount() {
-    console.log("it did mount");
-    //  console.log(window.location.pathname.split('/')[2]);
+   
+    //console.log(window.location.pathname.split('/')[2]);
     this.setState({ noteId: window.location.pathname.split('/')[2] });
     axios.get("/api" + window.location.pathname)
       .then(res => {
         var note = res.data;
         console.log(note);
-        var noteName = note[0].name;
-        var noteContents = note[0].contents;
+        var noteName = note[0][1];
+        var noteContents = note[0][2];
         this.setState({ note, noteName, noteContents });
         // this.setState( { submitted: false } );
 
@@ -63,7 +63,7 @@ class ViewMemo extends Component {
 
   render() {
     if (this.state.submitted === true) {
-      return <Redirect to='/updateMemo' />
+      return <Redirect to='/viewMemos' />
     } else {
       return (
 

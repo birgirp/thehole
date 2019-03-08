@@ -4,7 +4,7 @@ import { Menu, Segment } from "semantic-ui-react";
 
 class MenuBar extends Component {
   state = {
-    activePage: "login"
+    activePage: "home"
   }
 
   handleItemClick = (e, { name }) => {
@@ -19,7 +19,8 @@ class MenuBar extends Component {
       console.log("activepage: " + this.state.activePage);
 
       if ( this.state.activePage !== "view" && window.location.pathname === "/viewMemos") {
-         this.setState({ activePage: "view" });
+        console.log("I would like to change the state to view")
+        this.setState({ activePage: "view" });
       }
 
     } catch (error) {
@@ -39,7 +40,7 @@ class MenuBar extends Component {
             to="/"
             name="Login"
             content="Login"
-            active={activePage === "login"}
+            active={activePage === "Login"}
             onClick={this.handleItemClick} />
           <Menu.Item
             as={Link}
