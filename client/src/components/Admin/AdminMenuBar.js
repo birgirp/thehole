@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Menu, Segment } from "semantic-ui-react";
 
-class MenuBar extends Component {
+class AdminMenuBar extends Component {
   state = {
-    activePage: "home"
+    activePage: "overview"
   }
 
   handleItemClick = (e, { name }) => {
@@ -12,7 +12,7 @@ class MenuBar extends Component {
   }
 
   componentDidUpdate() {
-    try {
+   /* try {
      // console.log("menubar updated...");
 
       console.log("path: " + window.location.pathname);
@@ -25,7 +25,7 @@ class MenuBar extends Component {
 
     } catch (error) {
       console.log("Error: " + error);
-    }
+    }*/
   }
 
 
@@ -37,49 +37,33 @@ class MenuBar extends Component {
         <Menu inverted pointing secondary>
           <Menu.Item
             as={Link}
-            to="/"
-            name="Login"
-            content="Login"
-            active={activePage === "Login"}
+            to="/admin"
+            name="overview"
+            content="Admin Home"
+            active={activePage === "overview"}
             onClick={this.handleItemClick} />
           <Menu.Item
             as={Link}
-            to="/viewMemos"
-            name="view"
-            content="Sjá minnismiða"
-            active={activePage === "view"}
+            to="/admin/users"
+            name="adminusers"
+            content="User management"
+            active={activePage === "adminusers"}
             onClick={this.handleItemClick}
           />
           <Menu.Item
             as={Link}
-            to="/createMemo"
-            name="create"
-            content="Búa til minnismiða"
-            active={activePage === "create"}
+            to="/admin/courses"
+            name="corses"
+            content="course management"
+            active={activePage === "admincourses"}
             onClick={this.handleItemClick}
           />
           <Menu.Item
             as={Link}
-            to="/deleteMemos"
-            name="delete"
-            content="Eyða minnismiðum"
+            to="/admin/competitions"
+            name="admincompetitions"
+            content="Competitions"
             active={activePage === "delete"}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            as={Link}
-            to="/updateMemo"
-            name="update"
-            content="Uppfæra minnismiða"
-            active={activePage === "update"}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            as={Link}
-            to="/authors"
-            name="authors"
-            content="Höfundar"
-            active={activePage === "authors"}
             onClick={this.handleItemClick}
           />
         </Menu>
@@ -88,4 +72,4 @@ class MenuBar extends Component {
   }
 }
 
-export default MenuBar;
+export default AdminMenuBar;

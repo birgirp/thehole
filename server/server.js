@@ -4,8 +4,13 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 // Internal imports
-const routes = require("./routes");
+const routes = require("./routes/routes");
+const users = require("./routes/users");
 const dbservice = require("./oracleService");
+var session = require("express-session");
+var passport = require("passport");
+var expressValidator = require("express-validator");
+var LocalStrategy = require("passport-local").Strategy;
 
 //console.log(" dbConf: ", dbservice)
 dbservice.initializeDB()
@@ -22,9 +27,41 @@ app.use(bodyParser.json());
 
 // Use our defined routes
 app.use("/", routes);
+app.use("/users", users);
 
 // Serve static assets and point to index.html file
 app.use("/", express.static(path.join(__dirname, "/../client/build/")));
+
+// Handle sessions
+app.use(session({
+    secret:'secret',
+    saveUninitialized: true,
+    resave: true
+}));
+
+// Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Validator
+app.use(expressValidator({
+    errorFormatter: function(param, msg, value){
+        var namespace = param.split('.'),
+        root = namespace.shift(),
+        formParam = root;
+
+        while(namespace.lenght){
+            formParam += '[' + namespace.shift() + ']';
+        }
+        return{
+            param : formParam,
+            msg : msg,
+            value: value
+            
+        }
+    }
+}));
+
 app.get('/', (req, res) => res.sendFile(path.join(__dirname + "/../client/build/index.html")));
 
 // Start server!

@@ -4,7 +4,7 @@ const router = express.Router();
 var jsonQuery = require('json-query')
 var _ = require("underscore");
 const fileLocation = "./data/memos.json";
-const dbdata = require('./oracleService')
+const dbdata = require('../oracleService')
 
 // ---------------------------------------------------------------------
 // GET ALL MEMOS
