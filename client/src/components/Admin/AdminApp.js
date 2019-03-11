@@ -4,10 +4,10 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import "semantic-ui-css/semantic.min.css";
 
 import AdminMenuBar from "./AdminMenuBar";
-import AdminOverview from "./AdminOverview";
-import AdminCompetitions from "./AdminCompetitions";
+import AdminOverview from "./AdminOverview/AdminOverview";
+import AdminCompetitions from "./AdminCompetitions/AdminCompetitions";
 import AdminUsers from "./AdminUsers/AdminUsers";
-import AdminCourses from "./AdminCourses";
+import AdminCourses from "./AdminCourses/AdminCourses";
 
 
 

@@ -9,8 +9,9 @@ const users = require("./routes/users");
 const dbservice = require("./oracleService");
 var session = require("express-session");
 var passport = require("passport");
-var expressValidator = require("express-validator");
 var LocalStrategy = require("passport-local").Strategy;
+var expressValidator = require("express-validator");
+
 
 //console.log(" dbConf: ", dbservice)
 dbservice.initializeDB()

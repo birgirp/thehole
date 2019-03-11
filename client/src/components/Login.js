@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+//import ReactDOM from "react-dom";
+//import { BrowserRouter as Router, Route } from "react-router-dom";
 import "semantic-ui-css/semantic.min.css";
 import {  Button,  Form,  Grid,  Header,  Segment, Modal } from 'semantic-ui-react';
 import axios from "axios";
+import { Redirect } from "react-router-dom";
 
 
 
@@ -12,7 +13,8 @@ class Login extends Component {
       email: "",
       password: "",
       submitting: false,
-      unknownuser: false
+      unknownuser: false,
+      success: false
     }
 
 
@@ -33,23 +35,21 @@ class Login extends Component {
     this.setState({ submitting: true });
     console.log(this.state.email);
     console.log(this.state.password);
-    axios.get("/users/login", {
-      contents: this.state.email,
-      title: this.state.password
-    })
+    axios.get("/users/login/" + this.state.email + "/passw/" + this.state.password  )
       .then(response => {
         //this.setState({ loading: false, open: true })
-        console.log(response);
+       console.log("known user = " + JSON.stringify(response.data));
+
       })
       .catch(error => {
         console.log(error);
       });
 
-      if (this.state.email == "birgir@gmail.com" && this.state.password === "123"){
+     /* if (this.state.email == "birgir@gmail.com" && this.state.password === "123"){
         console.log("logging in...")
       }else{
         this.setState({ unknownuser: true })
-      }
+      }*/
 
       this.setState({ submitting: false });
   }
@@ -71,9 +71,12 @@ class Login extends Component {
       )
 
     }else{
-
+      if (this.state.success === true) {
+        return <Redirect to='/home' />
+      } else{
    
     return (
+
       <div>
         <br /><br />
       <Grid centered columns={2}>
@@ -89,7 +92,7 @@ class Login extends Component {
               iconPosition="left"
               placeholder="Email address"
               value={this.state.email} 
-              pattern="\d{3}"
+              //pattern=""
               onChange={this.handleEmailChange}
             />
             <Form.Input
@@ -112,6 +115,7 @@ class Login extends Component {
     </div>
     )
   }
+}
 }
 }
 

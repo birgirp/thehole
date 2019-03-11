@@ -50,10 +50,34 @@ function doRelease(connection) {
     }
 
 
-
 module.exports = {
     initializeDB: initializeDB,
     closePool: closePool,
+
+    getUserbyEmail: function (email, passw) {
+        return new Promise((resolve, reject) => {
+            let conn;
+            getConnectionPromise().then((connection) => {
+                conn = connection;
+               // console.log(email + "  " + passw);
+                return conn.execute('select name from users where email = :email and password = :passw ', [email, passw]);
+            }).then((result) => {
+                resolve(result);
+            }).catch((error) => {
+                reject(error)
+            }).then(() => {
+                doRelease(conn);
+            })
+        })
+    },
+
+
+
+    //  OLD export
+//---------------------------------------------------------------------------------------
+
+
+
     getNotebyId: function (id) {
         return new Promise((resolve, reject) => {
             let conn;
