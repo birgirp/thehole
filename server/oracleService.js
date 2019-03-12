@@ -71,6 +71,22 @@ module.exports = {
         })
     },
 
+    getAllUsers: function () {
+        return new Promise((resolve, reject) => {
+            let conn;
+            getConnectionPromise().then((connection) => {
+                conn = connection;
+                return conn.execute('select name, email, handicap from users');
+            }).then((result) => {
+                resolve(result);
+            }).catch((error) => {
+                reject(error)
+            }).then(() => {
+                doRelease(conn);
+            })
+        })
+    },
+
 
 
     //  OLD export
