@@ -1,86 +1,86 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Menu, Segment } from "semantic-ui-react";
+import { Dropdown, Menu, Segment } from "semantic-ui-react";
+import axios from "axios";
 
 class MenuBar extends Component {
   state = {
-    activePage: "login"
+    activePage: "home",
+    isAdmin: false
   }
 
   handleItemClick = (e, { name }) => {
+    console.log("name = " + name);
+    //if(name !== "admin"){
     this.setState({ activePage: name });
+    //}
   }
 
-  componentDidUpdate() {
-    try {
-     // console.log("menubar updated...");
 
-      console.log("path: " + window.location.pathname);
-      console.log("activepage: " + this.state.activePage);
+  componentDidMount() {
+    axios.get("/api/isloggedin")
+      .then(res => {
+        console.log("is admin? = " + JSON.stringify(res.data.isAdmin));
+        this.setState({ isLoggedIn: res.data.isAdmin });
+      })
+      .catch(err => {
+        console.log(err);
 
-      if ( this.state.activePage !== "view" && window.location.pathname === "/viewMemos") {
-         this.setState({ activePage: "view" });
-      }
-
-    } catch (error) {
-      console.log("Error: " + error);
-    }
+      })
   }
+
+  adminMenu() {
+    const { activePage } = this.state.activePage;
+    return (
+      <Dropdown text='Admin' name="admin" pointing className='link item'>
+        <Dropdown.Menu>
+          <Dropdown.Item
+            as={Link}
+            to="/admin/users"
+            name="adminusers"
+            content="Users"
+            active={activePage === "adminusers"}
+            onClick={this.handleItemClick} />
+          <Dropdown.Item
+            as={Link}
+            to="/admin/courses"
+            name="admincourses"
+            content="Courses"
+            active={activePage === "admincourses"}
+            onClick={this.handleItemClick} />
+          <Dropdown.Item
+            as={Link}
+            to="/admin/tours"
+            name="admintours"
+            content="Tours"
+            active={activePage === "admintours"}
+            onClick={this.handleItemClick} />
+        </Dropdown.Menu>
+      </Dropdown>
+
+
+    );
+
+  }
+
 
 
   render() {
-    const { activePage } = this.state;
-
+    const { activePage } = this.state.activePage;
+   // const isadmin = this.state.isAdmin
+    const isadmin = true
+    console.log("adminnnnn??? " + isadmin)
     return (
       <Segment inverted>
         <Menu inverted pointing secondary>
           <Menu.Item
             as={Link}
-            to="/"
-            name="Login"
-            content="Login"
-            active={activePage === "login"}
+            to="/home"
+            name="home"
+            content="Home"
+            active={activePage === "home"}
             onClick={this.handleItemClick} />
-          <Menu.Item
-            as={Link}
-            to="/viewMemos"
-            name="view"
-            content="Sjá minnismiða"
-            active={activePage === "view"}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            as={Link}
-            to="/createMemo"
-            name="create"
-            content="Búa til minnismiða"
-            active={activePage === "create"}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            as={Link}
-            to="/deleteMemos"
-            name="delete"
-            content="Eyða minnismiðum"
-            active={activePage === "delete"}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            as={Link}
-            to="/updateMemo"
-            name="update"
-            content="Uppfæra minnismiða"
-            active={activePage === "update"}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            as={Link}
-            to="/authors"
-            name="authors"
-            content="Höfundar"
-            active={activePage === "authors"}
-            onClick={this.handleItemClick}
-          />
+          {isadmin === true && this.adminMenu()}
         </Menu>
       </Segment>
     )

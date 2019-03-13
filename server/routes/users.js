@@ -11,8 +11,6 @@ router.get('/', function(req, res, next){
 });
 
 
-
-
 //router.post('/login', passport.authenticate('local-login', { successRedirect: '/home',  failureRedirect: '/fail'}));
 
 router.post('/login', function (req, res, next) {
@@ -40,16 +38,15 @@ passport.use('local-login', new LocalStrategy({
     function(req, username, password, done) {
       dbdata.getUserbyEmail(username, password).then((data) => {
 
-        console.log("success")
-
-        console.log(JSON.stringify(data.rows[0])); 
+        //console.log(JSON.stringify(data.rows[0])); 
         if(data.rows.length > 0) {
+         // console.log("success")
             user = {
                 id: data.rows[0][0],
                 name: data.rows[0][1],
                 email: data.rows[0][2],
                 handicap: data.rows[0][3],
-                isadmin: data.rows[0][4],
+                isadmin: (data.rows[0][4] === 1 ? true : false)
 
             }
             return done(null, user);            

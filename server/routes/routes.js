@@ -43,10 +43,11 @@ router.get("/api/gethandicap", isLoggedIn, (req, res) => {
 
 router.get("/api/isloggedin", (req, res) => {
     if (req.isAuthenticated()) {
-        console.log("In IsloggedIN...")
-        res.json({loggedIn: true, name: req.user.name,  isAdmin: true })
+        //console.log("In IsloggedIN...")
+        res.json({loggedIn: true, name: req.user.name,  isAdmin: req.user.isadmin })
     } else {
         res.json({loggedIn: false })
+
     }
 });
 // ---------------------------------------------------------------------
@@ -55,7 +56,7 @@ router.get("/api/isloggedin", (req, res) => {
 router.delete("/api/deleteMemos", isLoggedIn, (req, res) => {
     let idsToDelete =  req.body;
     ids = idsToDelete.map(item => {
-        return	item = [item];
+        return	item = [item]; 
     }); 
 
 

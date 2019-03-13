@@ -1,10 +1,10 @@
 // External libs
 import React, { Component } from "react";
-import { Table } from "semantic-ui-react";
+//import { Table } from "semantic-ui-react";
 import axios from "axios";
 
 // Own components
-import Loading from "../../Loading/Loading";
+//import Loading from "../../Loading/Loading";
 
 class AdminUsers extends Component {
     state = {

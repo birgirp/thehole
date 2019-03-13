@@ -1,8 +1,12 @@
 import React, { Component } from "react";
 import axios from "axios";
 
+ 
+
+
+
 class Home extends Component {
-    
+
     
   componentDidMount() {
     axios.get("/api/isloggedin")
@@ -14,14 +18,16 @@ class Home extends Component {
         
       })
   }
-    render() {
 
-        console.log(this.props.location.state.user);
-        //console.log(this.props.location.state.type);
+
+    render() {
         return (
+ 
+
             <div>
                 <h1>Home...</h1>
             </div>
+
         )
     }
 }

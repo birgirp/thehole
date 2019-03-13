@@ -30,20 +30,22 @@ class Login extends Component {
     this.setState({ password: event.target.value });
   }
 
-
   handleSubmit = () => {
     this.setState({ submitting: true });
-    console.log(this.state.email);
-    console.log(this.state.password);
+   
     axios.post("/users/login/", {email: this.state.email, password: this.state.password})
       .then(response => {
-        console.log("known user = " + JSON.stringify(response.data));
-        // this.setState({ success: true });
-        this.props.history.push({
+        console.log("response = " + JSON.stringify(response.data.user));
+       
+        if (response.data.user === false){
+          this.setState({ unknownuser: true });
+        }else{
+         this.setState({ success: true });
+       /* this.props.history.push({
           pathname: "/home",
           state: { user: response.data }
-        });
-
+        });*/
+      }
       })
       .catch(error => {
         console.log(error);
@@ -53,26 +55,31 @@ class Login extends Component {
   }
 
 
+  unKnownUser(){
+    return(
+      <div>
+      <Modal size="tiny" open={this.state.unknownuser} onClose={this.close}>
+        <Modal.Header>Unknown user</Modal.Header>
+        <Modal.Content>
+          <p>gekk ekki...</p>
+        </Modal.Content>
+
+      </Modal>
+    </div>
+
+    )
+  }
+
+
   render() {
     if (this.state.unknownuser === true) {
       return (
-        <div>
-          <Modal size="tiny" open={this.state.unknownuser} onClose={this.close}>
-            <Modal.Header>Unknown user</Modal.Header>
-            <Modal.Content>
-              <p>gekk ekki...</p>
-            </Modal.Content>
-
-          </Modal>
-        </div>
-
+        this.unKnownUser()
       )
     } else {
       if (this.state.success === true) {
-        console.log("Trying to  redirect from Login...")
         return <Redirect to='/home' />
       } else {
-
         return (
           <div>
             <br /><br />
