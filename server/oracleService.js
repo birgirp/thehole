@@ -60,7 +60,7 @@ module.exports = {
             getConnectionPromise().then((connection) => {
                 conn = connection;
                // console.log(email + "  " + passw);
-                return conn.execute('select name from users where email = :email and password = :passw ', [email, passw]);
+                return conn.execute('select id, name, email, handicap, isadmin from users where email = :email and password = :passw ', [email, passw]);
             }).then((result) => {
                 resolve(result);
             }).catch((error) => {
@@ -87,6 +87,21 @@ module.exports = {
         })
     },
 
+    getHandicap: function (userid) {
+        return new Promise((resolve, reject) => {
+            let conn;
+            getConnectionPromise().then((connection) => {
+                conn = connection;
+                return conn.execute('select handicap from users where id = :id', [userid]);
+            }).then((result) => {
+                resolve(result);
+            }).catch((error) => {
+                reject(error)
+            }).then(() => {
+                doRelease(conn);
+            })
+        })
+    },
 
 
     //  OLD export

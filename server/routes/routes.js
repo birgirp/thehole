@@ -9,15 +9,13 @@ const dbdata = require('../oracleService')
 // ---------------------------------------------------------------------
 // GET ALL MEMOS
 // ---------------------------------------------------------------------
-router.get("/api/getMemos", (req, res) => {
+router.get("/api/getMemos", isLoggedIn, (req, res) => {
   
   /*  fs.readFile(fileLocation, "utf8", (err, memos) => {
         console.log("Frá file: \n")
     })*/
    
-   
-
-    dbdata.getAllNotes().then((data) => {
+     dbdata.getAllNotes().then((data) => {
       //  console.log(JSON.stringify(data.rows));  
         res.json(data.rows)
     }).catch((error) => {
@@ -29,10 +27,32 @@ router.get("/api/getMemos", (req, res) => {
 
 });
 
+router.get("/api/gethandicap", isLoggedIn, (req, res) => {
+
+    dbdata.getHandicap(req.user.id).then((data) =>{
+
+        console.log("in handicap route..." + data.rows[0]);
+        res.json(data.rows[0]);
+    }).catch((error) => {
+        console.log(error)
+        res.status(500);
+        res.json({error: error});
+    });
+   
+});
+
+router.get("/api/isloggedin", (req, res) => {
+    if (req.isAuthenticated()) {
+        console.log("In IsloggedIN...")
+        res.json({loggedIn: true, name: req.user.name,  isAdmin: true })
+    } else {
+        res.json({loggedIn: false })
+    }
+});
 // ---------------------------------------------------------------------
 // DELETE MEMOS
 // ---------------------------------------------------------------------
-router.delete("/api/deleteMemos", (req, res) => {
+router.delete("/api/deleteMemos", isLoggedIn, (req, res) => {
     let idsToDelete =  req.body;
     ids = idsToDelete.map(item => {
         return	item = [item];
@@ -89,7 +109,7 @@ router.delete("/api/deleteMemos", (req, res) => {
 // ---------------------------------------------------------------------
 // CREATE A NEW MEMO
 // ---------------------------------------------------------------------
-router.post("/api/createMemo", (req, res) => {
+router.post("/api/createMemo", isLoggedIn, (req, res) => {
 //-----------------------------------------------------------------------------------
     console.log("about to insert0");
     dbdata.addNewNote(req.body.title, req.body.contents ).then((data) => {
@@ -133,7 +153,7 @@ router.post("/api/createMemo", (req, res) => {
 
  // TODO!
 
- router.get("/api/viewMemo/:id", (req, res) => {
+ router.get("/api/viewMemo/:id", isLoggedIn, (req, res) => {
     
      //dbdata.getNotebyId(1, (err, data)=> {
     //    if (err){
@@ -230,6 +250,19 @@ router.put("/api/updateMemo", (req, res) => {
 });
 //-----------------------------------------------------------------------------
 
+
+// route middleware to make sure a user is logged in
+function isLoggedIn(req, res, next) {
+    console.log("verify user login...")
+    // if user is authenticated in the session, carry on 
+   // console.log(JSON.stringify(req))
+    if (req.isAuthenticated())
+        console.log(req.isAuthenticated())
+        return next();
+
+    // if they aren't redirect them to the home page
+    res.redirect('/');
+}
 
 
 

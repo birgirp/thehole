@@ -35,13 +35,13 @@ class Login extends Component {
     this.setState({ submitting: true });
     console.log(this.state.email);
     console.log(this.state.password);
-    axios.get("/users/login/" + this.state.email + "/passw/" + this.state.password)
+    axios.post("/users/login/", {email: this.state.email, password: this.state.password})
       .then(response => {
         console.log("known user = " + JSON.stringify(response.data));
         // this.setState({ success: true });
         this.props.history.push({
           pathname: "/home",
-          state: { detail: "asdf", type: "gene", description: response.data }
+          state: { user: response.data }
         });
 
       })

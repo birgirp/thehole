@@ -26,12 +26,6 @@ const port = process.env.PORT || 5000;
 // Use json for all communication
 app.use(bodyParser.json());
 
-// Use our defined routes
-app.use("/", routes);
-app.use("/users", users);
-
-// Serve static assets and point to index.html file
-app.use("/", express.static(path.join(__dirname, "/../client/build/")));
 
 // Handle sessions
 app.use(session({
@@ -39,10 +33,19 @@ app.use(session({
     saveUninitialized: true,
     resave: true
 }));
-
-// Passport
+// required for passport
 app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.session()); // persistent login sessions
+
+// Use our defined routes
+app.use("/", routes);
+app.use("/users", users);
+
+// Serve static assets and point to index.html file
+app.use("/", express.static(path.join(__dirname, "/../client/build/")));
+
+
+
 
 // Validator
 app.use(expressValidator({
