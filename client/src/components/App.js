@@ -10,8 +10,20 @@ import AdminUsers from "./Admin/AdminUsers/AdminUsers"
 
 
 class App extends Component {
-  state = {
-    isLoggedIn: false
+
+  constructor(props){
+    super(props);
+    this.state = {
+      isLoggedIn: false
+    };
+     this.changeLoggedIn = this.changeLoggedIn.bind(this);
+  }
+
+  changeLoggedIn() {
+    console.log("changing state in App");
+    console.log("state before: " + this.state.isLoggedIn);
+    this.setState({ isLoggedIn: true });
+    console.log("state after: " + this.state.isLoggedIn);
   }
 
   componentDidMount() {
@@ -36,6 +48,7 @@ class App extends Component {
   }
 
   render() {
+    console.log("rendering app")
     const isLoggedIn = this.state.isLoggedIn;
     return (
       <Router>
@@ -43,7 +56,7 @@ class App extends Component {
           {isLoggedIn === true && <MenuBar />}
           <div id="mainView">
             <Route exact path="/" component={Login} />
-            <Route exact path="/home" component={Home} />
+            <Route exact path="/home"  render={(props) => <Home {...props} changeLoggedIn= {this.changeLoggedIn} />}/>
             <Route exact path="/admin" component={AdminOverview} />
             <Route exact path="/admin/users" component={AdminUsers} />
           </div>

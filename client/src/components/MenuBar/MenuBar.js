@@ -16,6 +16,11 @@ class MenuBar extends Component {
     //}
   }
 
+  handleLogoutItemClick = (e, { name }) => {
+    console.log("Logging out");
+    axios.get("/api/logout")
+  }
+
 
   componentDidMount() {
     axios.get("/api/isloggedin")
@@ -39,14 +44,14 @@ class MenuBar extends Component {
             to="/admin/users"
             name="adminusers"
             content="Users"
-            active={activePage === "adminusers"}
+           // active={activePage === "adminusers"}
             onClick={this.handleItemClick} />
           <Dropdown.Item
             as={Link}
             to="/admin/courses"
             name="admincourses"
             content="Courses"
-            active={activePage === "admincourses"}
+           // active={activePage === "admincourses"}
             onClick={this.handleItemClick} />
           <Dropdown.Item
             as={Link}
@@ -67,9 +72,9 @@ class MenuBar extends Component {
 
   render() {
     const { activePage } = this.state.activePage;
-   // const isadmin = this.state.isAdmin
-    const isadmin = true
-    console.log("adminnnnn??? " + isadmin)
+     const isadmin = this.state.isAdmin
+
+  
     return (
       <Segment inverted>
         <Menu inverted pointing secondary>
@@ -81,6 +86,12 @@ class MenuBar extends Component {
             active={activePage === "home"}
             onClick={this.handleItemClick} />
           {isadmin === true && this.adminMenu()}
+          <Menu.Item
+          className="right menu"
+            name="logout"
+            content="Logout"
+            active={activePage === "login"}
+            onClick={this.handleLogoutItemClick} />
         </Menu>
       </Segment>
     )

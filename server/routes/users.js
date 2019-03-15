@@ -60,22 +60,13 @@ passport.use('local-login', new LocalStrategy({
         //}  
         return done(null, false);
       })
-    
-      /*
-      User.findOne({ username: username }, function(err, user) {
-        if (err) { return done(err); }
-        if (!user) {
-          return done(null, false, { message: 'Incorrect username.' });
-        }
-        if (!user.validPassword(password)) {
-          return done(null, false, { message: 'Incorrect password.' });
-        }
-        return done(null, user);
-      });
-      */
-
-    }
+       }
   ));
+
+  router.get('/logout', function (req, res) {
+    req.logout();
+    res.redirect('/');
+  });
 
   passport.serializeUser(function(user, done) {
     done(null, user);
