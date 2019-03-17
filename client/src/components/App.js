@@ -7,6 +7,7 @@ import Login from "./Login";
 import Home from "./Application/Home"
 import AdminOverview from "./Admin/AdminOverview/AdminOverview"
 import AdminUsers from "./Admin/AdminUsers/AdminUsers"
+import AdminCourses from "./Admin/AdminCourses/AdminCourses"
 
 
 class App extends Component {
@@ -46,6 +47,7 @@ class App extends Component {
             <Route exact path="/home" component={Home} />
             <Route exact path="/admin" component={AdminOverview} />
             <Route exact path="/admin/users" component={AdminUsers} />
+            <Route exact path="/admin/courses" component={AdminCourses} />
           </div>
         </div>
       </Router>

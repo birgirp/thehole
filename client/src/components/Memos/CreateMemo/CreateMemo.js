@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button, Form, TextArea, Input, Modal } from "semantic-ui-react";
 import axios from "axios";
 
-// Own components
+// Own components...
 import Loading from "../../Loading/Loading";
 
 class CreateMemo extends Component {
