@@ -4,12 +4,13 @@ const router = express.Router();
 var jsonQuery = require('json-query')
 var _ = require("underscore");
 const fileLocation = "./data/memos.json";
-const dbdata = require('../oracleService')
+//const dbdata = require('../oracleService')
+const dbdata = require('../pgService')
 
 // ---------------------------------------------------------------------
 // GET ALL MEMOS
 // ---------------------------------------------------------------------
-router.get("/api/getMemos", isLoggedIn, (req, res) => {
+router.get("/api/getMemos",  (req, res) => {
   
   /*  fs.readFile(fileLocation, "utf8", (err, memos) => {
         console.log("Frá file: \n")

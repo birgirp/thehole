@@ -2,7 +2,8 @@ var express = require("express");
 var router = express.Router();
 var passport = require("passport");
 var LocalStrategy = require("passport-local").Strategy;
-const dbdata = require('../oracleService')
+//const dbdata = require('../oracleService')
+const dbdata = require('../pgService')
 
 router.get('/', function(req, res, next){
     console.log("in users router");
@@ -16,6 +17,7 @@ router.get('/', function(req, res, next){
 router.post('/login', function (req, res, next) {
     passport.authenticate('local-login', function (err, user) {
         if (err) {
+          console.log("sdfsfsdf")
             res.status(err.statusCode).send(err);
             return;
         }
@@ -36,9 +38,10 @@ passport.use('local-login', new LocalStrategy({
     passReqToCallback : true
     },
     function(req, username, password, done) {
+      console.log("xxxxxxxxxxxxx")
       dbdata.getUserbyEmail(username, password).then((data) => {
 
-        //console.log(JSON.stringify(data.rows[0])); 
+        console.log(JSON.stringify(data.rows[0])); 
         if(data.rows.length > 0) {
          // console.log("success")
             user = {

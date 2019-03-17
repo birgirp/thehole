@@ -21,7 +21,8 @@
     "passport": "*",
     "passport-http": "*",
     "passport-local": "*",
-    "underscore": "^1.9.1"
+    "underscore": "^1.9.1",
+    "pg": "*"
   },
   "devDependencies": {
     "concurrently": "^4.1.0",
