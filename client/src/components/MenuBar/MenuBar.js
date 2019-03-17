@@ -2,12 +2,19 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Dropdown, Menu, Segment } from "semantic-ui-react";
 import axios from "axios";
+import Loading from "../Loading/Loading";
 
 class MenuBar extends Component {
-  state = {
-    activePage: "home",
-    isAdmin: false
+  constructor(props) {
+    super(props);
+    this.state = {
+      activePage: "home",
+      isAdmin: -1
+    };
   }
+
+
+
 
   handleItemClick = (e, { name }) => {
     console.log("name = " + name);
@@ -16,12 +23,21 @@ class MenuBar extends Component {
     //}
   }
 
+  handleLogoutItemClick = (e, { name }) => {
+    console.log("Logging out");
+    axios.get("/api/logout")
+  }
 
-  componentDidMount() {
+
+  componentWillMount() {
     axios.get("/api/isloggedin")
       .then(res => {
         console.log("is admin? = " + JSON.stringify(res.data.isAdmin));
-        this.setState({ isLoggedIn: res.data.isAdmin });
+        if (res.data.isAdmin) {
+          this.setState({ isAdmin: 1 });
+        } else {
+          this.setState({ isAdmin: 0 });
+        }
       })
       .catch(err => {
         console.log(err);
@@ -30,6 +46,7 @@ class MenuBar extends Component {
   }
 
   adminMenu() {
+
     const { activePage } = this.state.activePage;
     return (
       <Dropdown text='Admin' name="admin" pointing className='link item'>
@@ -39,14 +56,14 @@ class MenuBar extends Component {
             to="/admin/users"
             name="adminusers"
             content="Users"
-            active={activePage === "adminusers"}
+            // active={activePage === "adminusers"}
             onClick={this.handleItemClick} />
           <Dropdown.Item
             as={Link}
             to="/admin/courses"
             name="admincourses"
             content="Courses"
-            active={activePage === "admincourses"}
+            // active={activePage === "admincourses"}
             onClick={this.handleItemClick} />
           <Dropdown.Item
             as={Link}
@@ -66,25 +83,38 @@ class MenuBar extends Component {
 
 
   render() {
-    const { activePage } = this.state.activePage;
-   // const isadmin = this.state.isAdmin
-    const isadmin = true
-    console.log("adminnnnn??? " + isadmin)
-    return (
-      <Segment inverted>
-        <Menu inverted pointing secondary>
-          <Menu.Item
-            as={Link}
-            to="/home"
-            name="home"
-            content="Home"
-            active={activePage === "home"}
-            onClick={this.handleItemClick} />
-          {isadmin === true && this.adminMenu()}
-        </Menu>
-      </Segment>
-    )
+
+    if (this.state.isAdmin === -1) {
+      return (
+       <div></div>
+      )
+    } else {
+      const { activePage } = this.state.activePage;
+     
+      let isadmin = this.state.isAdmin === 1 ? true : false;
+      console.log("aaaa " + this.state.isAdmin);
+
+      return (
+        <Segment inverted>
+          <Menu inverted pointing secondary>
+            <Menu.Item
+              as={Link}
+              to="/home"
+              name="home"
+              content="Home"
+              active={activePage === "home"}
+              onClick={this.handleItemClick} />
+            {isadmin === true && this.adminMenu()}
+            <Menu.Item
+              className="right menu"
+              name="logout"
+              content="Logout"
+              active={activePage === "logout"}
+              onClick={this.handleLogoutItemClick} />
+          </Menu>
+        </Segment>
+      )
+    }
   }
 }
-
-export default MenuBar;
+  export default MenuBar;

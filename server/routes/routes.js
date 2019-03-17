@@ -12,19 +12,15 @@ const dbdata = require('../pgService')
 // ---------------------------------------------------------------------
 router.get("/api/getMemos",  (req, res) => {
   
-  /*  fs.readFile(fileLocation, "utf8", (err, memos) => {
-        console.log("Frá file: \n")
-    })*/
+
    
      dbdata.getAllNotes().then((data) => {
-      //  console.log(JSON.stringify(data.rows));  
         res.json(data.rows)
     }).catch((error) => {
         console.log(error)
          res.status(500);
          res.json({error: error});
     });
-     
 
 });
 
@@ -44,11 +40,11 @@ router.get("/api/gethandicap", isLoggedIn, (req, res) => {
 
 router.get("/api/isloggedin", (req, res) => {
     if (req.isAuthenticated()) {
-        //console.log("In IsloggedIN...")
-        res.json({loggedIn: true, name: req.user.name,  isAdmin: req.user.isadmin })
+        console.log("full_name: " + req.user.full_name );
+        console.log("is_admin: " + req.user.is_admin );
+        res.json({loggedIn: true, name: req.user.full_name,  isAdmin: req.user.is_admin })
     } else {
         res.json({loggedIn: false })
-
     }
 });
 // ---------------------------------------------------------------------
@@ -82,28 +78,7 @@ router.delete("/api/deleteMemos", isLoggedIn, (req, res) => {
    // res.send("allt i godu");
 
 
-/*
-    fs.readFile(fileLocation, "utf8", (err, memos) => {
-        let parsedMemos = JSON.parse(memos);
 
-        for (var i = 0; i < idsToDelete.length; i++) {
-            let currentId = idsToDelete[i];
-            console.log("currentid: " + currentId);
-      
-            var index = parsedMemos.map(memo => { return memo.id; }).indexOf(currentId);
-            console.log("index: " + index);
-            parsedMemos.splice(index, 1);
-        }
-
-        fs.writeFile(fileLocation, JSON.stringify(parsedMemos), (err) => {
-            if (err) {
-                throw err;
-            } else {
-                res.send("allt i godu");
-            }
-        });
-
-    });*/
 });
 
 
@@ -151,24 +126,10 @@ router.post("/api/createMemo", isLoggedIn, (req, res) => {
 
 // ---------------------------------------------------------------------
 // VIEW A MEMO
-//
 
- // TODO!
 
  router.get("/api/viewMemo/:id", isLoggedIn, (req, res) => {
     
-     //dbdata.getNotebyId(1, (err, data)=> {
-    //    if (err){
-    //        console.log(error)
-    //        //res.status(500);
-    //        //res.json({error: error});
-    //        return
-    //    }
-    
-    //    //res.json(data)
-    //    console.log(JSON.stringify(data));    
-    //})
-
     dbdata.getNotebyId(parseInt(req.params.id)).then((data) => {
         console.log(JSON.stringify(data.rows));  
         res.json(data.rows)
@@ -178,19 +139,6 @@ router.post("/api/createMemo", isLoggedIn, (req, res) => {
          res.json({error: error});
     });
     
-    
-    
-    
-   /* fs.readFile(fileLocation, "utf8", (err, memos) => {
-       let jdata = JSON.parse(memos);
-      
-       var filtered = _.where(jdata, {id: parseInt(req.params.id)});
-
-
-       res.send(filtered);
-    });*/
-
-
 });
 
 
@@ -198,13 +146,12 @@ router.post("/api/createMemo", isLoggedIn, (req, res) => {
 // UPDATE A MEMO
 // ---------------------------------------------------------------------
 
- // TODO!
- // You would usually use a PUT for :id but let's use a HTTP GET for simplicity's sake
+
 router.put("/api/updateMemo", (req, res) => {
 
     console.log("about to update");
     dbdata.updateNote( parseInt(req.body.id), req.body.title, req.body.contents ).then((data) => {
-        //console.log(JSON.stringify(data));  
+
         res.json("ok")
     }).catch((error) => {
         console.log(error)

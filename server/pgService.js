@@ -35,14 +35,13 @@ const pool = new Pool({
           response.status(200).json(results.rows)
         })
       }
-
 */
 module.exports = {
 
     getUserbyEmail: function (e_mail, passw) {
         return new Promise((resolve, reject) => {
 
-            pool.query('SELECT * FROM users where "email" = $1', [e_mail]).then((results) => {
+            pool.query('SELECT id, full_name, email, handicap, is_admin FROM users where "email" = $1 and "password" = $2', [e_mail, passw]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")
@@ -53,7 +52,7 @@ module.exports = {
 
     getAllUsers: function () {
         return new Promise((resolve, reject) => {
-            pool.query('SELECT * FROM users').then((results) => {
+            pool.query('SELECT id, full_name, email, handicap, is_admin FROM users').then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")
@@ -63,19 +62,9 @@ module.exports = {
     }
 }
 
-
-
 //-------------------------------------------
 
-
-
-
-
-
-
 /*
-
-
       const getUserById = (request, response) => {
         const id = parseInt(request.params.id)
 
@@ -86,7 +75,6 @@ module.exports = {
           response.status(200).json(results.rows)
         })
       }
-
       module.exports = {
         getUserbyEmail,
         getUserById ,

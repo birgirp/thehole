@@ -11,14 +11,24 @@ import AdminCourses from "./Admin/AdminCourses/AdminCourses"
 
 
 class App extends Component {
-  state = {
-    isLoggedIn: false
+
+  constructor(props){
+    super(props);
+    this.state = {
+      isLoggedIn: false
+    };
+     this.changeLoggedIn = this.changeLoggedIn.bind(this);
+  }
+
+  changeLoggedIn() {
+    this.setState({ isLoggedIn: true });
+
   }
 
   componentDidMount() {
     axios.get("/api/isloggedin")
       .then(res => {
-        console.log("isloggedin = " + JSON.stringify(res.data.loggedIn));
+        console.log("Mounting app, isloggedin = " + JSON.stringify(res.data.loggedIn));
         this.setState({ isLoggedIn: res.data.loggedIn });
       })
       .catch(err => {
@@ -37,6 +47,7 @@ class App extends Component {
   }
 
   render() {
+
     const isLoggedIn = this.state.isLoggedIn;
     return (
       <Router>
@@ -44,7 +55,7 @@ class App extends Component {
           {isLoggedIn === true && <MenuBar />}
           <div id="mainView">
             <Route exact path="/" component={Login} />
-            <Route exact path="/home" component={Home} />
+            <Route exact path="/home"  render={(props) => <Home {...props} changeLoggedIn= {this.changeLoggedIn} />}/>
             <Route exact path="/admin" component={AdminOverview} />
             <Route exact path="/admin/users" component={AdminUsers} />
             <Route exact path="/admin/courses" component={AdminCourses} />
