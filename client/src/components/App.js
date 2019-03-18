@@ -12,24 +12,32 @@ import AdminCourses from "./Admin/AdminCourses/AdminCourses"
 
 class App extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
-      isLoggedIn: false
+      isLoggedIn: false,
+      isAdmin: false
     };
-     this.changeLoggedIn = this.changeLoggedIn.bind(this);
+    this.changeLoggedIn = this.changeLoggedIn.bind(this);
   }
 
-  changeLoggedIn() {
+  changeLoggedIn(isadmin) {
     this.setState({ isLoggedIn: true });
+    this.setState({ isAdmin: isadmin });
 
   }
+
 
   componentDidMount() {
     axios.get("/api/isloggedin")
       .then(res => {
         console.log("Mounting app, isloggedin = " + JSON.stringify(res.data.loggedIn));
-        this.setState({ isLoggedIn: res.data.loggedIn });
+      if(res.data.loggedIn){
+        this.setState({ isLoggedIn: res.data.loggedIn, isAdmin: res.data.isAdmin  });
+        if (window.location.pathname !== "/home") {
+          window.location = "/home";
+        }
+      }
       })
       .catch(err => {
         console.log(err);
@@ -37,25 +45,20 @@ class App extends Component {
       })
   }
 
-  componentWillMount() {
-    axios.get("/api/isloggedin")
-      .then(res => {
-        this.setState({ isLoggedIn: res.data.loggedIn });
-      }).catch(err => {
-        console.log(err);
-      })
-  }
-
   render() {
-
-    const isLoggedIn = this.state.isLoggedIn;
+   /* var user = "";
+    if (this.state.isLoggedIn ) {
+      console.log(this.state);
+      user = <MenuBar getIsAdmin={this.state.isAdmin}></MenuBar>;
+    }
+*/
     return (
       <Router>
         <div>
-          {isLoggedIn === true && <MenuBar />}
+          {this.state.isLoggedIn && <MenuBar getIsAdmin={this.state.isAdmin}></MenuBar>}
           <div id="mainView">
             <Route exact path="/" component={Login} />
-            <Route exact path="/home"  render={(props) => <Home {...props} changeLoggedIn= {this.changeLoggedIn} />}/>
+            <Route exact path="/home" render={(props) => <Home {...props} changeLoggedIn={this.changeLoggedIn} />} />
             <Route exact path="/admin" component={AdminOverview} />
             <Route exact path="/admin/users" component={AdminUsers} />
             <Route exact path="/admin/courses" component={AdminCourses} />

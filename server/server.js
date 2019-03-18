@@ -12,7 +12,6 @@ var passport = require("passport");
 var LocalStrategy = require("passport-local").Strategy;
 var expressValidator = require("express-validator");
 
-
 //console.log(" dbConf: ", dbservice)
 //dbservice.initializeDB()
 

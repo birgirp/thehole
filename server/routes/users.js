@@ -58,7 +58,7 @@ passport.use('local-login', new LocalStrategy({
 
 router.get('/logout', function (req, res) {
   req.logout();
-  //res.redirect('/');
+  res.redirect('/');
 });
 
 passport.serializeUser(function (user, done) {

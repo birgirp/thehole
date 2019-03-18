@@ -24,7 +24,7 @@ class Home extends Component {
             state: { user: res.data }
           });
         }else{
-          this.props.changeLoggedIn();
+          this.props.changeLoggedIn(res.data.isAdmin);
         }
       })
       .catch(err => {

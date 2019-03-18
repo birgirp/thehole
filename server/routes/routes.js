@@ -11,9 +11,7 @@ const dbdata = require('../pgService')
 // GET ALL MEMOS
 // ---------------------------------------------------------------------
 router.get("/api/getMemos",  (req, res) => {
-  
-
-   
+     
      dbdata.getAllNotes().then((data) => {
         res.json(data.rows)
     }).catch((error) => {
@@ -72,15 +70,8 @@ router.delete("/api/deleteMemos", isLoggedIn, (req, res) => {
          res.json({error: error});
     });
 
-
-
-
    // res.send("allt i godu");
-
-
-
 });
-
 
 
 // ---------------------------------------------------------------------
@@ -97,31 +88,6 @@ router.post("/api/createMemo", isLoggedIn, (req, res) => {
          res.status(500);
          res.json({error: error});
     })
-
-
-//---------------------------------------------------------------------------------
-   /* fs.readFile(fileLocation, "utf8", (err, memos) => {
-        let parsedMemos = JSON.parse(memos);
-        let lastMemo = parsedMemos[parsedMemos.length - 1];
-
-        let newMemo = {
-            id: lastMemo.id + 1,
-            name: req.body.title,
-            contents: req.body.contents
-        }
-
-       // addMemo(newMemo);
-         parsedMemos.push(newMemo);
-         res.send("allt i godu");
-       fs.writeFile(fileLocation, JSON.stringify(parsedMemos), (err) => {
-            if (err) {
-                throw err;
-            } else {
-                res.send("allt i godu");
-            }
-        });
-
-    });*/
 });
 
 // ---------------------------------------------------------------------
@@ -138,9 +104,7 @@ router.post("/api/createMemo", isLoggedIn, (req, res) => {
          res.status(500);
          res.json({error: error});
     });
-    
 });
-
 
 // ---------------------------------------------------------------------
 // UPDATE A MEMO
@@ -160,7 +124,6 @@ router.put("/api/updateMemo", (req, res) => {
          
     })
         
-    
     
     
     

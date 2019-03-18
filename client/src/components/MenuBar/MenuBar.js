@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Dropdown, Menu, Segment } from "semantic-ui-react";
 import axios from "axios";
-import Loading from "../Loading/Loading";
+
 
 class MenuBar extends Component {
   constructor(props) {
@@ -14,8 +14,6 @@ class MenuBar extends Component {
   }
 
 
-
-
   handleItemClick = (e, { name }) => {
     console.log("name = " + name);
     //if(name !== "admin"){
@@ -25,7 +23,7 @@ class MenuBar extends Component {
 
   handleLogoutItemClick = (e, { name }) => {
     console.log("Logging out");
-    axios.get("/api/logout")
+    axios.get("/users/logout")
   }
 
 
@@ -81,18 +79,12 @@ class MenuBar extends Component {
   }
 
 
-
   render() {
 
-    if (this.state.isAdmin === -1) {
-      return (
-       <div></div>
-      )
-    } else {
       const { activePage } = this.state.activePage;
      
-      let isadmin = this.state.isAdmin === 1 ? true : false;
-      console.log("aaaa " + this.state.isAdmin);
+      //let isadmin = this.state.isAdmin === 1 ? true : false;
+      console.log("aaaa " + this.props.getIsAdmin);
 
       return (
         <Segment inverted>
@@ -104,7 +96,7 @@ class MenuBar extends Component {
               content="Home"
               active={activePage === "home"}
               onClick={this.handleItemClick} />
-            {isadmin === true && this.adminMenu()}
+            {this.props.getIsAdmin && this.adminMenu()}
             <Menu.Item
               className="right menu"
               name="logout"
@@ -115,6 +107,6 @@ class MenuBar extends Component {
         </Segment>
       )
     }
-  }
+  
 }
   export default MenuBar;
