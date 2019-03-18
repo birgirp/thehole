@@ -10,32 +10,7 @@ const pool = new Pool({
     port: 5432,
 })
 
-/*
-    const getAllNotes = (request, response) => {
-        const { email, password } = request.body
-        console.log("in pgservice...");
-        console.log(email, password)
-        pool.query('INSERT INTO users (name, email) VALUES ($1, $2)', [email, password],  (error, results) => {
-          if (error) {
-            throw error
-          }
-          response.status(200).json(results.rows)
-        })
-      }
 
-     getUserbyEmail: function (email, passw)  {
-        console.log("in pgservice...");
-        console.log(JSON.stringify(request.body))
-        const { email, password } = request.body
-        console.log(email, password)
-        pool.query('select * FROM users WHERE email = $1 and password = $2', [email, password],  (error, results) => {
-          if (error) {
-            throw error
-          }
-          response.status(200).json(results.rows)
-        })
-      }
-*/
 module.exports = {
 
     getUserbyEmail: function (e_mail, passw) {
@@ -59,7 +34,32 @@ module.exports = {
                 reject(error)
             })
         })
+    },
+
+    insertUser: function (username, email, hcp, isadmin, passw) {
+        return new Promise((resolve, reject) => {
+            pool.query('INSERT INTO users(full_name, email, handicap, is_admin, password) values ($1, $2, $3, $4, $5)', [username, email, hcp, isadmin, passw]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+     
+    },
+
+    getAllCourses: function () {
+        return new Promise((resolve, reject) => {
+            pool.query('SELECT id, course_name, country FROM courses').then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
     }
+
+
 }
 
 //-------------------------------------------

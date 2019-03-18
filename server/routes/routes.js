@@ -10,6 +10,30 @@ const dbdata = require('../pgService')
 // ---------------------------------------------------------------------
 // GET ALL MEMOS
 // ---------------------------------------------------------------------
+
+
+router.get('/api/getallcourses', function (req, res) {
+    dbdata.getAllCourses().then((data) => {
+  
+      console.log("datarows " + JSON.stringify(data.rows));
+      if (data.rows.length > 0) {
+        courses = data.rows
+        res.json(courses);
+      } else {
+        console.log("No courses found")
+        res.json(null);
+      }
+  
+    }).catch((error) => {
+      console.log(error)
+      res.status(500);
+      res.json({ error: error });
+    })
+  });
+  
+
+
+
 router.get("/api/getMemos",  (req, res) => {
      
      dbdata.getAllNotes().then((data) => {
@@ -38,8 +62,6 @@ router.get("/api/gethandicap", isLoggedIn, (req, res) => {
 
 router.get("/api/isloggedin", (req, res) => {
     if (req.isAuthenticated()) {
-        console.log("full_name: " + req.user.full_name );
-        console.log("is_admin: " + req.user.is_admin );
         res.json({loggedIn: true, name: req.user.full_name,  isAdmin: req.user.is_admin })
     } else {
         res.json({loggedIn: false })
@@ -72,7 +94,6 @@ router.delete("/api/deleteMemos", isLoggedIn, (req, res) => {
 
    // res.send("allt i godu");
 });
-
 
 // ---------------------------------------------------------------------
 // CREATE A NEW MEMO
@@ -124,9 +145,7 @@ router.put("/api/updateMemo", (req, res) => {
          
     })
         
-    
-    
-    
+       
     //--------------------------------------------------------
     /* fs.readFile(fileLocation, "utf8", (err, memos) => {  
     let parsedMemos = JSON.parse(memos);

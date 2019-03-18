@@ -30,7 +30,6 @@ class MenuBar extends Component {
   componentWillMount() {
     axios.get("/api/isloggedin")
       .then(res => {
-        console.log("is admin? = " + JSON.stringify(res.data.isAdmin));
         if (res.data.isAdmin) {
           this.setState({ isAdmin: 1 });
         } else {
@@ -81,32 +80,30 @@ class MenuBar extends Component {
 
   render() {
 
-      const { activePage } = this.state.activePage;
-     
-      //let isadmin = this.state.isAdmin === 1 ? true : false;
-      console.log("aaaa " + this.props.getIsAdmin);
+    const { activePage } = this.state.activePage;
 
-      return (
-        <Segment inverted>
-          <Menu inverted pointing secondary>
-            <Menu.Item
-              as={Link}
-              to="/home"
-              name="home"
-              content="Home"
-              active={activePage === "home"}
-              onClick={this.handleItemClick} />
-            {this.props.getIsAdmin && this.adminMenu()}
-            <Menu.Item
-              className="right menu"
-              name="logout"
-              content="Logout"
-              active={activePage === "logout"}
-              onClick={this.handleLogoutItemClick} />
-          </Menu>
-        </Segment>
-      )
-    }
-  
+
+    return (
+      <Segment inverted>
+        <Menu inverted pointing secondary>
+          <Menu.Item
+            as={Link}
+            to="/home"
+            name="home"
+            content="Home"
+            active={activePage === "home"}
+            onClick={this.handleItemClick} />
+          {this.props.getIsAdmin && this.adminMenu()}
+          <Menu.Item
+            className="right menu"
+            name="logout"
+            content="Logout"
+            active={activePage === "logout"}
+            onClick={this.handleLogoutItemClick} />
+        </Menu>
+      </Segment>
+    )
+  }
+
 }
-  export default MenuBar;
+export default MenuBar;

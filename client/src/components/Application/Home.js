@@ -2,9 +2,6 @@ import React, { Component } from "react";
 import axios from "axios";
 import { withRouter } from "react-router-dom";
 
-
-
-
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -12,7 +9,7 @@ class Home extends Component {
   }
 
 
-  componentWillMount() {
+  componentDidMount() {
 
  
     axios.get("/api/isloggedin")

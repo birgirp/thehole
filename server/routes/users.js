@@ -28,7 +28,6 @@ router.post('/login', function (req, res, next) {
 });
 
 
-
 passport.use('local-login', new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password',
@@ -74,19 +73,32 @@ router.get('/getAllUsers', function (req, res) {
 
     console.log("datarows " + JSON.stringify(data.rows));
     if (data.rows.length > 0) {
-      console.log("success")
       users = data.rows
       res.json(users);
+    } else {
+      console.log("No users found")
+      res.json(null);
     }
-    console.log("No users found")
-    res.json(null);
+
   }).catch((error) => {
     console.log(error)
     res.status(500);
-    res.json({error: error});
+    res.json({ error: error });
   })
 });
 
-
+router.post("/createUser", (req, res) => {
+  //-----------------------------------------------------------------------------------
+  console.log("about to insert user...");
+  console.log(JSON.stringify(req.body.isadmin));
+  dbdata.insertUser(req.body.full_name, req.body.email, req.body.handicap, req.body.isadmin, req.body.password).then((data) => {
+    console.log(JSON.stringify(data));
+    res.json("true");
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
 
 module.exports = router;
