@@ -14,6 +14,7 @@ class AdminUsers extends Component {
       users: [],
       addinguser: false
     }
+    this.close = this.close.bind(this);
   }
 
   componentDidMount() {
@@ -34,13 +35,11 @@ class AdminUsers extends Component {
       }*/
   }
 
-
-
-
-  close = () => {
-    this.setState({ addinguser: false });
+  close() {
+    if(this.state.addinguser){
+      this.setState({ addinguser: false });
+    }
   }
-
 
   render() {
     if (this.state.users.length === 0) {
@@ -50,9 +49,9 @@ class AdminUsers extends Component {
     } else {
       const data = this.state.users;
       return (
-        
-        <div>
-
+          <div>
+            <h1>Admin Users</h1>
+            <br />
           <Button primary onClick={this.handleAddUser}>Add new User</Button>
           <br /><br />
           <Table celled>
@@ -81,7 +80,7 @@ class AdminUsers extends Component {
             </Table.Body>
           </Table>
 
-          <Modal id="adminUsersModal" open={this.state.addinguser} onClose={this.close}>
+          <Modal id="adminUsersModal"  open={this.state.addinguser} onClose={this.close}>
             <Modal.Header>Create New User</Modal.Header>
             <Modal.Content >
               {<CreateUser />}

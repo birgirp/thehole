@@ -1,17 +1,19 @@
 // External libs
 import React, { Component } from "react";
-import { Table, Button } from "semantic-ui-react";
+import { Table, Button, Modal } from "semantic-ui-react";
 import axios from "axios";
 
 // Own components
 import Loading from "../../Loading/Loading";
+import CreateCourse from "./CreateCourse";
 
 class AdminCourses extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      courses: []
+      courses: [],
+      addingcourse: false
     }
   }
 
@@ -26,9 +28,13 @@ class AdminCourses extends Component {
       })
   }
 
+  close = () => {
+    this.setState({ addingcourse: false });
+  }
+
   handleAddCourse = () => {
     if (window.location.pathname !== "/admin/addcourse") {
-      window.location = "/admin/addcourse";
+        this.setState({ addingcourse: true })
     }
   }
 
@@ -42,7 +48,7 @@ class AdminCourses extends Component {
       console.log(data);
       return (
         <div>
-          <Button secondary onClick={this.handleAddCourse}>Add new Course</Button>
+          <Button primary onClick={this.handleAddCourse}>Add new Course</Button>
           <br /><br />
           <Table celled>
             <Table.Header>
@@ -67,7 +73,12 @@ class AdminCourses extends Component {
               })}
             </Table.Body>
           </Table>
-
+          <Modal  id="adminUsersModal"  open={this.state.addingcourse} onClose={this.close}>
+            <Modal.Header>Add new course</Modal.Header>
+            <Modal.Content >
+              {<CreateCourse />}
+            </Modal.Content>
+          </Modal>
         </div>
       )
     }

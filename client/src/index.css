@@ -8,8 +8,16 @@
 
 #adminUsersModal {
     /* height: 185px; */
-    height: 90vh;
+    height: 60vh;
     top: 50vh;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#loginErrorModal {
+    /* height: 185px; */
+    height: 20vh;
+    top: 60vh;
     left: 50%;
     transform: translate(-50%, -50%);
 }

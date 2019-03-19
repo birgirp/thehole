@@ -1,22 +1,19 @@
 // External libs
 import React, { Component } from "react";
-import { Button, Form, Input, Checkbox } from "semantic-ui-react";
+import { Button, Form, Input, TextArea, Select } from "semantic-ui-react";
 import axios from "axios";
 
 // Own components...
 import Loading from "../../Loading/Loading";
 
-class CreateUser extends Component {
+class CreatCourse extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            full_name: "",
-            email: "",
-            handicap: "",
-            isadmin: false,
-            password1: "",
-            password2: "",
+            course_name: "",
+            country: "",
+            tee: "",
             loading: false
         };
     }
@@ -25,9 +22,9 @@ class CreateUser extends Component {
 
 
 
-   /* close = () => {
+    close = () => {
         this.setState({ open: false, loadingView: false, loading: false });
-    }*/
+    }
 
     handleNameChange = (event) => {
         this.setState({ full_name: event.target.value });
@@ -59,7 +56,6 @@ class CreateUser extends Component {
 
     handleSubmit = () => {
         this.setState({ loading: true });
-        console.log("ddfdf  " + this.state.isadmin)
         axios.post("/users/createUser", {
             full_name: this.state.full_name,
             email: this.state.email,
@@ -79,67 +75,59 @@ class CreateUser extends Component {
     }
 
     handleCancel = () => {
-        //this.props.closeModal();
-       window.location = "/admin/users";
+        window.location = "/admin/courses";
     }
 
-    render() {
 
+
+    render() {
         if (this.state.loading) {
             return (
                 <Loading />
             )
         } else {
+
+            const genderOptions = [
+                { key: 'm', text: 'Male', value: 'male' },
+                { key: 'f', text: 'Female', value: 'female' },
+            ]
             return (
                 <div>
                     <Form>
                         <Form.Group widths='equal'>
                             <Form.Field
+                                id='form-input-control-first-name'
                                 control={Input}
-                                label='Name'
-                                placeholder='Name'
-                                value={this.state.full_name} onChange={this.handleNameChange}
+                                label='First name'
+                                placeholder='First name'
                             />
                             <Form.Field
+                                id='form-input-control-last-name'
                                 control={Input}
-                                label='Email'
-                                placeholder='Email'
-                                value={this.state.email} onChange={this.handleEmailChange}
+                                label='Last name'
+                                placeholder='Last name'
                             />
                             <Form.Field
-                                control={Input}
-                                label='Handicap'
-                                placeholder='Handicap'
-                                width={6}
-                                value={this.state.handicap} onChange={this.handleHandicapChange}
+                                control={Select}
+                                options={genderOptions}
+                                label={{ children: 'Gender', htmlFor: 'form-select-control-gender' }}
+                                placeholder='Gender'
+                                search
+                                searchInput={{ id: 'form-select-control-gender' }}
                             />
-                        </Form.Group>
-                        <Form.Group widths='equal'>
-                            <Form.Field
-                                control={Input}
-                                label='Password 1'
-                                placeholder='Password 1'
-                                type="password"
-                                value={this.state.password1} onChange={this.handlePW1Change}
-                            />
-                            <Form.Field
-                                control={Input}
-                                label='Password 2'
-                                placeholder='Password 2'
-                                type="password"
-                                value={this.state.password2} onChange={this.handlePW2Change}
-                            />
-
                         </Form.Group>
                         <Form.Field
-                            control={Checkbox}
-                            label='Is admin'
-                            placeholder='Is admin'
-                            width={4}
-                            checked={this.state.isadmin} onChange={this.handleCheckboxChange}
+                            id='form-textarea-control-opinion'
+                            control={TextArea}
+                            label='Opinion'
+                            placeholder='Opinion'
                         />
-                        <Button primary onClick={this.handleSubmit}>Submit</Button>
-                        <Button secondary onClick={this.handleCancel}>Cancel</Button>
+                        <Form.Field
+                            id='form-button-control-public'
+                            control={Button}
+                            content='Confirm'
+                            label='Label with htmlFor'
+                        />
                     </Form>
                 </div>
             )
@@ -148,4 +136,4 @@ class CreateUser extends Component {
 }
 
 
-export default CreateUser;
+export default CreatCourse;
