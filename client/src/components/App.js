@@ -30,10 +30,10 @@ class App extends Component {
   componentDidMount() {
     axios.get("/api/isloggedin")
       .then(res => {
-      if(res.data.loggedIn){
-        this.setState({ isLoggedIn: res.data.loggedIn, isAdmin: res.data.isAdmin  });
+        if (res.data.loggedIn) {
+          this.setState({ isLoggedIn: res.data.loggedIn, isAdmin: res.data.isAdmin });
 
-      }
+        }
       })
       .catch(err => {
         console.log(err);
@@ -42,21 +42,29 @@ class App extends Component {
   }
 
   render() {
-
-    return (
-      <Router>
-        <div>
-          {this.state.isLoggedIn && <MenuBar getIsAdmin={this.state.isAdmin}></MenuBar>}
-          <div id="mainView">
-            <Route exact path="/" component={Login} />
-            <Route exact path="/home" render={(props) => <Home {...props} changeLoggedIn={this.changeLoggedIn} />} />
-            <Route exact path="/admin/users" component={AdminUsers} />
-            <Route exact path="/admin/adduser" component={CreateUser} />
-            <Route exact path="/admin/courses" component={AdminCourses} />
+    if (!this.state.isLoggedIn) {
+      return (
+        <Router>
+          <div>
+            <Route exact path="/" render={(props) => <Login {...props} changeLoggedIn={this.changeLoggedIn} />} />
           </div>
-        </div>
-      </Router>
-    )
+        </Router>
+      )
+    } else {
+      return (
+        <Router>
+          <div>
+            {<MenuBar getIsAdmin={this.state.isAdmin}></MenuBar>}
+            <div id="mainView">
+              <Route exact path="/home" render={(props) => <Home {...props} changeLoggedIn={this.changeLoggedIn} />} />
+              <Route exact path="/admin/users" component={AdminUsers} />
+              <Route exact path="/admin/adduser" component={CreateUser} />
+              <Route exact path="/admin/courses" component={AdminCourses} />
+            </div>
+          </div>
+        </Router>
+      )
+    }
   }
 }
 

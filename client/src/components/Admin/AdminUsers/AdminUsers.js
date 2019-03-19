@@ -1,17 +1,18 @@
 // External libs
 import React, { Component } from "react";
-import { Table, Button } from "semantic-ui-react";
+import { Table, Button, Modal } from "semantic-ui-react";
 import axios from "axios";
 
 // Own components
 import Loading from "../../Loading/Loading";
-
+import CreateUser from "./CreateUser"
 class AdminUsers extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      users: []
+      users: [],
+      addinguser: false
     }
   }
 
@@ -27,10 +28,19 @@ class AdminUsers extends Component {
   }
 
   handleAddUser = () => {
-    if (window.location.pathname !== "/admin/adduser") {
-      window.location = "/admin/adduser";
-    }
+    this.setState({ addinguser: true });
+    /*  if (window.location.pathname !== "/admin/adduser") {
+        window.location = "/admin/adduser";
+      }*/
   }
+
+
+
+
+  close = () => {
+    this.setState({ addinguser: false });
+  }
+
 
   render() {
     if (this.state.users.length === 0) {
@@ -39,10 +49,11 @@ class AdminUsers extends Component {
       )
     } else {
       const data = this.state.users;
-      console.log(data);
       return (
+        
         <div>
-          <Button secondary onClick={this.handleAddUser}>Add new User</Button>
+
+          <Button primary onClick={this.handleAddUser}>Add new User</Button>
           <br /><br />
           <Table celled>
             <Table.Header>
@@ -69,6 +80,13 @@ class AdminUsers extends Component {
               })}
             </Table.Body>
           </Table>
+
+          <Modal id="adminUsersModal" open={this.state.addinguser} onClose={this.close}>
+            <Modal.Header>Create New User</Modal.Header>
+            <Modal.Content >
+              {<CreateUser />}
+            </Modal.Content>
+          </Modal>
 
         </div>
       )

@@ -104,8 +104,6 @@ class CreateUser extends Component {
         } else {
             return (
                 <div>
-                    <h1>Create new user</h1>
-                    <br />
                     <Form>
                         <h3>Name</h3>
                         <Input value={this.state.full_name} onChange={this.handleNameChange} placeholder="Name" style={{ width: "100%" }} />
@@ -124,7 +122,6 @@ class CreateUser extends Component {
                         <br />
                         <h3>Is Administrator</h3>
                         <Checkbox  type="checkbox" checked={this.state.isadmin} onChange={this.handleCheckboxChange} />
-                        <br /><br />
                         <br /><br />
                         <Button primary onClick={this.handleSubmit}>Submit</Button>
                         <Button secondary onClick={this.handleCancel}>Cancel</Button>

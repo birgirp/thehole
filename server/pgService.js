@@ -50,7 +50,7 @@ module.exports = {
 
     getAllCourses: function () {
         return new Promise((resolve, reject) => {
-            pool.query('SELECT id, course_name, country FROM courses').then((results) => {
+            pool.query('SELECT id, course_name, tee, country FROM courses').then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")

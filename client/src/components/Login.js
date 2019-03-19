@@ -41,6 +41,7 @@ class Login extends Component {
           this.setState({ unknownuser: true });
         }else{
          this.setState({ success: true });
+         this.props.changeLoggedIn(response.data.user.is_admin);
        /* this.props.history.push({
           pathname: "/home",
           state: { user: response.data }
@@ -61,7 +62,7 @@ class Login extends Component {
       <Modal size="tiny" open={this.state.unknownuser} onClose={this.close}>
         <Modal.Header>Unknown user</Modal.Header>
         <Modal.Content>
-          <p>gekk ekki...</p>
+          <p>Unknown username or password</p>
         </Modal.Content>
 
       </Modal>
@@ -82,6 +83,18 @@ class Login extends Component {
       } else {
         return (
           <div>
+
+<Modal trigger={<Button>Show Modal</Button>}>
+    <Modal.Header>Select a Photo</Modal.Header>
+    <Modal.Content image>
+      <Modal.Description>
+        <Header>Default Profile Image</Header>
+        <p>We've found the following gravatar image associated with your e-mail address.</p>
+        <p>Is it okay to use this photo?</p>
+      </Modal.Description>
+    </Modal.Content>
+  </Modal>
+
             <br /><br />
             <Grid centered columns={2}>
               <Grid.Column>

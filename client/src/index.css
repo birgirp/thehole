@@ -6,9 +6,25 @@
     border-radius: 0px !important;
 }
 
-.ui.modal {
-    height: 185px;
-    top: 20%;
+#adminUsersModal {
+    /* height: 185px; */
+    height: 90vh;
+    top: 50vh;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.ui.modal {
+    max-height: 80vh;
+    top: 5vh;
+    left: 25vw;
+    width: 50vw !important;
+}
+
+@media (max-width: 800px) {
+    .ui.modal {
+        top: 5vh;
+        left: 10vw;
+        width: 80vw !important;
+    }
 }

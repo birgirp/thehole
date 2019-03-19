@@ -48,6 +48,7 @@ class AdminCourses extends Component {
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell>Name</Table.HeaderCell>
+                <Table.HeaderCell>Tee</Table.HeaderCell>
                 <Table.HeaderCell>Country</Table.HeaderCell>
 
               </Table.Row>
@@ -58,6 +59,7 @@ class AdminCourses extends Component {
                 return (
                   <Table.Row key={course.id}>
                     <Table.Cell >{course.course_name}</Table.Cell>
+                    <Table.Cell >{course.tee}</Table.Cell>
                     <Table.Cell >{course.country}</Table.Cell>
 
                   </Table.Row>
