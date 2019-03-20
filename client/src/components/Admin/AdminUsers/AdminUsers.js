@@ -83,7 +83,7 @@ class AdminUsers extends Component {
           <Modal id="adminUsersModal"  open={this.state.addinguser} onClose={this.close}>
             <Modal.Header>Create New User</Modal.Header>
             <Modal.Content >
-              {<CreateUser />}
+              {<CreateUser closeModal={this.close}/>}
             </Modal.Content>
           </Modal>
 

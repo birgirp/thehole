@@ -1,137 +1,73 @@
 // External libs
 import React, { Component } from "react";
-import { Button, Form, Input, TextArea, Select } from "semantic-ui-react";
-import axios from "axios";
-
+import { Button } from "semantic-ui-react";
+//import axios from "axios";
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 // Own components...
-import Loading from "../../Loading/Loading";
+//import Loading from "../../Loading/Loading";
 
 class CreatCourse extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            course_name: "",
-            country: "",
-            tee: "",
-            loading: false
+            columnDefs: [
+                { headerName: "", field: "rowname" },
+                { headerName: "Make", field: "make" },
+                { headerName: "Model", field: "model" },
+                { headerName: "Price", field: "price" }
+            ],
+            rowData: [
+                { rowname: "Par", make: "Toyota", model: "Celica", price: 35000 },
+                { rowname: "Hcp", make: "Ford", model: "Mondeo", price: 32000 },
+                { rowname: "Score", make: "Porsche", model: "Boxter", price: 72000 },
+                { rowname: "points", make: "Porsche", model: "Boxter", price: 72000 }
+            ],
+            defaultColDef: {
+                resizable: true,
+                editable: this.checkEditFunction
+            }
+
         };
     }
 
+    checkEditFunction = (params) => {
 
-
-
-
-    close = () => {
-        this.setState({ open: false, loadingView: false, loading: false });
-    }
-
-    handleNameChange = (event) => {
-        this.setState({ full_name: event.target.value });
-    }
-
-    handleEmailChange = (event) => {
-        this.setState({ email: event.target.value });
-    }
-
-    handleHandicapChange = (event) => {
-        this.setState({ handicap: event.target.value });
-    }
-
-    handlePW1Change = (event) => {
-        this.setState({ password1: event.target.value });
-    }
-
-    handlePW2Change = (event) => {
-        this.setState({ password2: event.target.value });
-    }
-
-    handleCheckboxChange = (event, value) => {
-        console.log(value.checked);
-        this.setState({ isadmin: value.checked })
-    }
-
-    navigateAway = () => {
+        //params.node - for row identity
+        //params.column - for column identity
+        console.log(params.column);
+        return params.node.id > 1 && params.column.colId !== "rowname" // - just as sample
     }
 
     handleSubmit = () => {
-        this.setState({ loading: true });
-        axios.post("/users/createUser", {
-            full_name: this.state.full_name,
-            email: this.state.email,
-            handicap: parseFloat(this.state.handicap),
-            isadmin: this.state.isadmin,
-            password: this.state.password1,
-        })
-            .then(response => {
-                this.setState({ loading: false })
-                console.log(response);
-                this.setState({ full_name: "", email: "", handicap: "", isadmin: false, password2: "", });
-                window.location = "/admin/users";
-            })
-            .catch(error => {
-                console.log(error);
-            });
+        console.log(this.state.rowData)
     }
-
-    handleCancel = () => {
-        window.location = "/admin/courses";
-    }
-
 
 
     render() {
-        if (this.state.loading) {
-            return (
-                <Loading />
-            )
-        } else {
 
-            const genderOptions = [
-                { key: 'm', text: 'Male', value: 'male' },
-                { key: 'f', text: 'Female', value: 'female' },
-            ]
-            return (
-                <div>
-                    <Form>
-                        <Form.Group widths='equal'>
-                            <Form.Field
-                                id='form-input-control-first-name'
-                                control={Input}
-                                label='First name'
-                                placeholder='First name'
-                            />
-                            <Form.Field
-                                id='form-input-control-last-name'
-                                control={Input}
-                                label='Last name'
-                                placeholder='Last name'
-                            />
-                            <Form.Field
-                                control={Select}
-                                options={genderOptions}
-                                label={{ children: 'Gender', htmlFor: 'form-select-control-gender' }}
-                                placeholder='Gender'
-                                search
-                                searchInput={{ id: 'form-select-control-gender' }}
-                            />
-                        </Form.Group>
-                        <Form.Field
-                            id='form-textarea-control-opinion'
-                            control={TextArea}
-                            label='Opinion'
-                            placeholder='Opinion'
-                        />
-                        <Form.Field
-                            id='form-button-control-public'
-                            control={Button}
-                            content='Confirm'
-                            label='Label with htmlFor'
-                        />
-                    </Form>
+
+        return (
+            <div>
+                <div
+                    className="ag-theme-balham"
+                    style={{
+                        height: '400px',
+                        width: '800px'
+                    }}
+                >
+                    <AgGridReact
+                        columnDefs={this.state.columnDefs}
+                        defaultColDef={this.state.defaultColDef}
+                        rowData={this.state.rowData}>
+                    </AgGridReact>
                 </div>
-            )
-        }
+                <Button primary onClick={this.handleSubmit}>Submit</Button>
+
+            </div>
+        )
     }
 }
 

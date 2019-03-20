@@ -18,7 +18,6 @@ class AdminCourses extends Component {
   }
 
   componentDidMount() {
-    console.log("admin courses...")
     axios.get("/api/getallcourses")
       .then(res => {
         this.setState({ courses: res.data })
@@ -45,7 +44,6 @@ class AdminCourses extends Component {
       )
     } else {
       const data = this.state.courses;
-      console.log(data);
       return (
         <div>
           <Button primary onClick={this.handleAddCourse}>Add new Course</Button>
