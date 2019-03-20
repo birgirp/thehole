@@ -24,3 +24,35 @@
 
 
 insert into users (name, email, handicap, password, isadmin) values ('Birgir Pálsson', 'birgir.palsson@gmail.com', 13.5, 'birgir', 1);
+
+-- Table: public.holes
+
+-- DROP TABLE public.holes;
+
+CREATE TABLE public.holes
+(
+    hole integer NOT NULL,
+    par integer NOT NULL,
+    handicap integer NOT NULL,
+    course_id integer NOT NULL,
+    CONSTRAINT holes_course_id_fkey FOREIGN KEY (course_id)
+        REFERENCES public.courses (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.holes
+    OWNER to golfapp;
+
+-- Index: fk_course_id
+
+-- DROP INDEX public.fk_course_id;
+
+CREATE INDEX fk_course_id
+    ON public.holes USING btree
+    (course_id)
+    TABLESPACE pg_default;

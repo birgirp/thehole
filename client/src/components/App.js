@@ -8,6 +8,7 @@ import Home from "./Application/Home"
 import CreateUser from "./Admin/AdminUsers/CreateUser"
 import AdminUsers from "./Admin/AdminUsers/AdminUsers"
 import AdminCourses from "./Admin/AdminCourses/AdminCourses"
+import CreateCourse from "./Admin/AdminCourses/CreateCourse"
 
 
 class App extends Component {
@@ -16,15 +17,21 @@ class App extends Component {
     super(props);
     this.state = {
       isLoggedIn: false,
-      isAdmin: false
+      isAdmin: false,
+      showMenu: true
     };
     this.changeLoggedIn = this.changeLoggedIn.bind(this);
+    this.toggleShowMenu = this.toggleShowMenu.bind(this);
   }
 
   changeLoggedIn(isadmin) {
     this.setState({ isLoggedIn: true });
     this.setState({ isAdmin: isadmin });
 
+  }
+
+  toggleShowMenu(showMenu)  {
+    this.setState({ showMenu: showMenu });
   }
 
   componentDidMount() {
@@ -54,12 +61,14 @@ class App extends Component {
       return (
         <Router>
           <div>
-            {<MenuBar getIsAdmin={this.state.isAdmin}></MenuBar>}
+            {this.state.showMenu && <MenuBar getIsAdmin={this.state.isAdmin}></MenuBar>}
             <div id="mainView">
               <Route exact path="/home" render={(props) => <Home {...props} changeLoggedIn={this.changeLoggedIn} />} />
               <Route exact path="/admin/users" component={AdminUsers} />
               <Route exact path="/admin/adduser" component={CreateUser} />
               <Route exact path="/admin/courses" component={AdminCourses} />
+              <Route exact path="/admin/createcourse" render={(props) => <CreateCourse {...props} toggleShowMenu={this.toggleShowMenu} />} />
+ 
             </div>
           </div>
         </Router>

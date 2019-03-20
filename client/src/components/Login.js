@@ -35,8 +35,7 @@ class Login extends Component {
 
     axios.post("/users/login/", { email: this.state.email, password: this.state.password })
       .then(response => {
-        console.log("response = " + JSON.stringify(response.data.user));
-
+  
         if (response.data.user === false) {
           this.setState({ unknownuser: true });
         } else {

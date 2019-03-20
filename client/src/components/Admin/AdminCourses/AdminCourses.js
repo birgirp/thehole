@@ -32,7 +32,9 @@ class AdminCourses extends Component {
   }
 
   handleAddCourse = () => {
-    if (window.location.pathname !== "/admin/addcourse") {
+    if (window.location.pathname !== "/admin/createcourse") {
+        window.location = '/admin/createcourse'
+        
         this.setState({ addingcourse: true })
     }
   }
@@ -71,7 +73,7 @@ class AdminCourses extends Component {
               })}
             </Table.Body>
           </Table>
-          <Modal  id="adminUsersModal"  open={this.state.addingcourse} onClose={this.close}>
+          <Modal size="fullscreen"  open={false} onClose={this.close}>
             <Modal.Header>Add new course</Modal.Header>
             <Modal.Content >
               {<CreateCourse />}

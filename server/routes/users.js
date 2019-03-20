@@ -19,7 +19,6 @@ router.post('/login', function (req, res, next) {
       return;
     }
     req.logIn(user, function () {
-      console.log("user logging in: " + JSON.stringify(user));
       res.status(200).send({
         user
       });
@@ -71,7 +70,7 @@ passport.deserializeUser(function (user, done) {
 router.get('/getAllUsers', function (req, res) {
   dbdata.getAllUsers().then((data) => {
 
-    console.log("datarows " + JSON.stringify(data.rows));
+
     if (data.rows.length > 0) {
       users = data.rows
       res.json(users);

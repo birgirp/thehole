@@ -5,17 +5,17 @@
 .ui.inverted.segment {
     border-radius: 0px !important;
 }
-
+/*
 #adminUsersModal {
-    /* height: 185px; */
+    width: 50vw !important;
     height: 60vh;
     top: 50vh;
     left: 50%;
     transform: translate(-50%, -50%);
 }
-
+*/
 #loginErrorModal {
-    /* height: 185px; */
+     height: 185px; 
     height: 20vh;
     top: 60vh;
     left: 50%;
@@ -36,3 +36,4 @@
         width: 80vw !important;
     }
 }
+
