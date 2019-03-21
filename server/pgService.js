@@ -58,6 +58,16 @@ module.exports = {
             })
         })
     },
+    getHoles: function (courseId) {
+        return new Promise((resolve, reject) => {
+            pool.query('SELECT hole, par, handicap FROM holes WHERE course_id = $1', [courseId]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
 
     insertCourse: function (courseName, tee, country) {
         return new Promise((resolve, reject) => {

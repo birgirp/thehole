@@ -75,7 +75,6 @@ class MenuBar extends Component {
 
 
     );
-
   }
 
 

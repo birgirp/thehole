@@ -8,7 +8,7 @@ import Home from "./Application/Home"
 import CreateUser from "./Admin/AdminUsers/CreateUser"
 import AdminUsers from "./Admin/AdminUsers/AdminUsers"
 import AdminCourses from "./Admin/AdminCourses/AdminCourses"
-import CreateCourse from "./Admin/AdminCourses/CreateCourse"
+import EditCourse from "./Admin/AdminCourses/EditCourse"
 
 
 class App extends Component {
@@ -67,7 +67,7 @@ class App extends Component {
               <Route exact path="/admin/users" component={AdminUsers} />
               <Route exact path="/admin/adduser" component={CreateUser} />
               <Route exact path="/admin/courses" component={AdminCourses} />
-              <Route exact path="/admin/createcourse" render={(props) => <CreateCourse {...props} toggleShowMenu={this.toggleShowMenu} />} />
+              <Route exact path="/admin/createcourse" render={(props) => <EditCourse {...props} toggleShowMenu={this.toggleShowMenu} />} />
  
             </div>
           </div>

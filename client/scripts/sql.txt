@@ -29,12 +29,10 @@ insert into users (name, email, handicap, password, isadmin) values ('Birgir Pá
 
 -- DROP TABLE public.holes;
 
-CREATE TABLE public.holes
-(
-    hole integer NOT NULL,
-    par integer NOT NULL,
-    handicap integer NOT NULL,
-    course_id integer NOT NULL,
+CREATE TABLE public.holes (hole integer NOT NULL, par integer NOT NULL,handicap integer NOT NULL,course_id integer NOT NULL);
+    
+    
+    
     CONSTRAINT holes_course_id_fkey FOREIGN KEY (course_id)
         REFERENCES public.courses (id) MATCH SIMPLE
         ON UPDATE NO ACTION
