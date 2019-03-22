@@ -1,13 +1,31 @@
 import React, { Component } from "react";
 
-class AdminCompetitions extends Component {
+class AdminTours extends Component {
+
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            tours: []
+        }
+    }
+
+    componentDidMount() {
+
+
+
+    }
+
+
+
+
     render() {
         return (
             <div>
-                <h1>Admin Competitions</h1>
+                <h1>Admin Tour</h1>
             </div>
         )
     }
 }
 
-export default AdminCompetitions;
+export default AdminTours;

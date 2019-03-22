@@ -25,6 +25,7 @@ class AdminCourses extends Component {
     axios.get("/api/getallcourses")
       .then(res => {
         this.setState({ courses: res.data })
+        console.log(res.data );
       })
       .catch(err => {
         console.log(err);
@@ -46,6 +47,7 @@ class AdminCourses extends Component {
     }
   }
   editCourse = (courseId, courseName) => {
+    console.log("cid = " + courseId)
     this.setState({ courseId: courseId })
     this.setState({ courseName: courseName })
     this.setState({ addingHoles: true })

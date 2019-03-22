@@ -13,6 +13,7 @@ class EditCourse extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            courseId: "",
             loading: false,
             country: "",
             courseName: "",
@@ -52,9 +53,10 @@ class EditCourse extends Component {
     }
 
     componentDidMount() {
+        console.log("cccccccccc  " + this.props.courseId)
         axios.post("/api/getholes", {
-            courseId: this.state.courseId
-        }).then(response => {
+            courseId: this.props.courseId
+            }).then(response => {
             console.log(response.data);
             if (response.data.length === 0) {
                 console.log("no holes for course");
@@ -75,9 +77,10 @@ class EditCourse extends Component {
     }
 
     handleSubmit = () => {
+        console.log("xxxxxxxxxxxxx  " + this.props.courseId)
         this.setState({ loading: true });
         axios.post("/api/addholes", {
-            courseId: this.state.courseId,
+            courseId: this.props.courseId,
             rowData: this.state.rowData
         }).then(response => {
                 console.log(response);
@@ -86,6 +89,7 @@ class EditCourse extends Component {
             })
             .catch(error => {
                 console.log(error);
+                this.props.closeModal();
             });
     }
 

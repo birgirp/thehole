@@ -1,4 +1,5 @@
 const Pool = require('pg').Pool
+const format = require('pg-format');
 
 
 
@@ -71,7 +72,7 @@ module.exports = {
 
     insertCourse: function (courseName, tee, country) {
         return new Promise((resolve, reject) => {
-            pool.query('INSERT INTO courses (course_name, tee, country) values ($1, $2, $3 )', [courseName, tee, country]).then((results) => {
+            pool.query('INSERT INTO courses (course_name, tee, country) values ($1, $2, $3 ) returning id', [courseName, tee, country]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")
@@ -82,9 +83,10 @@ module.exports = {
     },
     
     insertHoles: function (holes) {
-        //holes = [{3, 1, 5, 7},{3, 2, 5, 4},.., {3, 18, 3, 1} ]
+        //holes = [[3, 1, 5, 7],.., [3, 18, 3, 1] ]
+        let query = format('INSERT INTO holes (course_id, hole, par, handicap) values %L', holes);
         return new Promise((resolve, reject) => {
-            pool.query('INSERT INTO holes (course_id, hole, par, handicap) values $1', Inserts('$1, $2, $3, $4', holes)).then((results) => {
+            pool.query(query).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")

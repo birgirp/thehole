@@ -59,13 +59,30 @@ class Login extends Component {
     if (this.state.success === true) {
       return <Redirect to='/home' />
     } else {
+      let imgUrl ="./hole.png"
+      const divStyle = {
+        color: 'black',
+        backgroundImage: 'url(' + imgUrl + ')',
+        backgroundSize: 'cover',
+        height: '100vh',
+        textAlign:"center",
+        fontSize:"400px"
+      };
+
       return (
-        <div>
-          <br /><br />
+        <div style={divStyle}>
+           <br /><br />
+           <br /><br />
+           <br /><br />
+           <h1 fontSize= "400px">Holan</h1>
+
+           <br /><br />
+
+           <br /><br />
           <Grid centered columns={2}>
             <Grid.Column>
-              <Header as="h2" textAlign="center">
-                Login
+              <Header as="h2" textAlign="center" color="violet">
+                
                 </Header>
               <Segment>
                 <Form size="large">

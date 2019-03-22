@@ -81,15 +81,32 @@ router.post("/api/addcourse", (req, res) => {
 ]*/
 
 router.post("/api/addholes", (req, res) => {
-  //holes = [{3, 1, 5, 7},{3, 2, 5, 4},.., {3, 18, 3, 1} ]
-   let rows = req.body.rowData;
-   let holes = [];
-   for( i =1;i < 19; i++ ){
-       console.log("row0 " + global["rows[0].h"+i]);
-   }
+  //holes = [{3, 1, 5, 7},{3, 2, 5, 4},.., {cid: 3, h: 18, p:4, hc: 11} ]
+  let rows = req.body.rowData;
 
+  let courseId = req.body.courseId;
+console.log(JSON.stringify(req.body));
+  let holes = [];
+  console.log("course id " + req.body.courseId )
+  for (i = 1; i < 19; i++) {
+    console.log("hola " + i)
+    console.log("par " + rows[0]["h" + i]);
+    console.log("hcp " + rows[1]["h" + i]);
+    par = rows[0]["h" + i];
+    hcp = rows[1]["h" + i];
+    hole = i
+    hole = [ courseId, hole, par, hcp ]
+    holes.push(hole)
+  }
+  dbdata.insertHoles(holes).then((response) => {
+    res.json("ok");
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
 
-})
 
 //------------------------------------------------------------------
 
