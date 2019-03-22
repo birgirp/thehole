@@ -27,7 +27,6 @@ class MenuBar extends Component {
     window.location = "/"
   }
 
-
   componentWillMount() {
     axios.get("/api/isloggedin")
       .then(res => {
@@ -77,12 +76,9 @@ class MenuBar extends Component {
     );
   }
 
-
   render() {
 
     const { activePage } = this.state.activePage;
-
-
     return (
       <Segment inverted>
         <Menu inverted pointing secondary>

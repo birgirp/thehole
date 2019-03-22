@@ -64,7 +64,7 @@ class CreateUser extends Component {
             email: this.state.email,
             handicap: parseFloat(this.state.handicap),
             isadmin: this.state.isadmin,
-            password: this.state.password1,
+            password: this.state.password1
         })
             .then(response => {
                 this.setState({ full_name: "", email: "", handicap: "", isadmin: false, password2: "", });

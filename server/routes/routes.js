@@ -30,9 +30,6 @@ router.get('/api/getallcourses', function (req, res) {
   })
 });
 
-
-
-
 router.get("/api/gethandicap", isLoggedIn, (req, res) => {
 
   dbdata.getHandicap(req.user.id).then((data) => {
@@ -56,7 +53,6 @@ router.get("/api/isloggedin", isLoggedIn, (req, res) => {
 });
 
 router.post("/api/getholes", isLoggedIn, (req, res) => {
-  console.log("kjjdljdgkldjg")
   dbdata.getHoles(req.body.courseId).then((data) => {
     console.log("sds" + JSON.stringify(data.rows));
     res.json(data.rows)
@@ -68,12 +64,7 @@ router.post("/api/getholes", isLoggedIn, (req, res) => {
 });
 
 
-
 router.post("/api/addcourse", (req, res) => {
-  //-----------------------------------------------------------------------------------
-
-  //holes = [{3, 1, 5, 7},{3, 2, 5, 4},.., {3, 18, 3, 1} ]
-
   dbdata.insertCourse(req.body.courseName, req.body.tee, req.body.country).then((response) => {
     console.log("after inserting course : " + JSON.stringify(response));
     res.json("true");
@@ -84,9 +75,23 @@ router.post("/api/addcourse", (req, res) => {
   })
 });
 
+/*rowData: [
+    { rowname: "Par", h1: "", h2: "", h3: "", h4: "", h5: "", h6: "", h7: "", h8: "", h9: "", h10: "", h11: "", h12: "", h13: "", h14: "", h15: "", h16: "", h17: "", h18: "" },
+    { rowname: "Hcp", h1: "", h2: "", h3: "", h4: "", h5: "", h6: "", h7: "", h8: "", h9: "", h10: "", h11: "", h12: "", h13: "", h14: "", h15: "", h16: "", h17: "", h18: "" }
+]*/
 
-//-----------------------------------------------------------------------------
+router.post("/api/addholes", (req, res) => {
+  //holes = [{3, 1, 5, 7},{3, 2, 5, 4},.., {3, 18, 3, 1} ]
+   let rows = req.body.rowData;
+   let holes = [];
+   for( i =1;i < 19; i++ ){
+       console.log("row0 " + global["rows[0].h"+i]);
+   }
 
+
+})
+
+//------------------------------------------------------------------
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
@@ -100,8 +105,6 @@ function isLoggedIn(req, res, next) {
   // if they aren't redirect them to the home page
   res.redirect('/');
 }
-
-
 
 // ---------------------------------------------------------------------
 // EXPORT MODULE

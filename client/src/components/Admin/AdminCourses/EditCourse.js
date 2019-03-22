@@ -48,7 +48,6 @@ class EditCourse extends Component {
                 , width: 70,
                 suppressMovable: true
             }
-
         };
     }
 
@@ -80,7 +79,7 @@ class EditCourse extends Component {
         axios.post("/api/addholes", {
             courseId: this.state.courseId,
             rowData: this.state.rowData
-        }) .then(response => {
+        }).then(response => {
                 console.log(response);
                 this.setState({ loading: false })
                 this.props.closeModal();
