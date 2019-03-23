@@ -1,5 +1,7 @@
-const Pool = require('pg').Pool
+const Pool = require('pg').Pool;
+const Client = require('pg').Client;
 const format = require('pg-format');
+const dbconfig = require('./config/dbConfig');
 
 
 
@@ -11,10 +13,19 @@ const pool = new Pool({
     port: 5432,
 })
 
+/*const client = new Client({
+    user: dbconfig.dbconnection.user,
+    host: dbconfig.dbconnection.host,
+    database: dbconfig.dbconnection.database,
+    password: dbconfig.dbconnection.password,
+    port: dbconfig.dbconnection.port,
+    sslmode:'require'
+})*/
 
 module.exports = {
 
     getUserbyEmail: function (e_mail, passw) {
+        console.log(JSON.stringify(dbconfig.dbconnection.database));
         return new Promise((resolve, reject) => {
 
             pool.query('SELECT id, full_name, email, handicap, is_admin FROM users where "email" = $1 and "password" = $2', [e_mail, passw]).then((results) => {

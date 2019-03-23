@@ -6,18 +6,30 @@ import axios from "axios";
 // Own components...
 import Loading from "../../Loading/Loading";
 
+const emailRegex = RegExp(
+    /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+  );
+
 class CreateUser extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            full_name: "",
+            fullName: "",
             email: "",
             handicap: "",
             isadmin: false,
             password1: "",
             password2: "",
-            loading: false
+            loading: false,
+
+            formErrors: {
+                fullName: "",
+                email: "",
+                handicap: null,
+                password1: "",
+                password1: ""
+              }
         };
     }
 
@@ -30,7 +42,7 @@ class CreateUser extends Component {
     }*/
 
     handleNameChange = (event) => {
-        this.setState({ full_name: event.target.value });
+        this.setState({ fullName: event.target.value });
     }
 
     handleEmailChange = (event) => {
@@ -54,20 +66,48 @@ class CreateUser extends Component {
         this.setState({ isadmin: value.checked })
     }
 
-    navigateAway = () => {
-    }
+    handleChange = e => {
+        e.preventDefault();
+        const { name, value } = e.target;
+        let formErrors = { ...this.state.formErrors };
+    
+        switch (name) {
+          case "firstName":
+            formErrors.firstName =
+              value.length < 3 ? "minimum 3 characaters required" : "";
+            break;
+          case "lastName":
+            formErrors.lastName =
+              value.length < 3 ? "minimum 3 characaters required" : "";
+            break;
+          case "email":
+            formErrors.email = emailRegex.test(value)
+              ? ""
+              : "invalid email address";
+            break;
+          case "password":
+            formErrors.password =
+              value.length < 6 ? "minimum 6 characaters required" : "";
+            break;
+          default:
+            break;
+        }
+    
+        this.setState({ formErrors, [name]: value }, () => console.log(this.state));
+      };
+
 
     handleSubmit = () => {
         this.setState({ loading: true });
            axios.post("/users/createUser", {
-            full_name: this.state.full_name,
+            fullName: this.state.fullName,
             email: this.state.email,
             handicap: parseFloat(this.state.handicap),
             isadmin: this.state.isadmin,
             password: this.state.password1
         })
             .then(response => {
-                this.setState({ full_name: "", email: "", handicap: "", isadmin: false, password2: "", });
+                this.setState({ fullName: "", email: "", handicap: "", isadmin: false, password2: "", });
                 this.setState({ loading: false })
                 console.log(response);
                 this.props.closeModal();
@@ -96,13 +136,15 @@ class CreateUser extends Component {
                         <Form.Group widths='equal'>
                             <Form.Field
                                 required
+                                name='fullName'
                                 control={Input}
                                 label='Name'
                                 placeholder='Name'
-                                value={this.state.full_name} onChange={this.handleNameChange}
+                                value={this.state.fullMame} onChange={this.handleNameChange}
                             />
                             <Form.Field
                                 required
+                                name='email'
                                 control={Input}
                                 label='Email'
                                 placeholder='Email'
@@ -110,6 +152,7 @@ class CreateUser extends Component {
                             />
                             <Form.Field
                                 required
+                                name='handicap'
                                 control={Input}
                                 label='Handicap'
                                 placeholder='Hcp'
@@ -120,6 +163,7 @@ class CreateUser extends Component {
                         <Form.Group widths='equal'>
                             <Form.Field
                                 required
+                                name='password1'
                                 control={Input}
                                 label='Password 1'
                                 placeholder='Password 1'
@@ -128,6 +172,7 @@ class CreateUser extends Component {
                             />
                             <Form.Field
                                 required
+                                name='password1'
                                 control={Input}
                                 label='Password 2'
                                 placeholder='Password 2'
