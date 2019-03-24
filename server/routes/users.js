@@ -90,9 +90,23 @@ router.post("/createUser", (req, res) => {
   //-----------------------------------------------------------------------------------
   console.log("about to insert user...");
   console.log(JSON.stringify(req.body.isadmin));
-  dbdata.insertUser(req.body.full_name, req.body.email, req.body.handicap, req.body.isadmin, req.body.password).then((data) => {
+  dbdata.insertUser(req.body.fullName, req.body.email, req.body.handicap, req.body.isadmin, req.body.password).then((data) => {
     console.log(JSON.stringify(data));
     res.json("true");
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
+router.post("/deleteuser", (req, res) => {
+  //-----------------------------------------------------------------------------------
+  console.log("about to delete user...");
+  console.log(JSON.stringify(req.body.userId));
+  dbdata.deleteUser(req.body.userId).then((response) => {
+    console.log(JSON.stringify(response));
+    res.json("ok");
   }).catch((error) => {
     console.log(error)
     res.status(500);

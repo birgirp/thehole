@@ -4,6 +4,10 @@ const format = require('pg-format');
 const dbconfig = require('./config/dbConfig');
 
 
+/*const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
+});*/
 
 const pool = new Pool({
     user: 'golfapp',
@@ -60,6 +64,17 @@ module.exports = {
      
     },
 
+    deleteUser: function (userId) {
+        return new Promise((resolve, reject) => {
+            pool.query('DELETE FROM users where id = $1', [userId]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+     
+    },
     getAllCourses: function () {
         return new Promise((resolve, reject) => {
             pool.query('SELECT id, course_name, tee, country FROM courses').then((results) => {
