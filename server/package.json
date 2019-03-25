@@ -7,9 +7,14 @@
   "description": "Node.js server",
   "main": "index.js",
   "scripts": {
-    "client": "cd ../client && npm start",
-    "server": "./node_modules/.bin/nodemon server.js --ignore 'initializeDb.js",
-    "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\""
+    "devClient": "cd ../client && npm start",
+    "buildClient": "cd ../client && node scripts/build.js",
+    "installClient": "cd ../client && npm install",
+    "server": "./node_modules/.bin/nodemon server.js",
+    "start": "node server.js",
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run devClient\"",
+    "heroku-prebuild": "npm run installClient",
+    "heroku-postbuild": "npm run buildClient"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
