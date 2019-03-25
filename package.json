@@ -1,0 +1,17 @@
+{
+    "name": "Golf",
+    "version": "1.0.0",
+    "description": "This example is so cool.",
+    "main": "server/server.js",
+    "scripts": {
+        "heroku-prebuild": "cd server && npm run installClient && npm install",
+        "heroku-postbuild": "cd server && npm run buildClient",
+        "start": "node ./server/server.js"
+    },
+    "keywords": [
+      "golf",
+      "heroku"
+    ],
+    "author": "jane-doe",
+    "license": "MIT"
+  }
