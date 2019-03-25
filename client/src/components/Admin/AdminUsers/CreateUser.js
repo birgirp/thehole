@@ -6,15 +6,17 @@ import axios from "axios";
 // Own components...
 import Loading from "../../Loading/Loading";
 
-const emailRegex = RegExp(
+/*const emailRegex = RegExp(
     /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-  );
+  );*/
 
 class CreateUser extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            editingUser: false,
+            editingUserId: null,
             fullName: "",
             email: "",
             handicap: "",
@@ -28,18 +30,31 @@ class CreateUser extends Component {
                 email: "",
                 handicap: null,
                 password1: "",
-                password1: ""
-              }
+                password2: ""
+            }
         };
     }
 
 
+    componentDidMount() {
+        if (this.props.editingUser) {
+            this.setState({ editingUser: true });
+            this.setState({ editingUserId: this.props.userId });
+            axios.post("/users/getuser", {
+                userId: this.props.userId
+            }).then(response => {
+                console.log(response.data);
+                this.setState({ handicap: response.data.handicap, email: response.data.email, fullName: response.data.full_name, isadmin: response.data.is_admin });
+            }).catch(error => {
+                console.log(error);
+            });
+        }
+    }
 
 
-
-   /* close = () => {
-        this.setState({ open: false, loadingView: false, loading: false });
-    }*/
+    /* close = () => {
+         this.setState({ open: false, loadingView: false, loading: false });
+     }*/
 
     handleNameChange = (event) => {
         this.setState({ fullName: event.target.value });
@@ -66,61 +81,79 @@ class CreateUser extends Component {
         this.setState({ isadmin: value.checked })
     }
 
-    handleChange = e => {
-        e.preventDefault();
-        const { name, value } = e.target;
-        let formErrors = { ...this.state.formErrors };
-    
-        switch (name) {
-          case "firstName":
-            formErrors.firstName =
-              value.length < 3 ? "minimum 3 characaters required" : "";
-            break;
-          case "lastName":
-            formErrors.lastName =
-              value.length < 3 ? "minimum 3 characaters required" : "";
-            break;
-          case "email":
-            formErrors.email = emailRegex.test(value)
-              ? ""
-              : "invalid email address";
-            break;
-          case "password":
-            formErrors.password =
-              value.length < 6 ? "minimum 6 characaters required" : "";
-            break;
-          default:
-            break;
-        }
-    
-        this.setState({ formErrors, [name]: value }, () => console.log(this.state));
-      };
+    /*  handleChange = e => {
+          e.preventDefault();
+          const { name, value } = e.target;
+          let formErrors = { ...this.state.formErrors };
+      
+          switch (name) {
+            case "firstName":
+              formErrors.firstName =
+                value.length < 3 ? "minimum 3 characaters required" : "";
+              break;
+            case "lastName":
+              formErrors.lastName =
+                value.length < 3 ? "minimum 3 characaters required" : "";
+              break;
+            case "email":
+              formErrors.email = emailRegex.test(value)
+                ? ""
+                : "invalid email address";
+              break;
+            case "password":
+              formErrors.password =
+                value.length < 6 ? "minimum 6 characaters required" : "";
+              break;
+            default:
+              break;
+          }
+      
+          this.setState({ formErrors, [name]: value }, () => console.log(this.state));
+      };*/
 
 
     handleSubmit = () => {
         this.setState({ loading: true });
-           axios.post("/users/createUser", {
-            fullName: this.state.fullName,
-            email: this.state.email,
-            handicap: parseFloat(this.state.handicap),
-            isadmin: this.state.isadmin,
-            password: this.state.password1
-        })
-            .then(response => {
-                this.setState({ fullName: "", email: "", handicap: "", isadmin: false, password2: "", });
-                this.setState({ loading: false })
+        if (this.state.editingUser) {
+            axios.post("/users/edituser", {
+                userId: this.props.userId,
+                fullName: this.state.fullName,
+                email: this.state.email,
+                handicap: parseFloat(this.state.handicap),
+                isadmin: this.state.isadmin,
+                password: this.state.password1
+            }).then(response => {
                 console.log(response);
+                this.props.reloadUsers();
                 this.props.closeModal();
-               // window.location = "/admin/users";
-            })
-            .catch(error => {
+                this.setState({ loading: false })
+            }).catch(error => {
                 console.log(error);
             });
+
+        } else {
+            axios.post("/users/createUser", {
+                fullName: this.state.fullName,
+                email: this.state.email,
+                handicap: parseFloat(this.state.handicap),
+                isadmin: this.state.isadmin,
+                password: this.state.password1
+            }).then(response => {
+                console.log(response);
+                this.props.reloadUsers();
+                this.props.closeModal();
+                this.setState({ loading: false })
+            }).catch(error => {
+                console.log(error);
+            });
+        }
+        //   this.setState({ fullName: "", email: "", handicap: "", isadmin: false, password1: "", password2: "" });
+
+
     }
 
     handleCancel = () => {
         this.props.closeModal();
-     //  window.location = "/admin/users";
     }
 
     render() {
@@ -135,15 +168,15 @@ class CreateUser extends Component {
                     <Form>
                         <Form.Group widths='equal'>
                             <Form.Field
-                                required
+
                                 name='fullName'
                                 control={Input}
                                 label='Name'
                                 placeholder='Name'
-                                value={this.state.fullMame} onChange={this.handleNameChange}
+                                value={this.state.fullName} onChange={this.handleNameChange}
                             />
                             <Form.Field
-                                required
+
                                 name='email'
                                 control={Input}
                                 label='Email'
@@ -151,7 +184,7 @@ class CreateUser extends Component {
                                 value={this.state.email} onChange={this.handleEmailChange}
                             />
                             <Form.Field
-                                required
+
                                 name='handicap'
                                 control={Input}
                                 label='Handicap'
@@ -162,7 +195,7 @@ class CreateUser extends Component {
                         </Form.Group>
                         <Form.Group widths='equal'>
                             <Form.Field
-                                required
+
                                 name='password1'
                                 control={Input}
                                 label='Password 1'
@@ -171,8 +204,8 @@ class CreateUser extends Component {
                                 value={this.state.password1} onChange={this.handlePW1Change}
                             />
                             <Form.Field
-                                required
-                                name='password1'
+
+                                name='password2'
                                 control={Input}
                                 label='Password 2'
                                 placeholder='Password 2'

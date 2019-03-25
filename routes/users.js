@@ -34,8 +34,6 @@ passport.use('local-login', new LocalStrategy({
 },
   function (req, username, password, done) {
     dbdata.getUserbyEmail(username, password).then((data) => {
-
-      console.log("datarows " + JSON.stringify(data.rows[0]));
       if (data.rows.length > 0) {
         console.log("success")
         user = data.rows[0]
@@ -86,11 +84,41 @@ router.get('/getAllUsers', function (req, res) {
   })
 });
 
+router.post('/getuser', function (req, res) {
+  dbdata.getUserById(req.body.userId).then((data) => {
+    if (data.rows.length > 0) {
+      user = data.rows[0]
+      console.log("dfdfd " + JSON.stringify(user))
+      res.json(user);
+    } else {
+      console.log("No user found with id " + req.body.userId)
+      res.json(null);
+    }
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
+
 router.post("/createUser", (req, res) => {
   //-----------------------------------------------------------------------------------
   console.log("about to insert user...");
-  console.log(JSON.stringify(req.body.isadmin));
-  dbdata.insertUser(req.body.fullName, req.body.email, req.body.handicap, req.body.isadmin, req.body.password).then((data) => {
+   dbdata.insertUser(req.body.fullName, req.body.email, req.body.handicap, req.body.isadmin, req.body.password).then((data) => {
+    console.log(JSON.stringify(data));
+    res.json("true");
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
+router.post("/edituser", (req, res) => {
+  //-----------------------------------------------------------------------------------
+  console.log("about to edit user...");
+  dbdata.editUser( req.body.fullName, req.body.email, req.body.handicap, req.body.isadmin, req.body.password, req.body.userId).then((data) => {
     console.log(JSON.stringify(data));
     res.json("true");
   }).catch((error) => {

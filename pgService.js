@@ -8,31 +8,42 @@ const dbconfig = require('./config/dbConfig');
   connectionString: process.env.DATABASE_URL,
   ssl: true
 });*/
-
+/*
 const pool = new Pool({
     user: 'golfapp',
     host: 'localhost',
     database: 'golfdb',
     password: 'golf',
     port: 5432,
-})
+})*/
 
-/*const client = new Client({
+const pool = new Pool({
     user: dbconfig.dbconnection.user,
     host: dbconfig.dbconnection.host,
     database: dbconfig.dbconnection.database,
     password: dbconfig.dbconnection.password,
     port: dbconfig.dbconnection.port,
-    sslmode:'require'
-})*/
+    ssl:true
+})
 
 module.exports = {
 
     getUserbyEmail: function (e_mail, passw) {
-        console.log(JSON.stringify(dbconfig.dbconnection.database));
+        
         return new Promise((resolve, reject) => {
 
             pool.query('SELECT id, full_name, email, handicap, is_admin FROM users where "email" = $1 and "password" = $2', [e_mail, passw]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+    getUserById: function (userId) {
+       
+        return new Promise((resolve, reject) => {
+            pool.query('SELECT id, full_name, email, handicap, is_admin FROM users where id = $1', [userId]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")
@@ -61,7 +72,17 @@ module.exports = {
                 reject(error)
             })
         })
-     
+    },
+
+    editUser: function (username, email, hcp, isadmin, passw, userId) {
+        return new Promise((resolve, reject) => {
+            pool.query('UPDATE users SET full_name=$1,  email=$2, handicap=$3,is_admin=$4, password=$5 WHERE id=$6', [ username, email, hcp, isadmin, passw, userId]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
     },
 
     deleteUser: function (userId) {

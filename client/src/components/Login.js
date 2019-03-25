@@ -73,12 +73,6 @@ class Login extends Component {
         <div style={divStyle}>
            <br /><br />
            <br /><br />
-           <br /><br />
-           <h1 fontSize= "400px">Holan</h1>
-
-           <br /><br />
-
-           <br /><br />
           <Grid centered columns={2}>
             <Grid.Column>
               <Header as="h2" textAlign="center" color="violet">

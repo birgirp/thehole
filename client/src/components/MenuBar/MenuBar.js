@@ -34,11 +34,8 @@ class MenuBar extends Component {
           this.setState({ isAdmin: 1 });
         } else {
           this.setState({ isAdmin: 0 });
-        }
-      })
-      .catch(err => {
+        }}).catch(err => {
         console.log(err);
-
       })
   }
 

@@ -46,7 +46,7 @@ router.get("/api/gethandicap", isLoggedIn, (req, res) => {
 
 router.get("/api/isloggedin", isLoggedIn, (req, res) => {
   if (req.isAuthenticated()) {
-    res.json({ loggedIn: true, name: req.user.full_name, isAdmin: req.user.is_admin })
+    res.json({ loggedIn: true, name: req.user.full_name, isAdmin: req.user.is_admin, userId: req.user.id })
   } else {
     res.json({ loggedIn: false })
   }

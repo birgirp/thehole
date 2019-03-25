@@ -7,7 +7,7 @@ class Loading extends Component {
       <div>
         <div className="loader"></div>
         <br />
-        <p style={{ textAlign: "center" }}>Hinkraðu augnablik ...</p>
+        <p style={{ textAlign: "center" }}>Wait a moment...</p>
       </div>
     )
   }

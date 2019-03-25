@@ -1,11 +1,11 @@
 module.exports = {
     "dbType": "pgHeroku",
         "dbconnection": {
-            "host": "ec2-54-228-252-67.eu-west-1.compute.amazonaws.com",
-            "database": "d1cos1o2o1jsn0",
-            "user": "yleztnarpqobzq",
+            "host": "ec2-23-23-195-205.compute-1.amazonaws.com",
+            "database": "d9nps47np7nuj2",
+            "user": "wdjicccgirusxg",
             "port": 5432,
-            "password": "3431f45094b0ca6b4caefda40501f8d47ce2717c13b4506b6a021838b7aa16d7"
+            "password": "80f4480939e4da993143ffb126e48a15a5555f40fb595a4e5ae4c9941e727908"
 
     }
 };
