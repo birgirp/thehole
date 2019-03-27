@@ -29,26 +29,21 @@ class AdminUsers extends Component {
       }).catch(err => {
         console.log(err);
       })
-
-
   }
 
 
   getAllUsers = () => {
-    console.log("getting usersss...")
     this.setState({ loading: true });
     axios.get("/users/getAllUsers")
       .then(res => {
-        this.setState({ users: res.data })
+        this.setState({ users: res.data });
         this.setState({ loading: false });
       }).catch(err => {
         console.log(err);
       })
-
   }
 
   componentDidMount() {
-
     this.getAllUsers();
   }
 
@@ -57,32 +52,59 @@ class AdminUsers extends Component {
   }
 
   close = () => {
+    this.cancel();
+    //this.getAllUsers();
+  }
+
+  addNewUser = (user) => {
+    let users = this.state.users;
+    users.push(user);
+    this.setState({ users: users });
+  }
+
+  editUserFields = (user) => {
+    let users = this.state.users;
+    let index = users.findIndex(x => x.id === user.id);
+
+    this.setState({ users: users });
+  }
+
+  cancel = () => {
     if (this.state.addinguser) {
       this.setState({ addinguser: false });
     } else if (this.state.editingUser) {
       this.setState({ editingUser: false });
     }
-    // this.getAllUsers();
   }
+
 
   editUser = (user) => {
     this.setState({ editingUser: true });
     this.setState({ editingUserId: user.id });
   }
 
+
   deleteUser = (userId) => {
+  
+    let users = this.state.users;
+    let index = users.findIndex(x => x.id === userId);
+
+    console.log("index = " + index);
     console.log("userid = " + userId);
+
+
     if (!this.isLoggedIn(userId)) {
       this.setState({ deletingUser: true });
       axios.post("/users/deleteuser", {
         userId: userId
       }).then(response => {
         this.setState({ deletingUser: false });
-        console.log(response);
-        this.getAllUsers();
+        users.splice(index, 1)
+        this.setState({ users: users });
       }).catch(error => {
         this.setState({ deletingUser: false });
         console.log(error);
+
       });
     }
   }
@@ -132,14 +154,14 @@ class AdminUsers extends Component {
           <Modal id="adminUsersModal" open={this.state.addinguser} onClose={this.close}>
             <Modal.Header>Create New User</Modal.Header>
             <Modal.Content >
-              {<CreateUser closeModal={this.close} reloadUsers={this.getAllUsers} editingUser={false} />}
+              {<CreateUser closeModal={this.close} addNewUser={this.addNewUser} reloadUsers={this.getAllUsers} cancel={this.cancel} editingUser={false} />}
             </Modal.Content>
           </Modal>
 
           <Modal id="editUsersModal" open={this.state.editingUser} onClose={this.close}>
             <Modal.Header>Edit User</Modal.Header>
             <Modal.Content >
-              {<CreateUser closeModal={this.close} reloadUsers={this.getAllUsers} userId={this.state.editingUserId} editingUser={true} />}
+              {<CreateUser closeModal={this.close} editUserFields={this.editUserFields} reloadUsers={this.getAllUsers} cancel={this.cancel} userId={this.state.editingUserId} editingUser={true} />}
             </Modal.Content>
           </Modal>
 

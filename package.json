@@ -10,7 +10,7 @@
     "devClient": "cd client && npm start",
     "buildClient": "cd client && node scripts/build.js",
     "installClient": "cd client && npm install",
-    "server": "./node_modules/.bin/nodemon server.js",
+    "server": "./node_modules/.bin/nodemon server.js -i client/",
     "start": "node server.js",
     "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run devClient\"",
     "heroku-prebuild": "npm run installClient",

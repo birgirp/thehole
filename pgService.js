@@ -8,16 +8,16 @@ const dbconfig = require('./config/dbConfig');
   connectionString: process.env.DATABASE_URL,
   ssl: true
 });*/
-/*
+
 const pool = new Pool({
     user: 'golfapp',
     host: 'localhost',
     database: 'golfdb',
     password: 'golf',
     port: 5432,
-})*/
+})
 
-const pool = new Pool({
+/*const pool = new Pool({
     user: dbconfig.dbconnection.user,
     host: dbconfig.dbconnection.host,
     database: dbconfig.dbconnection.database,
@@ -25,7 +25,7 @@ const pool = new Pool({
     port: dbconfig.dbconnection.port,
     ssl:true
 })
-
+*/
 module.exports = {
 
     getUserbyEmail: function (e_mail, passw) {
@@ -65,7 +65,7 @@ module.exports = {
 
     insertUser: function (username, email, hcp, isadmin, passw) {
         return new Promise((resolve, reject) => {
-            pool.query('INSERT INTO users(full_name, email, handicap, is_admin, password) values ($1, $2, $3, $4, $5)', [username, email, hcp, isadmin, passw]).then((results) => {
+            pool.query('INSERT INTO users(full_name, email, handicap, is_admin, password) values ($1, $2, $3, $4, $5) returning id', [username, email, hcp, isadmin, passw]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")

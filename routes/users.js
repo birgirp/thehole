@@ -107,7 +107,7 @@ router.post("/createUser", (req, res) => {
   console.log("about to insert user...");
    dbdata.insertUser(req.body.fullName, req.body.email, req.body.handicap, req.body.isadmin, req.body.password).then((data) => {
     console.log(JSON.stringify(data));
-    res.json("true");
+    res.json(data.rows[0]);
   }).catch((error) => {
     console.log(error)
     res.status(500);

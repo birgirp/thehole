@@ -21,22 +21,35 @@ class CreateUser extends Component {
             email: "",
             handicap: "",
             isadmin: false,
-            password1: "",
-            password2: "",
+            password: "",
             loading: false,
 
             formErrors: {
                 fullName: "",
                 email: "",
                 handicap: null,
-                password1: "",
-                password2: ""
+                password: ""
+
             }
         };
     }
 
+    getAllUsers = () => {
+
+        this.setState({ loading: true });
+        axios.get("/users/getAllUsers")
+            .then(res => {
+                this.setState({ users: res.data })
+                this.setState({ loading: false });
+            }).catch(err => {
+                console.log(err);
+            })
+
+    }
+
 
     componentDidMount() {
+        console.log(this.props.users)
         if (this.props.editingUser) {
             this.setState({ editingUser: true });
             this.setState({ editingUserId: this.props.userId });
@@ -68,13 +81,11 @@ class CreateUser extends Component {
         this.setState({ handicap: event.target.value });
     }
 
-    handlePW1Change = (event) => {
-        this.setState({ password1: event.target.value });
+    handlePWChange = (event) => {
+        this.setState({ password: event.target.value });
     }
 
-    handlePW2Change = (event) => {
-        this.setState({ password2: event.target.value });
-    }
+ 
 
     handleCheckboxChange = (event, value) => {
         console.log(value.checked);
@@ -112,7 +123,8 @@ class CreateUser extends Component {
       };*/
 
 
-    handleSubmit = () => {
+    handleSubmit = (event) => {
+        event.preventDefault();
         this.setState({ loading: true });
         if (this.state.editingUser) {
             axios.post("/users/edituser", {
@@ -121,12 +133,10 @@ class CreateUser extends Component {
                 email: this.state.email,
                 handicap: parseFloat(this.state.handicap),
                 isadmin: this.state.isadmin,
-                password: this.state.password1
+                password: this.state.password
             }).then(response => {
                 console.log(response);
-                this.props.reloadUsers();
-                this.props.closeModal();
-                this.setState({ loading: false })
+                this.setState({ loading: false }, () => this.props.closeModal());
             }).catch(error => {
                 console.log(error);
             });
@@ -137,23 +147,21 @@ class CreateUser extends Component {
                 email: this.state.email,
                 handicap: parseFloat(this.state.handicap),
                 isadmin: this.state.isadmin,
-                password: this.state.password1
+                password: this.state.password
             }).then(response => {
-                console.log(response);
-                this.props.reloadUsers();
-                this.props.closeModal();
-                this.setState({ loading: false })
+                console.log(response.data.id);
+                let user = {id: response.data.id, full_name: this.state.fullName, email: this.state.email, handicap: parseFloat(this.state.handicap), is_admin: this.state.isadmin}
+                this.props.addNewUser(user)
+                this.setState({ loading: false }, () => this.props.closeModal());
             }).catch(error => {
                 console.log(error);
             });
         }
-        //   this.setState({ fullName: "", email: "", handicap: "", isadmin: false, password1: "", password2: "" });
-
-
     }
 
-    handleCancel = () => {
-        this.props.closeModal();
+    handleCancel = (event) => {
+        event.preventDefault();
+        this.props.cancel();
     }
 
     render() {
@@ -196,23 +204,12 @@ class CreateUser extends Component {
                         <Form.Group widths='equal'>
                             <Form.Field
 
-                                name='password1'
+                                name='password'
                                 control={Input}
-                                label='Password 1'
-                                placeholder='Password 1'
-                                type="password"
-                                value={this.state.password1} onChange={this.handlePW1Change}
+                                label='Password'
+                                placeholder='Password'
+                                value={this.state.password} onChange={this.handlePWChange}
                             />
-                            <Form.Field
-
-                                name='password2'
-                                control={Input}
-                                label='Password 2'
-                                placeholder='Password 2'
-                                type="password"
-                                value={this.state.password2} onChange={this.handlePW2Change}
-                            />
-
                         </Form.Group>
                         <Form.Field
                             control={Checkbox}
