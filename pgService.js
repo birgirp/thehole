@@ -7,7 +7,7 @@ const dbconfig = require('./config/dbConfig');
 /*const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
-});*/
+});
 
 const pool = new Pool({
     user: 'golfapp',
@@ -15,9 +15,9 @@ const pool = new Pool({
     database: 'golfdb',
     password: 'golf',
     port: 5432,
-})
+})*/
 
-/*const pool = new Pool({
+const pool = new Pool({
     user: dbconfig.dbconnection.user,
     host: dbconfig.dbconnection.host,
     database: dbconfig.dbconnection.database,
@@ -25,7 +25,7 @@ const pool = new Pool({
     port: dbconfig.dbconnection.port,
     ssl:true
 })
-*/
+
 module.exports = {
 
     getUserbyEmail: function (e_mail, passw) {

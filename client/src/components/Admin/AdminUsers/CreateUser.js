@@ -136,6 +136,8 @@ class CreateUser extends Component {
                 password: this.state.password
             }).then(response => {
                 console.log(response);
+                let user = {id: this.props.userId, full_name: this.state.fullName, email: this.state.email, handicap: parseFloat(this.state.handicap), is_admin: this.state.isadmin}
+                this.props.editUserFields(user)
                 this.setState({ loading: false }, () => this.props.closeModal());
             }).catch(error => {
                 console.log(error);
