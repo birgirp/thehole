@@ -25,7 +25,7 @@ class AdminUsers extends Component {
   isLoggedIn = (userId) => {
     axios.get("/api/isloggedin")
       .then(res => {
-        return (res.data.loggedIn)
+        return (res.data.userId === userId)
       }).catch(err => {
         console.log(err);
       })
@@ -65,7 +65,10 @@ class AdminUsers extends Component {
   editUserFields = (user) => {
     let users = this.state.users;
     let index = users.findIndex(x => x.id === user.id);
-
+    users[index].full_name = user.full_name;
+    users[index].email = user.email;
+    users[index].handicap = user.handicap;
+    users[index].is_admin = user.is_admin;
     this.setState({ users: users });
   }
 
@@ -84,29 +87,34 @@ class AdminUsers extends Component {
   }
 
 
+
   deleteUser = (userId) => {
-  
-    let users = this.state.users;
-    let index = users.findIndex(x => x.id === userId);
 
-    console.log("index = " + index);
-    console.log("userid = " + userId);
+    axios.get("/api/isloggedin")
+      .then(res => {
+        if (parseInt(res.data.userId) === parseInt(userId)) {
+          console.log("Can't delete logged in user")
+        } else {
+          console.log("userid = " + parseInt(userId) )
+          console.log("luserid = " + parseInt(res.data.userId) )
+          let users = this.state.users;
+          let index = users.findIndex(x => x.id === userId);
+          this.setState({ deletingUser: true });
+          axios.post("/users/deleteuser", {
+            userId: userId
+          }).then(response => {
+            this.setState({ deletingUser: false });
+            users.splice(index, 1)
+            this.setState({ users: users });
+          }).catch(error => {
+            this.setState({ deletingUser: false });
+            console.log(error);
 
-
-    if (!this.isLoggedIn(userId)) {
-      this.setState({ deletingUser: true });
-      axios.post("/users/deleteuser", {
-        userId: userId
-      }).then(response => {
-        this.setState({ deletingUser: false });
-        users.splice(index, 1)
-        this.setState({ users: users });
-      }).catch(error => {
-        this.setState({ deletingUser: false });
-        console.log(error);
-
-      });
-    }
+          });
+        }
+      }).catch(err => {
+        console.log(err);
+      })
   }
 
 

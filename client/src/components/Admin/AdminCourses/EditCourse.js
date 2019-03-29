@@ -53,7 +53,7 @@ class EditCourse extends Component {
     }
 
     componentDidMount() {
-        console.log("cccccccccc  " + this.props.courseId)
+       
         axios.post("/api/getholes", {
             courseId: this.props.courseId
             }).then(response => {
