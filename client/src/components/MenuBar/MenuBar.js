@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Dropdown, Menu, Segment } from "semantic-ui-react";
+import { Dropdown, Menu, Segment, Icon } from "semantic-ui-react";
 import axios from "axios";
 
 
@@ -9,7 +9,8 @@ class MenuBar extends Component {
     super(props);
     this.state = {
       activePage: "home",
-      isAdmin: -1
+      isAdmin: -1,
+      userName: ""
     };
   }
 
@@ -30,11 +31,13 @@ class MenuBar extends Component {
   componentWillMount() {
     axios.get("/api/isloggedin")
       .then(res => {
+        this.setState({ userName: res.data.name });
         if (res.data.isAdmin) {
           this.setState({ isAdmin: 1 });
         } else {
           this.setState({ isAdmin: 0 });
-        }}).catch(err => {
+        }
+      }).catch(err => {
         console.log(err);
       })
   }
@@ -75,6 +78,21 @@ class MenuBar extends Component {
 
   render() {
 
+
+    /*
+              <Dropdown.Item
+              className="right menu"
+                name="logout"
+                content="Logout"
+                active={activePage === "logout"}
+                onClick={this.handleLogoutItemClick}
+
+              />
+
+
+
+    */
+
     const { activePage } = this.state.activePage;
     return (
       <Segment inverted>
@@ -87,13 +105,22 @@ class MenuBar extends Component {
             active={activePage === "home"}
             onClick={this.handleItemClick} />
           {this.props.getIsAdmin && this.adminMenu()}
-          <Menu.Item
-            className="right menu"
-            name="logout"
-            content="Logout"
-            active={activePage === "logout"}
-            onClick={this.handleLogoutItemClick} />
+
+          <Menu.Item className="right menu">
+          <Icon name="user" style={{marginRight: 20}}/>
+            <Dropdown text={this.state.userName} pointing  >
+              <Dropdown.Menu>
+              <Dropdown.Item name="logout"  active={activePage === "logout"} onClick={this.handleLogoutItemClick}>Logout</Dropdown.Item>
+
+              </Dropdown.Menu>
+            </Dropdown>
+
+
+          </Menu.Item>
         </Menu>
+
+
+
       </Segment>
     )
   }
