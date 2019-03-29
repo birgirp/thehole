@@ -10,6 +10,22 @@ import Loading from "../../Loading/Loading";
     /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
   );*/
 
+const formValid = ({ formErrors, ...rest }) => {
+    let valid = true;
+
+    // validate form errors being empty
+    Object.values(formErrors).forEach(val => {
+        val.length > 0 && (valid = false);
+    });
+
+    // validate the form was filled out
+    Object.values(rest).forEach(val => {
+        val === null && (valid = false);
+    });
+
+    return valid;
+};
+
 class CreateUser extends Component {
 
     constructor(props) {
@@ -67,7 +83,7 @@ class CreateUser extends Component {
 
     /* close = () => {
          this.setState({ open: false, loadingView: false, loading: false });
-     }*/
+     }
 
     handleNameChange = (event) => {
         this.setState({ fullName: event.target.value });
@@ -84,8 +100,8 @@ class CreateUser extends Component {
     handlePWChange = (event) => {
         this.setState({ password: event.target.value });
     }
+*/
 
- 
 
     handleCheckboxChange = (event, value) => {
         console.log(value.checked);
@@ -98,13 +114,13 @@ class CreateUser extends Component {
           let formErrors = { ...this.state.formErrors };
       
           switch (name) {
-            case "firstName":
-              formErrors.firstName =
+            case "fullName":
+              formErrors.fullName =
                 value.length < 3 ? "minimum 3 characaters required" : "";
               break;
-            case "lastName":
-              formErrors.lastName =
-                value.length < 3 ? "minimum 3 characaters required" : "";
+            case "handicap":
+              formErrors.handicap =
+               isNan(value) ? "Handicap must be a number" : "";
               break;
             case "email":
               formErrors.email = emailRegex.test(value)
@@ -125,6 +141,7 @@ class CreateUser extends Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
+        if(formValid(this.state)){
         this.setState({ loading: true });
         if (this.state.editingUser) {
             axios.post("/users/edituser", {
@@ -150,13 +167,16 @@ class CreateUser extends Component {
                 password: this.state.password
             }).then(response => {
                 console.log(response.data.id);
-                let user = {id: response.data.id, full_name: this.state.fullName, email: this.state.email, handicap: parseFloat(this.state.handicap), is_admin: this.state.isadmin}
+                let user = { id: response.data.id, full_name: this.state.fullName, email: this.state.email, handicap: parseFloat(this.state.handicap), is_admin: this.state.isadmin }
                 this.props.addNewUser(user)
                 this.setState({ loading: false }, () => this.props.closeModal());
             }).catch(error => {
                 console.log(error);
             });
         }
+    }else{
+        console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
+    }
     }
 
     handleCancel = (event) => {
@@ -181,16 +201,18 @@ class CreateUser extends Component {
                                 control={Input}
                                 label='Name'
                                 placeholder='Name'
-                                value={this.state.fullName} onChange={this.handleNameChange}
+                                value={this.state.fullName} onChange={this.handleChange}
                             />
+                             {formErrors.fullName.length > 0 && (<span className="errorMessage">{formErrors.fullName}</span>)}
                             <Form.Field
 
                                 name='email'
                                 control={Input}
                                 label='Email'
                                 placeholder='Email'
-                                value={this.state.email} onChange={this.handleEmailChange}
+                                value={this.state.email} onChange={this.handleChange}
                             />
+                             {formErrors.email.length > 0 && (<span className="errorMessage">{formErrors.email}</span>)}
                             <Form.Field
 
                                 name='handicap'
@@ -198,8 +220,9 @@ class CreateUser extends Component {
                                 label='Handicap'
                                 placeholder='Hcp'
                                 width={6}
-                                value={this.state.handicap} onChange={this.handleHandicapChange}
+                                value={this.state.handicap} onChange={this.handleChange}
                             />
+                             {formErrors.handicap.length > 0 && (<span className="errorMessage">{formErrors.handicap}</span>)}
                         </Form.Group>
                         <Form.Group widths='equal'>
                             <Form.Field
@@ -208,8 +231,9 @@ class CreateUser extends Component {
                                 control={Input}
                                 label='Password'
                                 placeholder='Password'
-                                value={this.state.password} onChange={this.handlePWChange}
+                                value={this.state.password} onChange={this.handleChange}
                             />
+                            {formErrors.password.length > 0 && (<span className="errorMessage">{formErrors.password}</span>)}
                         </Form.Group>
                         <Form.Field
                             control={Checkbox}
