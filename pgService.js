@@ -4,10 +4,10 @@ const format = require('pg-format');
 const dbconfig = require('./config/dbConfig');
 
 
-const pool = new Pool({
+/*const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
-});
+});*/
 
 /*const pool = new Pool({
     user: 'golfapp',
@@ -16,7 +16,7 @@ const pool = new Pool({
     password: 'golf',
     port: 5432,
 })
-
+*/
 const pool = new Pool({
     user: dbconfig.dbconnection.user,
     host: dbconfig.dbconnection.host,
@@ -25,7 +25,7 @@ const pool = new Pool({
     port: dbconfig.dbconnection.port,
     ssl:true
 })
-*/
+
 module.exports = {
 
     getUserbyEmail: function (e_mail, passw) {
@@ -141,7 +141,18 @@ module.exports = {
             })
         })
      
-    }
+    },
+
+    insertTour: function(tourName, tourStatus) {
+        return new Promise((resolve, reject) => {
+            pool.query('INSERT INTO tours (tour_name, tour_status) values ($1, $2 ) returning id', [tourName,tourStatus ]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
 
 }
 

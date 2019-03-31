@@ -104,6 +104,26 @@ console.log(JSON.stringify(req.body));
   })
 });
 
+router.post("/api/addtour", (req, res) => {
+  const players = req.body.players
+  const courses = req.body.courses
+  dbdata.insertTour(req.body.tourName, "Open").then((response) => {
+    console.log("after inserting tour : " + JSON.stringify(response.rows[0].id));
+    const tour_id = response.rows[0].id;
+    return dbdata.insertTourPlayers(tour_id, players);
+  })
+  .then(res2 =>{
+    console.log("after inserting tour players : " + JSON.stringify(res2));
+    return dbdata.insertTourCourses(tour_id, courses);
+  }).then(res3 => {
+    console.log("after inserting tour courses : " + JSON.stringify(res3));
+    res.json("ok");
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
 
 //------------------------------------------------------------------
 

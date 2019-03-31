@@ -9,6 +9,7 @@ import CreateUser from "./Admin/AdminUsers/CreateUser"
 import AdminUsers from "./Admin/AdminUsers/AdminUsers"
 import AdminCourses from "./Admin/AdminCourses/AdminCourses"
 import EditCourse from "./Admin/AdminCourses/EditCourse"
+import AdminTours from "./Admin/AdminTours/AdminTours"
 
 
 class App extends Component {
@@ -66,6 +67,7 @@ class App extends Component {
               <Route exact path="/admin/users" component={AdminUsers} />
               <Route exact path="/admin/adduser" component={CreateUser} />
               <Route exact path="/admin/courses" component={AdminCourses} />
+              <Route exact path="/admin/tours" component={AdminTours} />
               <Route exact path="/admin/createcourse" render={(props) => <EditCourse {...props} toggleShowMenu={this.toggleShowMenu} />} />
  
             </div>

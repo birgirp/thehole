@@ -12,15 +12,16 @@ const emailRegex = RegExp(
 
 const formValid = ({ formErrors, ...rest }) => {
     let valid = true;
-
+  
     // validate form errors being empty
     Object.values(formErrors).forEach(val => {
         val.length > 0 && (valid = false);
     });
-
+    console.log(rest)
     // validate the form was filled out
     Object.values(rest).forEach(val => {
-        val === null && (valid = false);
+        ( val === "") && (valid = false);
+        
     });
 
     return valid;
@@ -65,7 +66,7 @@ class CreateUser extends Component {
 
 
     componentDidMount() {
-        console.log(this.props.users)
+     //   console.log(this.props.users)
         if (this.props.editingUser) {
             this.setState({ editingUser: true });
             this.setState({ editingUserId: this.props.userId });
