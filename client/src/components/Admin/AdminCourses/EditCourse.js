@@ -53,15 +53,26 @@ class EditCourse extends Component {
     }
 
     componentDidMount() {
-       
+        this.setState({ loading: true })
         axios.post("/api/getholes", {
             courseId: this.props.courseId
             }).then(response => {
             console.log(response.data);
             if (response.data.length === 0) {
                 console.log("no holes for course");
+                this.setState({ loading: false })
+            } else{
+               let rowData = this.state.rowData
+                response.data.forEach(hole => {
+                    rowData[0]["h" + hole.hole ] = hole.par;
+                    rowData[1]["h" + hole.hole ] = hole.handicap;
+                });
+                console.log(rowData);
+                this.setState({ rowData })
+                this.setState({ loading: false })
+
             }
-            this.setState({ loading: false })
+     
         })
             .catch(error => {
                 console.log(error);
@@ -77,7 +88,7 @@ class EditCourse extends Component {
     }
 
     handleSubmit = () => {
-        console.log("xxxxxxxxxxxxx  " + this.props.courseId)
+        console.log("course ID  " + this.props.courseId)
         this.setState({ loading: true });
         axios.post("/api/addholes", {
             courseId: this.props.courseId,
@@ -93,10 +104,7 @@ class EditCourse extends Component {
             });
     }
 
-    handleCancel = () => {
-        this.props.closeModal();
-        //window.location = '/admin/courses'
-    }
+    handleCancel = () => { this.props.closeModal();  }
 
     render() {
 

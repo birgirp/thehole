@@ -9,22 +9,22 @@ const dbconfig = require('./config/dbConfig');
   ssl: true
 });*/
 
-/*const pool = new Pool({
+const pool = new Pool({
     user: 'golfapp',
     host: 'localhost',
-    database: 'golfdb',
+    database: 'hole',
     password: 'golf',
     port: 5432,
 })
-*/
-const pool = new Pool({
+
+/*const pool = new Pool({
     user: dbconfig.dbconnection.user,
     host: dbconfig.dbconnection.host,
     database: dbconfig.dbconnection.database,
     password: dbconfig.dbconnection.password,
     port: dbconfig.dbconnection.port,
     ssl:true
-})
+})*/
 
 module.exports = {
 
@@ -153,7 +153,35 @@ module.exports = {
             })
         })
     },
+    
+    insertTourPlayers: function(tour_id, players){
+        let data = players.map((val, index, arr) => { return [tour_id, val]});
+        let query = format('INSERT INTO tour_players (tour_id, player_id) values %L', data);
+        console.log(JSON.stringify(data))
 
+        return new Promise((resolve, reject) => {
+            pool.query(query).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+
+    insertTourCourses: function(tour_id, courses){
+        let data = courses.map((val, index, arr) => { return [tour_id, val]});
+        let query = format('INSERT INTO tour_courses (tour_id, course_id) values %L', data);
+        console.log(JSON.stringify(data))
+        return new Promise((resolve, reject) => {
+            pool.query(query).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
 }
 
 //-------------------------------------------

@@ -105,11 +105,12 @@ console.log(JSON.stringify(req.body));
 });
 
 router.post("/api/addtour", (req, res) => {
-  const players = req.body.players
-  const courses = req.body.courses
+  const players = req.body.players;
+  const courses = req.body.courses;
+  let tour_id = null;
   dbdata.insertTour(req.body.tourName, "Open").then((response) => {
     console.log("after inserting tour : " + JSON.stringify(response.rows[0].id));
-    const tour_id = response.rows[0].id;
+    tour_id = response.rows[0].id;
     return dbdata.insertTourPlayers(tour_id, players);
   })
   .then(res2 =>{
