@@ -104,6 +104,49 @@ router.post("/api/addholes", (req, res) => {
   })
 });
 
+router.post("/api/addholescores", (req, res) => {
+  //scores = [{3, 1, 5, 7},{3, 2, 5, 4},.., {scoredardid, holeid, strokes, points} ]
+  let rows = req.body.rowData;
+
+  let courseId = req.body.courseId;
+  console.log(JSON.stringify(req.body));
+  let holes = [];
+  console.log("course id " + req.body.courseId)
+  for (i = 1; i < 19; i++) {
+    par = rows[0]["h" + i];
+    hcp = rows[1]["h" + i];
+    hole = i;
+    hole = [courseId, hole, par, hcp];
+    holes.push(hole);
+  }
+  dbdata.insertHoles(holes).then((response) => {
+    res.json("ok");
+  }).catch((error) => {
+    console.log(error);
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
+router.post("/api/addscorecard", (req, res) => {
+  let courseId = req.body.courseId
+  let tourId = req.body.tourId
+  let roundNum = req.body.roundNum
+  let playerId = req.body.playerId
+  let roundDate = req.body.roundDate
+  let handicap = req.body.handicap
+  let status = req.body.status
+ dbdata.insertScoreCard(tourId, roundNum, courseId, playerId, roundDate , handicap, status ).then((response)=> {
+  res.json(response.rows[0].id)
+
+ }).catch((error)=>{
+  console.log(error);
+  res.status(500);
+  res.json({ error: error });
+ })
+});
+
+
 router.post("/api/addtour", (req, res) => {
   const players = req.body.players;
   const courses = req.body.courses;
