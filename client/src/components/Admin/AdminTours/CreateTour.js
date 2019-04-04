@@ -18,7 +18,8 @@ class CreatTour extends Component {
             selectedPlayers: [],
             selectedCourses: [],
             tourName: "",
-            isLoading: false
+            isLoading: false,
+            numberOfRounds:1
         };
     }
 
@@ -27,7 +28,6 @@ class CreatTour extends Component {
         axios.get("/api/getallcourses")
             .then(res => {
                 this.setState({ courses: res.data })
-                console.log(res.data);
                 return axios.get("/users/getAllUsers");
             })
             .then(res2 => {
@@ -52,10 +52,10 @@ class CreatTour extends Component {
         axios.post("/api/addtour", {
             players: this.state.selectedPlayers,
             courses: this.state.selectedCourses,
-            tourName: this.state.tourName
+            tourName: this.state.tourName,
+            rounds: this.state.numberOfRounds
         })
             .then(response => {
-                console.log(response);
                 this.setState({ loading: false })
                 this.props.closeModal();
             })
@@ -74,12 +74,14 @@ class CreatTour extends Component {
 
 
     handlePlayerChange = (event, value) => {
-        console.log(value.value)
-        this.setState({selectedPlayers: value.value})
+               this.setState({selectedPlayers: value.value})
     }
     handleCourseChange = (event, value) => {
-        console.log(value.value)
-        this.setState({selectedCourses: value.value})
+             this.setState({selectedCourses: value.value})
+    }
+
+    handleNumberChange = (event, value) => {
+        this.setState({numberOfRounds: value.value})
     }
 
     render() {
@@ -93,10 +95,7 @@ class CreatTour extends Component {
             return { key: val.id, text: val.course_name + "-" + val.tee, value: val.id }
         });
         
-        if (this.state.isLoading) {
-            return (
-                <Loading />
-            )
+        if (this.state.isLoading) {  return (   <Loading /> )
         } else {
             return (
                 <div>
@@ -112,6 +111,7 @@ class CreatTour extends Component {
                                 value={this.state.tourName} onChange={this.handleNameChange}
                             />
                             <Form.Field
+                                width="6"
                                 control={Dropdown}
                                 fluid
                                 search
@@ -123,6 +123,7 @@ class CreatTour extends Component {
                                 onChange={this.handlePlayerChange}
                             />
                             <Form.Field
+                                width="6"
                                control={Dropdown}
                                fluid
                                search
@@ -132,6 +133,17 @@ class CreatTour extends Component {
                                placeholder='Select courses'
                                options={cselection}
                                onChange={this.handleCourseChange}
+                            />
+                            <Form.Field
+                                width="2"
+                               control={Input}
+                               min="1"
+                               max="20"
+                               value={this.state.numberOfRounds}
+                               type="Number"
+                               label='Rounds'
+                               placeholder='#'
+                               onChange={this.handleNumberChange}
                             />
                         </Form.Group>
                     </Form>

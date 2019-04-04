@@ -35,16 +35,12 @@ class Login extends Component {
 
     axios.post("/users/login/", { email: this.state.email, password: this.state.password })
       .then(response => {
-  
+        console.log(JSON.stringify(response.data.user.id))
         if (response.data.user === false) {
           this.setState({ unknownuser: true });
         } else {
           this.setState({ success: true });
-          this.props.changeLoggedIn(response.data.user.is_admin);
-          /* this.props.history.push({
-             pathname: "/home",
-             state: { user: response.data }
-           });*/
+          this.props.changeLoggedIn(response.data.user.is_admin, response.data.user.id);
         }
       })
       .catch(error => {

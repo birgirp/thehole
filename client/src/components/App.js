@@ -5,12 +5,13 @@ import axios from "axios";
 import MenuBar from "./MenuBar/MenuBar";
 import Login from "./Login";
 import Home from "./Application/Home"
-import CreateUser from "./Admin/AdminUsers/CreateUser"
+import Tour from "./Application/Tour/Tour"
+//import CreateUser from "./Admin/AdminUsers/CreateUser"
 import AdminUsers from "./Admin/AdminUsers/AdminUsers"
 import AdminCourses from "./Admin/AdminCourses/AdminCourses"
-import EditCourse from "./Admin/AdminCourses/EditCourse"
+//import EditCourse from "./Admin/AdminCourses/EditCourse"
 import AdminTours from "./Admin/AdminTours/AdminTours"
-
+//import Loading from "./Loading/Loading";
 
 class App extends Component {
 
@@ -19,28 +20,25 @@ class App extends Component {
     this.state = {
       isLoggedIn: false,
       isAdmin: false,
-      showMenu: true
+      userId:null
     };
-    this.changeLoggedIn = this.changeLoggedIn.bind(this);
-    this.toggleShowMenu = this.toggleShowMenu.bind(this);
+
   }
 
-  changeLoggedIn(isadmin) {
+  changeLoggedIn = (isadmin, userId) => {
+    this.setState({ userId: userId });
     this.setState({ isLoggedIn: true });
     this.setState({ isAdmin: isadmin });
 
+
   }
 
-  toggleShowMenu(showMenu)  {
-    this.setState({ showMenu: showMenu });
-  }
 
   componentDidMount() {
     axios.get("/api/isloggedin")
       .then(res => {
         if (res.data.loggedIn) {
-          this.setState({ isLoggedIn: res.data.loggedIn, isAdmin: res.data.isAdmin });
-
+          this.setState({ isLoggedIn: res.data.loggedIn, isAdmin: res.data.isAdmin, userId: res.data.userId });
         }
       })
       .catch(err => {
@@ -49,7 +47,8 @@ class App extends Component {
   }
 
   render() {
-    if (!this.state.isLoggedIn) {
+
+    if (!this.state.isLoggedIn ) {
       return (
         <Router>
           <div>
@@ -57,22 +56,34 @@ class App extends Component {
           </div>
         </Router>
       )
-    } else {
+    } else if (this.state.isLoggedIn && this.state.isAdmin) {
       return (
         <Router>
           <div>
-            {this.state.showMenu && <MenuBar getIsAdmin={this.state.isAdmin}></MenuBar>}
+            <MenuBar getIsAdmin={this.state.isAdmin}></MenuBar>
             <div id="mainView">
-              <Route exact path="/home" render={(props) => <Home {...props} changeLoggedIn={this.changeLoggedIn} />} />
+              <Route exact path="/home"render={(props) => <Home {...props} userId={this.state.userId} />} />
               <Route exact path="/admin/users" component={AdminUsers} />
-              <Route exact path="/admin/adduser" component={CreateUser} />
               <Route exact path="/admin/courses" component={AdminCourses} />
               <Route exact path="/admin/tours" component={AdminTours} />
-              <Route exact path="/admin/createcourse" render={(props) => <EditCourse {...props} toggleShowMenu={this.toggleShowMenu} />} />
- 
             </div>
           </div>
         </Router>
+      )
+    } else if (this.state.isLoggedIn && !this.state.isAdmin) {
+      console.log("sdsds " + this.state.userId)
+      return(
+        <Router>
+        <div>
+          <MenuBar getIsAdmin={this.state.isAdmin}></MenuBar>
+          <div id="mainView">
+          <Route exact path="/home"render={(props) => <Home {...props} userId={this.state.userId} />} />
+          <Route exact path="/tour/:id"render={(props) => <Tour {...props} userId={this.state.userId} />} />
+          </div>
+        </div>
+      </Router>
+
+
       )
     }
   }

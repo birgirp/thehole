@@ -67,7 +67,7 @@ router.post("/api/getholes", isLoggedIn, (req, res) => {
 router.post("/api/addcourse", (req, res) => {
   dbdata.insertCourse(req.body.courseName, req.body.tee, req.body.country).then((response) => {
     console.log("after inserting course : " + JSON.stringify(response));
-    res.json("true");
+    res.json(response.rows[0]);
   }).catch((error) => {
     console.log(error)
     res.status(500);
@@ -85,14 +85,14 @@ router.post("/api/addholes", (req, res) => {
   let rows = req.body.rowData;
 
   let courseId = req.body.courseId;
-console.log(JSON.stringify(req.body));
+  console.log(JSON.stringify(req.body));
   let holes = [];
-  console.log("course id " + req.body.courseId )
+  console.log("course id " + req.body.courseId)
   for (i = 1; i < 19; i++) {
     par = rows[0]["h" + i];
     hcp = rows[1]["h" + i];
     hole = i;
-    hole = [ courseId, hole, par, hcp ];
+    hole = [courseId, hole, par, hcp];
     holes.push(hole);
   }
   dbdata.insertHoles(holes).then((response) => {
@@ -107,24 +107,169 @@ console.log(JSON.stringify(req.body));
 router.post("/api/addtour", (req, res) => {
   const players = req.body.players;
   const courses = req.body.courses;
+  const rounds = req.body.rounds;
   let tour_id = null;
-  dbdata.insertTour(req.body.tourName, "Open").then((response) => {
+  dbdata.insertTour(req.body.tourName, "Open", rounds).then((response) => {
     console.log("after inserting tour : " + JSON.stringify(response.rows[0].id));
     tour_id = response.rows[0].id;
     return dbdata.insertTourPlayers(tour_id, players);
   })
-  .then(res2 =>{
-    console.log("after inserting tour players : " + JSON.stringify(res2));
-    return dbdata.insertTourCourses(tour_id, courses);
-  }).then(res3 => {
-    console.log("after inserting tour courses : " + JSON.stringify(res3));
-    res.json("ok");
+    .then(res2 => {
+      console.log("after inserting tour players : " + JSON.stringify(res2));
+      return dbdata.insertTourCourses(tour_id, courses);
+    }).then(res3 => {
+      console.log("after inserting tour courses : " + JSON.stringify(res3));
+      res.json('ok')
+    })
+    .catch((error) => {
+      console.log(error)
+      res.status(500);
+      res.json({ error: error });
+    })
+});
+
+router.get("/api/getalltours", (req, res) => {
+  dbdata.getAllTours().then((data) => {
+    if (data.rows.length > 0) {
+      tours = data.rows
+      res.json(tours);
+    } else {
+      console.log("No tours found")
+      res.json(null);
+    }
   }).catch((error) => {
     console.log(error)
     res.status(500);
     res.json({ error: error });
   })
 });
+
+router.post("/api/gettourbyid", (req, res) => {
+  dbdata.getTourById(req.body.tourId).then((data) => {
+    if (data.rows.length > 0) {
+      tour = data.rows[0]
+      res.json(tour);
+    } else {
+      console.log("No tour found")
+      res.json(null);
+    }
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
+
+router.post("/api/getplayertours", (req, res) => {
+  let playerId = req.body.playerId
+  console.log("playerId " + playerId)
+  dbdata.getPlayerTours(playerId).then((data) => {
+    if (data.rows.length > 0) {
+      tours = data.rows
+      res.json(tours);
+    } else {
+      console.log("No tours found")
+      res.json(null);
+    }
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
+router.post("/api/gettourplayers", (req, res) => {
+  let tourId = req.body.tourId
+  dbdata.getTourPlayers(tourId).then((data) => {
+    if (data.rows.length > 0) {
+      players = data.rows
+      res.json(players);
+    } else {
+      console.log("No players found")
+      res.json(null);
+    }
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
+router.post("/api/gettourcourses", (req, res) => {
+  let tourId = req.body.tourId
+  dbdata.getTourCourses(tourId).then((data) => {
+    if (data.rows.length > 0) {
+      courses = data.rows
+      res.json(courses);
+    } else {
+      console.log("No courses found")
+      res.json(null);
+    }
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
+router.post("/api/getscorecard", (req, res) => {
+
+  let tourId = req.body.tourId
+  let roundNum = req.body.roundNum
+  let playerId = req.body.playerId
+  res.json(null)
+
+ /* dbdata.getScorecard(tourId, roundNum,playerId).then((data) => {
+    if (data.rows.length > 0) {
+      scores = data.rows
+      res.json(scores);
+    } else {
+      console.log("No scores found")
+      res.json(null);
+    }
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })*/
+});
+
+/*
+router.post("/api/addround", (req, res) => {
+  let tourId = req.body.tourId;
+  let rounds = parseInt(req.body.rounds);
+  var i;
+  for (i = 0; i < rounds; i++) {
+    console.log(i);
+    dbdata.insertTourRound(tourId).then((data) => {
+      console.log("...")
+    }).catch((error) => {
+      console.log(error)
+      res.status(500);
+      res.json({ error: error });
+    })
+  }
+});
+
+router.post("/api/updateround", (req, res) => {
+  let tourId = req.body.tourId;
+  let rounds = parseInt(req.body.rounds);
+  var i;
+  for (i = 0; i < rounds; i++) {
+    console.log(i);
+    dbdata.insertTourRound(tourId).then((data) => {
+      console.log("...")
+    }).catch((error) => {
+      console.log(error)
+      res.status(500);
+      res.json({ error: error });
+    })
+  }
+});
+*/
+
+
 
 //------------------------------------------------------------------
 

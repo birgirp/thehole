@@ -32,6 +32,12 @@ class AdminCourses extends Component {
       })
   }
 
+  addNewCourse = (course) => {
+    let courses = this.state.courses;
+    courses.push(course);
+    this.setState({ course: course });
+  }
+
   closeCreateModal = () => {
     this.setState({ addingcourse: false });
   }
@@ -47,10 +53,7 @@ class AdminCourses extends Component {
     }
   }
   editCourse = (courseId, courseName) => {
-    console.log("cid = " + courseId)
-    this.setState({ courseId: courseId })
-    this.setState({ courseName: courseName })
-    this.setState({ addingHoles: true })
+    this.setState({ courseId: courseId, courseName: courseName, addingHoles: true  })
   }
   
 
@@ -91,7 +94,7 @@ class AdminCourses extends Component {
           <Modal size="fullscreen"  open={this.state.addingcourse} onClose={this.closeCreateModal}>
             <Modal.Header>Add new course</Modal.Header>
             <Modal.Content >
-              {<CreateCourse closeModal={this.closeCreateModal} />}
+              {<CreateCourse closeModal={this.closeCreateModal} addNewCourse={this.addNewCourse} />}
             </Modal.Content>
           </Modal>
 

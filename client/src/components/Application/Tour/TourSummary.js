@@ -1,23 +1,20 @@
-// External libs
 import React, { Component } from "react";
-import { Button } from "semantic-ui-react";
-import axios from "axios";
+//import { Tab, Form, Input, Dropdown } from "semantic-ui-react";
+//import axios from "axios";
+
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
-// Own components...
 import Loading from "../../Loading/Loading";
 
-class EditCourse extends Component {
+class TourSummary extends Component {
+
 
     constructor(props) {
         super(props);
         this.state = {
-            courseId: "",
+
             loading: false,
-            country: "",
-            courseName: "",
-            tee: "",
             columnDefs: [
                 { headerName: "", field: "rowname" },
                 { headerName: "H1", field: "h1", width: 40 },
@@ -47,39 +44,14 @@ class EditCourse extends Component {
                 resizable: false,
                 editable: this.checkEditFunction
                 , width: 70,
-                suppressMovable: true,
-               
+                suppressMovable: true
             }
-        };
+
+
+        }
     }
 
-    componentDidMount() {
-        this.setState({ loading: true })
-        axios.post("/api/getholes", {
-            courseId: this.props.courseId
-            }).then(response => {
-            console.log(response.data);
-            if (response.data.length === 0) {
-                console.log("no holes for course");
-                this.setState({ loading: false })
-            } else{
-               let rowData = this.state.rowData
-                response.data.forEach(hole => {
-                    rowData[0]["h" + hole.hole ] = hole.par;
-                    rowData[1]["h" + hole.hole ] = hole.handicap;
-                });
-                console.log(rowData);
-                this.setState({ rowData })
-                this.setState({ loading: false })
-
-            }
-     
-        })
-            .catch(error => {
-                console.log(error);
-            });
-    }
-
+    
     checkEditFunction = (params) => {
 
         //params.node - for row identity
@@ -88,48 +60,28 @@ class EditCourse extends Component {
         return params.column.colId !== "rowname" // - just as sample
     }
 
-    handleSubmit = () => {
-        console.log("course ID  " + this.props.courseId)
-        this.setState({ loading: true });
-        axios.post("/api/addholes", {
-            courseId: this.props.courseId,
-            rowData: this.state.rowData
-        }).then(response => {
-                console.log(response);
-                this.setState({ loading: false })
-                this.props.closeModal();
-            })
-            .catch(error => {
-                console.log(error);
-                this.props.closeModal();
-            });
+    componentDidMount() {
+
     }
 
-    handleCancel = () => { this.props.closeModal();  }
+
+
+
 
     render() {
 
-        if (this.state.loading) {
-            return (
-                <Loading />
-            )
+        //console.log(this.state)
+        if (this.state.isLoading) {
+            return (<Loading />)
         } else {
 
-            //<div className="ag-theme-balham" style={{ height: '200px', width: '1200px'  }}>
             return (
                 <div>
-                    <h1>Edit holes </h1>
+                    <h1> Tour Summary </h1>
+                    <br />
+                 
                     <br />
 
-                    <AgGridReact
-                        columnDefs={this.state.columnDefs}
-                        defaultColDef={this.state.defaultColDef}
-                        rowData={this.state.rowData}>
-                    </AgGridReact>
-                    <br />
-
-                    <Button primary onClick={this.handleSubmit}>Submit</Button>
-                    <Button secondary onClick={this.handleCancel}>Cancel</Button>
 
                 </div>
             )
@@ -137,4 +89,4 @@ class EditCourse extends Component {
     }
 }
 
-export default EditCourse;
+export default TourSummary;

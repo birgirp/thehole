@@ -29,7 +29,9 @@ class CreatCourse extends Component {
             holes: this.state.rowData
         })
             .then(response => {
-                console.log(response);
+                console.log(response.data.id);
+                let course = { id: response.data.id, course_name:  this.state.courseName, tee: this.state.tee, country:this.state.country  }
+                this.props.addNewCourse(course)
                 this.setState({ loading: false })
                 this.props.closeModal();
              })
