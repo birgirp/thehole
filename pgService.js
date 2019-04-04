@@ -9,22 +9,22 @@ const dbconfig = require('./config/dbConfig');
   ssl: true
 });*/
 
-const pool = new Pool({
+/*const pool = new Pool({
     user: 'golfapp',
     host: 'localhost',
     database: 'hole2',
     password: 'golf',
     port: 5432,
-})
+})*/
 
-/*const pool = new Pool({
+const pool = new Pool({
     user: dbconfig.dbconnection.user,
     host: dbconfig.dbconnection.host,
     database: dbconfig.dbconnection.database,
     password: dbconfig.dbconnection.password,
     port: dbconfig.dbconnection.port,
     ssl: true
-})*/
+})
 
 module.exports = {
 
@@ -249,9 +249,34 @@ module.exports = {
         })
     },
 
-    insertScorecard: function (tourId,tourRound, courseId, playerId, roundDate , handicap, status ) {
+    insertScoreCard: function (tourId,tourRound, courseId, playerId, roundDate , handicap, status ) {
         return new Promise((resolve, reject) => {
             pool.query('INSERT INTO scorecards (tour_id, tour_round, course_id, player_id, round_date, handicap, status) values ($1, $2, $3, $4, $5, $6, $7 ) returning id', [tourId,tourRound, courseId, playerId, roundDate , handicap, status]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+    insertScores: function (scores) {
+        //holes = [[3, 1, 5, 7],.., [3, 18, 3, 1] ]
+        console.log("inserting scores...")
+        let query = format('INSERT INTO hole_scores (hole_id, strokes, points, scorecard_id) values %L', scores);
+        return new Promise((resolve, reject) => {
+            pool.query(query).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+
+    },
+
+    getScorecardScores: function (tourId, roundNum,playerId) {
+        return new Promise((resolve, reject) => {
+            pool.query('select *  from v_scorecards_scores where tour_id =  $1 and tour_round = $2 and player_id = $3;', [tourId, roundNum,playerId]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")

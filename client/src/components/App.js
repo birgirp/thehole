@@ -71,7 +71,7 @@ class App extends Component {
         </Router>
       )
     } else if (this.state.isLoggedIn && !this.state.isAdmin) {
-      console.log("sdsds " + this.state.userId)
+
       return(
         <Router>
         <div>

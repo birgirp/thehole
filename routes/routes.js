@@ -54,7 +54,6 @@ router.get("/api/isloggedin", isLoggedIn, (req, res) => {
 
 router.post("/api/getholes", isLoggedIn, (req, res) => {
   dbdata.getHoles(req.body.courseId).then((data) => {
-    console.log("sds" + JSON.stringify(data.rows));
     res.json(data.rows)
   }).catch((error) => {
     console.log(error)
@@ -136,14 +135,25 @@ router.post("/api/addscorecard", (req, res) => {
   let roundDate = req.body.roundDate
   let handicap = req.body.handicap
   let status = req.body.status
- dbdata.insertScoreCard(tourId, roundNum, courseId, playerId, roundDate , handicap, status ).then((response)=> {
-  res.json(response.rows[0].id)
-
- }).catch((error)=>{
-  console.log(error);
-  res.status(500);
-  res.json({ error: error });
- })
+  let scores = req.body.scores
+  console.log(JSON.stringify())
+  dbdata.insertScoreCard(tourId, roundNum, courseId, playerId, roundDate, handicap, status).then((response) => {
+    let scorecardId = response.rows[0].id
+    console.log(JSON.stringify(scorecardId))
+ 
+      scores.forEach(score => {
+        console.log("pushing...")
+        score.push(scorecardId)
+      });
+      return dbdata.insertScores(scores)
+  }).then(res2 =>{
+    console.log(res2)
+    res.json(res2)
+  }).catch((error) => {
+    console.log(error);
+    res.status(500);
+    res.json({ error: error });
+  })
 });
 
 
@@ -256,61 +266,31 @@ router.post("/api/gettourcourses", (req, res) => {
   })
 });
 
+
+//"/api/getscorecard", { tourId: this.props.tourId, roundNum: this.props.roundNum, playerId: this.props.playerId })
 router.post("/api/getscorecard", (req, res) => {
 
   let tourId = req.body.tourId
   let roundNum = req.body.roundNum
   let playerId = req.body.playerId
-  res.json(null)
 
- /* dbdata.getScorecard(tourId, roundNum,playerId).then((data) => {
-    if (data.rows.length > 0) {
-      scores = data.rows
-      res.json(scores);
-    } else {
-      console.log("No scores found")
+   dbdata.getScorecardScores(tourId, roundNum,playerId).then((data) => {
+     if (data.rows.length === 0) {
+      console.log("No scorecard found")
       res.json(null);
+      
+     }else{
+       res.json(data.rows)
+    
     }
-  }).catch((error) => {
-    console.log(error)
-    res.status(500);
-    res.json({ error: error });
-  })*/
+     
+   }).catch((error) => {
+     console.log(error)
+     res.status(500);
+     res.json({ error: error });
+   })
 });
 
-/*
-router.post("/api/addround", (req, res) => {
-  let tourId = req.body.tourId;
-  let rounds = parseInt(req.body.rounds);
-  var i;
-  for (i = 0; i < rounds; i++) {
-    console.log(i);
-    dbdata.insertTourRound(tourId).then((data) => {
-      console.log("...")
-    }).catch((error) => {
-      console.log(error)
-      res.status(500);
-      res.json({ error: error });
-    })
-  }
-});
-
-router.post("/api/updateround", (req, res) => {
-  let tourId = req.body.tourId;
-  let rounds = parseInt(req.body.rounds);
-  var i;
-  for (i = 0; i < rounds; i++) {
-    console.log(i);
-    dbdata.insertTourRound(tourId).then((data) => {
-      console.log("...")
-    }).catch((error) => {
-      console.log(error)
-      res.status(500);
-      res.json({ error: error });
-    })
-  }
-});
-*/
 
 
 
