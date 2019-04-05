@@ -285,6 +285,20 @@ module.exports = {
         })
 
     },
+    updateScores: function (scores) {
+        //holes = [[3, 1, 5, 7],.., [3, 18, 3, 1] ]
+        console.log("inserting scores...")
+        let query = format('INSERT INTO hole_scores (hole_id, strokes, points, scorecard_id) values %L', scores);
+        return new Promise((resolve, reject) => {
+            pool.query(query).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+
+    },
 
     getScorecardScores: function (tourId, roundNum,playerId) {
         return new Promise((resolve, reject) => {
