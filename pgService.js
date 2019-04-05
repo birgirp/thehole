@@ -9,22 +9,22 @@ const dbconfig = require('./config/dbConfig');
   ssl: true
 });*/
 
-/*const pool = new Pool({
+const pool = new Pool({
     user: 'golfapp',
     host: 'localhost',
     database: 'hole2',
     password: 'golf',
     port: 5432,
-})*/
+})
 
-const pool = new Pool({
+/*const pool = new Pool({
     user: dbconfig.dbconnection.user,
     host: dbconfig.dbconnection.host,
     database: dbconfig.dbconnection.database,
     password: dbconfig.dbconnection.password,
     port: dbconfig.dbconnection.port,
     ssl: true
-})
+})*/
 
 module.exports = {
 
@@ -252,6 +252,18 @@ module.exports = {
     insertScoreCard: function (tourId,tourRound, courseId, playerId, roundDate , handicap, status ) {
         return new Promise((resolve, reject) => {
             pool.query('INSERT INTO scorecards (tour_id, tour_round, course_id, player_id, round_date, handicap, status) values ($1, $2, $3, $4, $5, $6, $7 ) returning id', [tourId,tourRound, courseId, playerId, roundDate , handicap, status]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+
+    
+    updateScoreCard: function (courseId,  roundDate , handicap, status, scorecardId ) {
+        return new Promise((resolve, reject) => {
+            pool.query('UPDATE scorecards set  course_id = $1,  round_date = $2, handicap = $3, status = $4 where scorecard_id = $5', [ courseId,  roundDate , handicap, status, scorecardId]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")

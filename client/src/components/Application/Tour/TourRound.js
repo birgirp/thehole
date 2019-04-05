@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Modal, Button } from "semantic-ui-react";
-import axios from "axios";
+//import axios from "axios";
 import Loading from "../../Loading/Loading";
 import Scorecard from "./Scorecard";
 

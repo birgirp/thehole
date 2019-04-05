@@ -1,19 +1,36 @@
 import React, { Component } from "react";
-import { Button, Grid, Input, Dropdown } from "semantic-ui-react";
+import { Button, Grid, Input, Dropdown, Label } from "semantic-ui-react";
 import axios from "axios";
 import Loading from "../../Loading/Loading";
-import SemanticDatepicker from 'react-semantic-ui-datepickers';
-import ptLocale from 'react-semantic-ui-datepickers/dist/locales/pt-BR';
-import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
+import { DateInput } from 'semantic-ui-calendar-react';
+//import SemanticDatepicker from 'react-semantic-ui-datepickers';
+//import ptLocale from 'react-semantic-ui-datepickers/dist/locales/pt-BR';
+//import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 
+
 class Scorecard extends Component {
 
-
     constructor(props) {
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+
+        today = yyyy + '-' + mm + '-' + dd;
+
         super(props);
+
         this.state = {
             scorecardId: "",
             courses: [],
@@ -27,10 +44,12 @@ class Scorecard extends Component {
             selectedCourseId: null,
             selectedCourseName: "",
             handicap: 0,
-            roundDate: "",
+            roundDate: today,
             status: "",
             scores: null,
             holeIds: [],
+            sumStrokes: null,
+            sumPoints: null,
 
             columnDefs: [
                 { headerName: "", field: "rowname" },
@@ -72,6 +91,7 @@ class Scorecard extends Component {
     onCellValueChanged = (e) => {
 
         this.setState({ scoresTouched: true })
+
         let rowData = this.state.rowData;
         let par = rowData[0][e.column.colId]
         let hcp = rowData[1][e.column.colId]
@@ -79,9 +99,22 @@ class Scorecard extends Component {
         let score = e.newValue
         let points = this.calculatePointsPerHole(parseInt(par), parseInt(hcp), parseInt(score), parseInt(handicap))
         rowData[3][e.column.colId] = points;
-        this.setState({ rowData: rowData })
-        e.api.refreshCells()
 
+        this.setState({ rowData: rowData })
+        this.sumScores()
+        e.api.refreshCells()
+    }
+
+    sumScores = () => {
+        let sumStrokes = 0
+        let sumPoints = 0
+        let rowData = this.state.rowData;
+        var i
+        for (i = 1; i < 19; i++) {
+            sumStrokes = sumStrokes + parseInt(rowData[2]["h" + i])
+            sumPoints = sumPoints + parseInt(rowData[3]["h" + i])
+        }
+        this.setState({ sumStrokes: sumStrokes, sumPoints: sumPoints })
     }
 
     checkEditFunction = (params) => {
@@ -93,28 +126,33 @@ class Scorecard extends Component {
 
     componentDidMount() {
         this.setState({ isLoading: true });
+        var firstline = null
         axios.post("/api/getscorecard", { tourId: this.props.tourId, roundNum: this.props.roundNum, playerId: this.props.playerId })
             .then(res => {
                 if (!res.data) {
                     this.setState({ createNew: true })
                     throw new Error('No scorecard found');
                 }
-                let firstline = res.data[0]
-                this.setState({ scorecardId: firstline.id, status: firstline.status, selectedCourse: firstline.courseId, roundDate: firstline.round_date, handicap: firstline.handicap });
+                firstline = res.data[0]
+
+                let date = firstline.round_date.split("T")[0]
+                console.log(firstline.course_id)
+                this.setState({ scorecardId: firstline.id, status: firstline.status, selectedCourseId: firstline.course_id, roundDate: date, handicap: firstline.handicap });
                 let holeIds = [];
-                let rowData = this.state.rowData
+                let rowData = this.state.rowData;
                 res.data.forEach(hole => {
-                    console.log(hole)
                     rowData[2]["h" + hole.hole] = hole.strokes;
                     rowData[3]["h" + hole.hole] = hole.points;
                     holeIds.push(hole.id)
                 });
 
-                this.setState({ rowData })
-                this.setState({ holeIds: holeIds })
+                this.setState({ rowData, holeIds: holeIds, isLoading: false });
+                this.fetchCourse(firstline.course_id);
 
-                this.setState({ isLoading: false })
-            }).catch(err => {
+
+            })
+
+            .catch(err => {
                 console.log(err);
                 this.setState({ isLoading: false })
             })
@@ -129,6 +167,7 @@ class Scorecard extends Component {
         let holeIds = this.state.holeIds;
         let rowData = this.state.rowData;
         let scores = [];
+        let scorecardId = this.state.scorecardId;
 
         this.setState({ isLoading: true })
         var i;
@@ -136,28 +175,46 @@ class Scorecard extends Component {
             let holeId = holeIds[i - 1]
             let score = rowData[2]["h" + i]
             let points = rowData[3]["h" + i]
-            scores.push([holeId, score, points])
+            if(this.state.createNew){
+                scores.push([holeId, score, points])
+            }else {
+                scores.push([scorecardId, holeId, score, points])
+            }
+
+
         }
-
-        axios.post("/api/addscorecard", {
-            tourId: this.props.tourId, roundNum: this.props.roundNum,
-            playerId: this.props.playerId, courseId: this.state.selectedCourseId, roundDate: this.state.roundDate,
-            handicap: this.state.handicap, status: "Saved", scores: scores
-        }).then(res => {
-            console.log(res)
-            this.setState({ isLoading: false })
-        }).catch(err => {
-            console.log(err);
-            this.setState({ isLoading: false })
-        })
-
+        if (this.state.createNew) {
+            axios.post("/api/addscorecard", {
+                tourId: this.props.tourId, roundNum: this.props.roundNum,
+                playerId: this.props.playerId, courseId: this.state.selectedCourseId, roundDate: this.state.roundDate,
+                handicap: this.state.handicap, status: "Saved", scores: scores
+            }).then(res => {
+                this.setState({ isLoading: false })
+            }).catch(err => {
+                console.log(err);
+                this.setState({ isLoading: false })
+            })
+        } else {
+         
+            axios.post("/api/updatescorecard", {
+                scorecardId: scorecardId, courseId: this.state.selectedCourseId, roundDate: this.state.roundDate,
+                handicap: this.state.handicap, status: "Saved", scores: scores
+            }).then((res => {
+                this.setState({ isLoading: false })
+            })).catch(err => {
+                console.log(err);
+                this.setState({ isLoading: false })
+            })
+        }
     }
+
+
 
     handleHandicapChange = (e, v) => {
-        this.setState({ handicap: v.value })
+        this.setState({ handicap: v.value }, () => this.calculateAllPoints());
     }
 
-    calculatePoints = () => {
+    calculateAllPoints = () => {
         let rowData = this.state.rowData;
         let handicap = this.state.handicap
         var i;
@@ -167,8 +224,10 @@ class Scorecard extends Component {
             let score = rowData[2]["h" + i]
             let points = this.calculatePointsPerHole(par, hcp, score, handicap)
             rowData[3]["h" + i] = points;
-            this.setState({ rowData: rowData })
+
         }
+
+        this.setState({ rowData: rowData }, () => this.sumScores())
     }
 
     calculatePointsPerHole = (par, hcp, score, handicap) => {
@@ -214,10 +273,10 @@ class Scorecard extends Component {
 
     }
 
-    handleCourseChange = (e, v) => {
+    fetchCourse = (courseId) => {
         this.setState({ isLoading: true })
-        this.setState({ selectedCourseId: parseInt(v.value) });
-        axios.post("/api/getholes", { courseId: v.value })
+
+        axios.post("/api/getholes", { courseId })
             .then(res => {
                 let holeIds = [];
                 let rowData = this.state.rowData
@@ -227,19 +286,34 @@ class Scorecard extends Component {
                     holeIds.push(hole.id)
                 });
 
-                this.setState({ rowData })
-                this.setState({ holeIds: holeIds })
+                this.setState({ rowData: rowData, holeIds: holeIds }, () => this.calculateAllPoints())
+
                 this.setState({ isLoading: false })
             }).catch(err => {
                 console.log(err);
                 this.setState({ isLoading: false })
             })
+
     }
 
-    onDateChange = (e) => {
 
-        this.setState({ roundDate: e })
-        console.log(e)
+    handleCourseChange = (e, v) => {
+        this.setState({ selectedCourseId: parseInt(v.value) });
+
+        this.fetchCourse(v.value);
+
+
+
+    }
+
+    onDateChange = (event, { name, value }) => {
+
+        console.log(this.state.roundDate)
+        console.log(JSON.stringify(this.state.roundDate))
+
+        this.setState({ roundDate: value })
+        console.log(value)
+
     }
 
 
@@ -284,13 +358,15 @@ class Scorecard extends Component {
                                 />
                             </Grid.Column>
                             <Grid.Column>
-                                <SemanticDatepicker
-                                    locale={ptLocale}
-                                    onDateChange={this.onDateChange}
-                                    type="basic"
 
+                                <DateInput
+                                    name="date"
+                                    placeholder="Date"
+                                    value={this.state.roundDate}
+                                    iconPosition="left"
+                                    dateFormat="YYYY-MM-DD"
+                                    onChange={this.onDateChange}
                                 />
-
                             </Grid.Column>
                         </Grid.Row>
 
@@ -305,9 +381,21 @@ class Scorecard extends Component {
                         enterMovesDown={false}>
                     </AgGridReact>
                     <br />
-                    <Button primary onClick={this.handleSave}>Save</Button>
-                    <Button secondary onClick={this.handleCancel}>Cancel</Button>
 
+                    <Grid colums={3} >
+                        <Grid.Row>
+                            <Grid.Column  >
+                                <Button primary onClick={this.handleSave}>Save</Button>
+                            </Grid.Column>
+                            <Grid.Column  >
+                                <Button secondary onClick={this.handleCancel}>Cancel</Button>
+                            </Grid.Column>
+                            <Grid.Column floated='right' width={5} >
+                                <Label>Strokes: {this.state.sumStrokes}</Label>
+                                <Label>Points: {this.state.sumPoints}</Label>
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
                 </div>
             )
         }
