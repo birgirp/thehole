@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 //import { Tab, Form, Input, Dropdown } from "semantic-ui-react";
-//import axios from "axios";
+import axios from "axios";
 
-//import { AgGridReact } from 'ag-grid-react';
+import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import Loading from "../../Loading/Loading";
@@ -15,31 +15,9 @@ class TourSummary extends Component {
         this.state = {
 
             loading: false,
-            columnDefs: [
-                { headerName: "", field: "rowname" },
-                { headerName: "H1", field: "h1", width: 40 },
-                { headerName: "H2", field: "h2", width: 40 },
-                { headerName: "H3", field: "h3", width: 40 },
-                { headerName: "H4", field: "h4", width: 40 },
-                { headerName: "H5", field: "h5", width: 40 },
-                { headerName: "H6", field: "h6", width: 40 },
-                { headerName: "H7", field: "h7", width: 40 },
-                { headerName: "H8", field: "h8", width: 40 },
-                { headerName: "H9", field: "h9", width: 40 },
-                { headerName: "H10", field: "h10", width: 40 },
-                { headerName: "H11", field: "h11", width: 40 },
-                { headerName: "H12", field: "h12", width: 40 },
-                { headerName: "H13", field: "h13", width: 40 },
-                { headerName: "H14", field: "h14", width: 40 },
-                { headerName: "H15", field: "h15", width: 40 },
-                { headerName: "H16", field: "h16", width: 40 },
-                { headerName: "H17", field: "h17", width: 40 },
-                { headerName: "H18", field: "h18", width: 40 },
-            ],
-            rowData: [
-                { rowname: "Par", h1: "", h2: "", h3: "", h4: "", h5: "", h6: "", h7: "", h8: "", h9: "", h10: "", h11: "", h12: "", h13: "", h14: "", h15: "", h16: "", h17: "", h18: "" },
-                { rowname: "Hcp", h1: "", h2: "", h3: "", h4: "", h5: "", h6: "", h7: "", h8: "", h9: "", h10: "", h11: "", h12: "", h13: "", h14: "", h15: "", h16: "", h17: "", h18: "" }
-            ],
+            columnDefs: [ ],
+            rowData: [ ],
+            scoreData: [],
             defaultColDef: {
                 resizable: false,
                 editable: this.checkEditFunction
@@ -51,16 +29,93 @@ class TourSummary extends Component {
         }
     }
 
-    
+
     checkEditFunction = (params) => {
 
         //params.node - for row identity
         //params.column - for column identity
         console.log(params.column);
-        return params.column.colId !== "rowname" // - just as sample
+        return false
     }
 
+    
+    createRowData = () => {
+        let rounds = this.props.rounds;
+        let players = this.props.players;
+        let scoreData = this.state.scoreData
+        let rowData = [];
+        players.forEach(element => {
+            let row = { player: element.full_name }
+            let sum = 0;
+            var key
+            var z
+            for (z = 1; z < rounds + 1; z++) {
+                key = 'r' + z
+                row[key] = ""
+            }
+            row['eclectic'] = ""
+         
+
+            let p_id = element.player_id
+
+            scoreData.forEach(item =>{
+                if(item.player_id === p_id){
+                    var key2 = 'r' + item.tour_round
+                    row[key2] = item.points
+                    sum = sum + parseInt(item.points)
+                }
+
+            })
+            row['sum'] = sum
+
+            rowData.push(row)
+        });
+
+        this.setState({ rowData:rowData })
+
+
+    }
+    
+    
+    
+    
+    
     componentDidMount() {
+        let tourId = this.props.tourId;
+        let rounds = this.props.rounds;
+        this.setState({isLoading: true})
+
+
+
+        let columnDefs = [{ headerName: "Player", field: "player",  width: 180 }]
+        var i;
+        for (i = 1; i < rounds + 1; i++) {
+            let col = { headerName: "Round" + i, field: "r" + i, width: 80 }
+            columnDefs.push(col)
+        }
+        let eclcol = {headerName: "Eclectic", field: "eclectic", width:80}
+        columnDefs.push(eclcol)
+        let sumcol = {headerName: "Sum", field: "sum", width:80}
+        columnDefs.push(sumcol)
+        
+        this.setState({ columnDefs:columnDefs })
+      
+        axios.post("/api/gettourscorecards", { tourId: tourId })
+            .then(res => {
+                if (!res.data) {
+                    throw new Error('No scorecards found');
+                }
+           
+                this.setState({ scoreData: res.data , isLoading: false }, () => this.createRowData());
+                this.setState({isLoading: false})
+            })
+            .catch(err => {
+                console.log(err);
+                this.setState({isLoading: false})
+            })
+
+          
+
 
     }
 
@@ -79,7 +134,13 @@ class TourSummary extends Component {
                 <div>
                     <h1> Tour Summary </h1>
                     <br />
-                 
+                    <AgGridReact
+                        columnDefs={this.state.columnDefs}
+                        defaultColDef={this.state.defaultColDef}
+                        rowData={this.state.rowData}
+                        enterMovesDownAfterEdit={false}
+                        enterMovesDown={false}>
+                    </AgGridReact>
                     <br />
 
 

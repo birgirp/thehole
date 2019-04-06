@@ -46,7 +46,7 @@ class Tour extends Component {
                 return axios.post("/api/gettourcourses", { tourId: tourId })
                     .then(res2 => {
                         this.setState({ courses: res2.data });
-                         let tabs = [{ menuItem: 'Summary', render: () => <Tab.Pane><TourSummary /></Tab.Pane> }]
+                         let tabs = [{ menuItem: 'Summary', render: () => <Tab.Pane><TourSummary players={this.state.players}  rounds={this.state.rounds} tourId={this.props.match.params.id}/></Tab.Pane> }]
 
                         var i ;
                         for (i = 1; i < rounds +1; i++) {

@@ -187,8 +187,12 @@ router.post("/api/updatescorecard", (req, res) => {
   let handicap = req.body.handicap
   let status = req.body.status
   let scores = req.body.scores
+  console.log("update scorecard...")
   dbdata.updateScoreCard( courseId,  roundDate, handicap, status, scorecardId).then((response) => {
-    return dbdata.updateScores(scores)
+      
+   return dbdata.updateScores(scores)
+
+
   }).then(res2 =>{
     console.log(res2)
     res.json(res2)
@@ -333,6 +337,26 @@ router.post("/api/getscorecard", (req, res) => {
      res.json({ error: error });
    })
 });
+router.post("/api/gettourscorecards", (req, res) => {
+
+  let tourId = req.body.tourId
+
+   dbdata.getTourScorecards(tourId).then((data) => {
+     if (data.rows.length === 0) {
+      console.log("No scorecard found")
+      res.json(null);
+      
+     }else{
+       res.json(data.rows)
+   }
+     
+   }).catch((error) => {
+     console.log(error)
+     res.status(500);
+     res.json({ error: error });
+   })
+});
+
 
 
 

@@ -28,7 +28,7 @@
     "passport-local": "*",
     "pg": "*",
     "pg-format": "^1.0.4",
-    "react-semantic-ui-datepickers": "0.0.0-semantically-released",
+    "pg-promise": "^8.6.4",
     "underscore": "^1.9.1"
   },
   "devDependencies": {

@@ -100,8 +100,8 @@ class Scorecard extends Component {
         let points = this.calculatePointsPerHole(parseInt(par), parseInt(hcp), parseInt(score), parseInt(handicap))
         rowData[3][e.column.colId] = points;
 
-        this.setState({ rowData: rowData })
-        this.sumScores()
+        this.setState({ rowData: rowData },  () => this.sumScores())
+       
         e.api.refreshCells()
     }
 
@@ -164,6 +164,8 @@ class Scorecard extends Component {
 
 
     handleSave = () => {
+
+     
         let holeIds = this.state.holeIds;
         let rowData = this.state.rowData;
         let scores = [];
@@ -173,12 +175,13 @@ class Scorecard extends Component {
         var i;
         for (i = 1; i < 19; i++) {
             let holeId = holeIds[i - 1]
+           
             let score = rowData[2]["h" + i]
             let points = rowData[3]["h" + i]
             if(this.state.createNew){
                 scores.push([holeId, score, points])
             }else {
-                scores.push([scorecardId, holeId, score, points])
+                scores.push({scorecard_id: scorecardId, hole_id: holeId, strokes: parseInt(score), points:parseInt(points)})
             }
 
 

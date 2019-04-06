@@ -1,21 +1,23 @@
 const Pool = require('pg').Pool;
-const Client = require('pg').Client;
 const format = require('pg-format');
 const dbconfig = require('./config/dbConfig');
+const pgp = require('pg-promise')({
+    capSQL: true // if you want all generated SQL capitalized
+ });
 
-
-/*const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
-});*/
 
 const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
+});
+
+/*const pool = new Pool({
     user: 'golfapp',
     host: 'localhost',
     database: 'hole2',
     password: 'golf',
     port: 5432,
-})
+})*/
 
 /*const pool = new Pool({
     user: dbconfig.dbconnection.user,
@@ -263,7 +265,7 @@ module.exports = {
     
     updateScoreCard: function (courseId,  roundDate , handicap, status, scorecardId ) {
         return new Promise((resolve, reject) => {
-            pool.query('UPDATE scorecards set  course_id = $1,  round_date = $2, handicap = $3, status = $4 where scorecard_id = $5', [ courseId,  roundDate , handicap, status, scorecardId]).then((results) => {
+            pool.query('UPDATE scorecards set  course_id = $1,  round_date = $2, handicap = $3, status = $4 where id = $5', [ courseId,  roundDate , handicap, status, scorecardId]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")
@@ -285,12 +287,21 @@ module.exports = {
         })
 
     },
-    updateScores: function (scores) {
-        //holes = [[3, 1, 5, 7],.., [3, 18, 3, 1] ]
-        console.log("inserting scores...")
-        let query = format('INSERT INTO hole_scores (hole_id, strokes, points, scorecard_id) values %L', scores);
+    updateScores: function (scores ) {
+        //     scores.push({scorecardId: scorecardId, holeId: holeId, score: score, points:points})
+        // const dataMulti = [{id: 1, val: 123, msg: 'hello'}, {id: 2, val: 456, msg: 'world!'}];
+        console.log("Updating scores...")
+
+      q=  pgp.helpers.update(scores, ['?scorecard_id', '?hole_id', 'strokes', 'points'], 'hole_scores') + ' WHERE t.scorecard_id = v.scorecard_id and v.hole_id = t.hole_id';
+//=> UPDATE "my-table" AS t SET "val"=v."val","msg"=v."msg" FROM (VALUES(1,123,'hello'),(2,456,'world!'))
+//   AS v("id","val","msg") WHERE v.id = t.id
+
+console.log(q)
+
+
+      //  let query = format('UPDATE hole_scores set ', scores);
         return new Promise((resolve, reject) => {
-            pool.query(query).then((results) => {
+            pool.query(q).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")
@@ -310,6 +321,15 @@ module.exports = {
             })
         })
     },
-
+    getTourScorecards: function (tourId) {
+        return new Promise((resolve, reject) => {
+            pool.query('select player_id, tour_round, strokes, points  from v_scorecards_sum where tour_id =  $1;', [tourId]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
 }
 
