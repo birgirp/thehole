@@ -53,7 +53,7 @@ class TourSummary extends Component {
                 key = 'r' + z
                 row[key] = ""
             }
-            row['eclectic'] = ""
+          //  row['eclectic'] = ""
          
 
             let p_id = element.player_id
@@ -93,8 +93,7 @@ class TourSummary extends Component {
             let col = { headerName: "Round" + i, field: "r" + i, width: 80 }
             columnDefs.push(col)
         }
-        let eclcol = {headerName: "Eclectic", field: "eclectic", width:80}
-        columnDefs.push(eclcol)
+
         let sumcol = {headerName: "Sum", field: "sum", width:80}
         columnDefs.push(sumcol)
         

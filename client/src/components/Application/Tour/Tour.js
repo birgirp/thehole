@@ -27,7 +27,6 @@ class Tour extends Component {
     componentDidMount() {
         this.setState({ isLoading: true })
         const tourId = this.props.match.params.id
-        console.log(tourId)
         var rounds;
         this.setState({ id: tourId })
         //  this.setState({ id: t.id, name: t.name, status: t.status, rounds: parseInt(t.rounds), isLoading: true });
@@ -54,7 +53,7 @@ class Tour extends Component {
                             let r = { menuItem: 'Round ' + i, render: () => <Tab.Pane><TourRound roundNum={x} playerId={this.props.userId} tourId={this.props.match.params.id} courses={res2.data}/></Tab.Pane> }
                             tabs.push(r)
                         }
-                        tabs.push({ menuItem: 'Eclectic', render: () => <Tab.Pane><TourEclectic /></Tab.Pane> })
+                        tabs.push({ menuItem: 'Eclectic', render: () => <Tab.Pane><TourEclectic  players={this.state.players}  tourId={this.props.match.params.id} courses={res2.data}/></Tab.Pane> })
 
                         this.setState({tabs: tabs})
 

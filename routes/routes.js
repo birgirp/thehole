@@ -164,12 +164,12 @@ router.post("/api/addscorecard", (req, res) => {
   dbdata.insertScoreCard(tourId, roundNum, courseId, playerId, roundDate, handicap, status).then((response) => {
     let scorecardId = response.rows[0].id
     console.log(JSON.stringify(scorecardId))
- 
-      scores.forEach(score => {
+
+    scores.forEach(score => {
       score.push(scorecardId)
-      });
-      return dbdata.insertScores(scores)
-  }).then(res2 =>{
+    });
+    return dbdata.insertScores(scores)
+  }).then(res2 => {
     console.log(res2)
     res.json(res2)
   }).catch((error) => {
@@ -188,12 +188,12 @@ router.post("/api/updatescorecard", (req, res) => {
   let status = req.body.status
   let scores = req.body.scores
   console.log("update scorecard...")
-  dbdata.updateScoreCard( courseId,  roundDate, handicap, status, scorecardId).then((response) => {
-      
-   return dbdata.updateScores(scores)
+  dbdata.updateScoreCard(courseId, roundDate, handicap, status, scorecardId).then((response) => {
+
+    return dbdata.updateScores(scores)
 
 
-  }).then(res2 =>{
+  }).then(res2 => {
     console.log(res2)
     res.json(res2)
   }).catch((error) => {
@@ -321,42 +321,79 @@ router.post("/api/getscorecard", (req, res) => {
   let roundNum = req.body.roundNum
   let playerId = req.body.playerId
 
-   dbdata.getScorecardScores(tourId, roundNum,playerId).then((data) => {
-     if (data.rows.length === 0) {
+  dbdata.getScorecardScores(tourId, roundNum, playerId).then((data) => {
+    if (data.rows.length === 0) {
       console.log("No scorecard found")
       res.json(null);
-      
-     }else{
-       res.json(data.rows)
-    
+
+    } else {
+      res.json(data.rows)
+
     }
-     
-   }).catch((error) => {
-     console.log(error)
-     res.status(500);
-     res.json({ error: error });
-   })
+
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
 });
 router.post("/api/gettourscorecards", (req, res) => {
 
   let tourId = req.body.tourId
 
-   dbdata.getTourScorecards(tourId).then((data) => {
-     if (data.rows.length === 0) {
+  dbdata.getTourScorecards(tourId).then((data) => {
+    if (data.rows.length === 0) {
       console.log("No scorecard found")
       res.json(null);
-      
-     }else{
-       res.json(data.rows)
-   }
-     
-   }).catch((error) => {
-     console.log(error)
-     res.status(500);
-     res.json({ error: error });
-   })
+
+    } else {
+      res.json(data.rows)
+    }
+
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
 });
 
+router.post("/api/geteclectic", (req, res) => {
+
+  let tourId = req.body.tourId
+  dbdata.getTourEclectic(tourId).then((data) => {
+    if (data.rows.length === 0) {
+      console.log("No score found")
+      res.json(null);
+    } else {
+      res.json(data.rows)
+    }
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
+router.post("/api/getroundscorecards", (req, res) => {
+
+  let tourId = req.body.tourId
+  let round = req.body.round
+
+  dbdata.getRoundScorecards(tourId, round).then((data) => {
+    if (data.rows.length === 0) {
+      console.log("No scorecards found")
+      res.json(null);
+
+    } else {
+      res.json(data.rows)
+    }
+
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
 
 
 
