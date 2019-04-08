@@ -189,7 +189,6 @@ class Scorecard extends Component {
 
     handleSave = () => {
         let submitting = this.state.submitting
-        console.log(submitting)
         if ((submitting && this.state.status === 'Submitted') || this.state.status === 'Saved' ) {
             if (!this.state.selectedCourseId) {
                 this.setState({ isMissingCourse: true })
@@ -357,6 +356,7 @@ class Scorecard extends Component {
 
     render() {
         let isSubmitted = this.state.status === 'Submitted' ? true : false
+        console.log("ddf" + isSubmitted)
         if (this.state.isLoading) {
             return (<Loading />)
         } else {
@@ -424,7 +424,7 @@ class Scorecard extends Component {
                     <Grid colums={3} >
                         <Grid.Row>
                             <Grid.Column  >
-                                <Button primary onClick={this.handleSave}>Save</Button>
+                               {isSubmitted && (<Button primary onClick={this.handleSave}>Save</Button>)}
 
                             </Grid.Column>
                             <Grid.Column  >

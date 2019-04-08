@@ -82,13 +82,9 @@ class TourSummary extends Component {
     
     componentDidMount() {
 
-        console.log("mounting...")
         let tourId = this.props.tourId;
         let rounds = this.props.rounds;
         this.setState({isLoading: true})
-
-
-
         let columnDefs = [{ headerName: "Player", field: "player",  width: 180 }]
         var i;
         for (i = 1; i < rounds + 1; i++) {

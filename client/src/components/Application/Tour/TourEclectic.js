@@ -22,7 +22,7 @@ class TourEclectic extends Component {
             isLoading: false,
 
             columnDefs: [
-                { headerName: "Player", field: "player" },
+                { headerName: "Player", field: "player", width: 140},
                 { headerName: "1", field: "h1", width: 40 },
                 { headerName: "2", field: "h2", width: 40 },
                 { headerName: "3", field: "h3", width: 40 },

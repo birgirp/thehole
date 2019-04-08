@@ -21,8 +21,8 @@ class TourRound extends Component {
             selectedRound: null,
 
             columnDefs: [
-                { headerName: "Player", field: "full_name", width: 70 },
-                { headerName: "Course", field: "course_name", width: 140 },
+                { headerName: "Player", field: "full_name", width: 140 },
+                { headerName: "Course", field: "course_name", width: 160 },
                 { headerName: "Hcp", field: "handicap", width: 40 },
                 { headerName: "1", field: "h1", width: 30 },
                 { headerName: "2", field: "h2", width: 30 },
