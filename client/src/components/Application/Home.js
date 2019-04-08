@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { Table } from "semantic-ui-react";
-//import { withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Loading from "../Loading/Loading";
 
 class Home extends Component {
@@ -59,7 +59,7 @@ class Home extends Component {
               {data.map((tour) => {
                 return (
                   <Table.Row key={tour.id}>
-                    <Table.Cell ><a href={`/tour/${tour.id}`}>{tour.tour_name}</a></Table.Cell>
+                    <Table.Cell ><Link to={`/tour/${tour.id}`}>{tour.tour_name}</Link></Table.Cell>
                     <Table.Cell >{tour.tour_status}</Table.Cell>
                   </Table.Row>
                 );
