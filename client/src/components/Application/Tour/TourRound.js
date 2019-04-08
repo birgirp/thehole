@@ -14,7 +14,6 @@ class TourRound extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
             players: [],
             courses: [],
             isLoading: false,
@@ -114,10 +113,10 @@ class TourRound extends Component {
 
             return (
                 <div>
-                    <h1>{this.props.roundNum} - {this.props.playerId} -  {this.props.tourId} </h1>
-                    <br />
+
                     <Button primary onClick={this.handleSubmit}>Open Scorecard</Button>
                     <br />
+                    <h2>Scorecards</h2>
                     <AgGridReact
                         columnDefs={this.state.columnDefs}
                         defaultColDef={this.state.defaultColDef}
@@ -131,7 +130,7 @@ class TourRound extends Component {
                         closeOnDimmerClick={false}>
                         <Modal.Header>Scorecard - round {this.props.roundNum}</Modal.Header>
                         <Modal.Content >
-                            {<Scorecard closeModal={this.closeScorecard} roundNum={this.props.roundNum} playerId={this.props.playerId} tourId={this.props.tourId} courses={this.props.courses} />}
+                            {<Scorecard fetchScorecards={this.fetchScorecards}  closeModal={this.closeScorecard} roundNum={this.props.roundNum} playerId={this.props.playerId} tourId={this.props.tourId} courses={this.props.courses} />}
                         </Modal.Content>
                     </Modal>
 

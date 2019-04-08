@@ -52,6 +52,7 @@ class Scorecard extends Component {
             sumPoints: 0,
             isMissingCourse: false,
             isIncomplete: false,
+            submitting: false,
             columnDefs: [
                 { headerName: "", field: "rowname" },
                 { headerName: "1", field: "h1", width: 40 },
@@ -90,15 +91,13 @@ class Scorecard extends Component {
     }
 
     onCellValueChanged = (e) => {
-
+        let isSubmitted = this.state.status === 'Submitted' ? true : false
         let rowData = this.state.rowData;
-        if (!Number.isInteger(parseInt(e.newValue))) {
+        if (!Number.isInteger(parseInt(e.newValue)) || isSubmitted) {
             rowData[2][e.column.colId] = e.oldValue;
-             this.setState({ rowData: rowData })
+            this.setState({ rowData: rowData })
         } else {
             this.setState({ scoresTouched: true })
-
-            
             let par = rowData[0][e.column.colId]
             let hcp = rowData[1][e.column.colId]
             let handicap = this.state.handicap
@@ -117,10 +116,10 @@ class Scorecard extends Component {
         let rowData = this.state.rowData;
         var i
         for (i = 1; i < 19; i++) {
-            if(rowData[2]["h" + i] !== ""){
-            sumStrokes = sumStrokes + parseInt(rowData[2]["h" + i])
-            sumPoints = sumPoints + parseInt(rowData[3]["h" + i])
-        }
+            if (rowData[2]["h" + i] !== "") {
+                sumStrokes = sumStrokes + parseInt(rowData[2]["h" + i])
+                sumPoints = sumPoints + parseInt(rowData[3]["h" + i])
+            }
         }
         this.setState({ sumStrokes: sumStrokes, sumPoints: sumPoints })
     }
@@ -155,11 +154,7 @@ class Scorecard extends Component {
 
                 this.setState({ rowData, holeIds: holeIds, isLoading: false });
                 this.fetchCourse(firstline.course_id);
-
-
-            })
-
-            .catch(err => {
+            }).catch(err => {
                 console.log(err);
                 this.setState({ isLoading: false })
             })
@@ -169,89 +164,92 @@ class Scorecard extends Component {
         this.props.closeModal();
     }
 
-    handleSubmit = () =>{
-        let rowData = this.state.rowData
-        let incomplete = false
-        for(var i = 0; i<18; i++){
-          let score =  rowData[2]["h" + i]
-          if (score ===0 || score === ""){
-              incomplete = true
-          }
+    handleSubmit = () => {
+        let status = this.state.status;
+        if (status === 'Submitted') {
+            this.setState({ status: "Saved" })
+        } else {
+            let rowData = this.state.rowData
+            let incomplete = false
+            for (var i = 0; i < 18; i++) {
+                let score = rowData[2]["h" + i]
+                if (score === 0 || score === "") {
+                    incomplete = true
+                }
+            }
+            if (incomplete) {
+                this.setState({ isIncomplete: true })
+                console.log(incomplete)
+            } else {
+                this.setState({ status: "Submitted", submitting: true }, () => this.handleSave(true))
+            }
         }
-        if(incomplete){
-            console.log("dfdf " + incomplete)
-            this.setState({isIncomplete: true})
-            console.log(incomplete)
-        }else{
-
-        this.setState({status: "Submitted"}, () => this.handleSave())
-        
-    }
-
     }
 
 
     handleSave = () => {
-        if(!this.state.selectedCourseId){
-            this.setState({isMissingCourse: true})
-            return;
-        }
-
-        let holeIds = this.state.holeIds;
-        let rowData = this.state.rowData;
-        let scores = [];
-        let scorecardId = this.state.scorecardId;
-
-        this.setState({ isLoading: true })
-        var i;
-        let score = 0
-        let points = 0
-        for (i = 1; i < 19; i++) {
-            let holeId = holeIds[i - 1]
-            if(rowData[2]["h" + i] !== ""){
-            score = rowData[2]["h" + i]
-            points = rowData[3]["h" + i]
-            }else {
-                score = 0
-                points = 0
+        let submitting = this.state.submitting
+        console.log(submitting)
+        if ((submitting && this.state.status === 'Submitted') || this.state.status === 'Saved' ) {
+            if (!this.state.selectedCourseId) {
+                this.setState({ isMissingCourse: true })
+                return;
+            }
+            let holeIds = this.state.holeIds;
+            let rowData = this.state.rowData;
+            let scores = [];
+            let scorecardId = this.state.scorecardId;
+            this.setState({ isLoading: true })
+            var i;
+            let score = 0
+            let points = 0
+            for (i = 1; i < 19; i++) {
+                let holeId = holeIds[i - 1]
+                if (rowData[2]["h" + i] !== "") {
+                    score = rowData[2]["h" + i]
+                    points = rowData[3]["h" + i]
+                } else {
+                    score = 0
+                    points = 0
+                }
+                if (this.state.createNew) {
+                    scores.push([holeId, score, points])
+                } else {
+                    scores.push({ scorecard_id: scorecardId, hole_id: holeId, strokes: parseInt(score), points: parseInt(points) })
+                }
             }
             if (this.state.createNew) {
-                scores.push([holeId, score, points])
+                axios.post("/api/addscorecard", {
+                    tourId: this.props.tourId, roundNum: this.props.roundNum,
+                    playerId: this.props.playerId, courseId: this.state.selectedCourseId, roundDate: this.state.roundDate,
+                    handicap: this.state.handicap, status: this.state.status, scores: scores
+                }).then(res => {
+                    this.setState({ isLoading: false })
+                    this.props.fetchScorecards()
+                    this.props.closeModal();
+                }).catch(err => {
+                    console.log(err);
+                    this.setState({ isLoading: false })
+                })
             } else {
-                scores.push({ scorecard_id: scorecardId, hole_id: holeId, strokes: parseInt(score), points: parseInt(points) })
+
+                axios.post("/api/updatescorecard", {
+                    scorecardId: scorecardId, courseId: this.state.selectedCourseId, roundDate: this.state.roundDate,
+                    handicap: this.state.handicap, status: this.state.status, scores: scores
+                }).then((res => {
+                    this.setState({ isLoading: false })
+                    this.props.fetchScorecards()
+                    this.props.closeModal();
+                })).catch(err => {
+                    console.log(err);
+                    this.setState({ isLoading: false })
+
+                })
             }
-
-
-        }
-        if (this.state.createNew) {
-            axios.post("/api/addscorecard", {
-                tourId: this.props.tourId, roundNum: this.props.roundNum,
-                playerId: this.props.playerId, courseId: this.state.selectedCourseId, roundDate: this.state.roundDate,
-                handicap: this.state.handicap, status: this.state.status, scores: scores
-            }).then(res => {
-                this.setState({ isLoading: false })
-                this.props.closeModal();
-            }).catch(err => {
-                console.log(err);
-                this.setState({ isLoading: false })
-            })
         } else {
 
-            axios.post("/api/updatescorecard", {
-                scorecardId: scorecardId, courseId: this.state.selectedCourseId, roundDate: this.state.roundDate,
-                handicap: this.state.handicap, status: this.state.status, scores: scores
-            }).then((res => {
-                this.setState({ isLoading: false })
-                this.props.closeModal();
-            })).catch(err => {
-                console.log(err);
-                this.setState({ isLoading: false })
-               
-            })
         }
     }
-
-
 
     handleHandicapChange = (e, v) => {
         this.setState({ handicap: v.value }, () => this.calculateAllPoints());
@@ -265,9 +263,9 @@ class Scorecard extends Component {
             let par = rowData[0]["h" + i]
             let hcp = rowData[1]["h" + i]
             let score = rowData[2]["h" + i]
-            if(score !== "" && score!==0) {
-            let points = this.calculatePointsPerHole(par, hcp, score, handicap)
-            rowData[3]["h" + i] = points;
+            if (score !== "" && score !== 0) {
+                let points = this.calculatePointsPerHole(par, hcp, score, handicap)
+                rowData[3]["h" + i] = points;
             }
 
         }
@@ -353,12 +351,12 @@ class Scorecard extends Component {
 
     onDateChange = (event, { name, value }) => {
         this.setState({ roundDate: value })
-     }
+    }
 
 
 
     render() {
-
+        let isSubmitted = this.state.status === 'Submitted' ? true : false
         if (this.state.isLoading) {
             return (<Loading />)
         } else {
@@ -369,6 +367,7 @@ class Scorecard extends Component {
 
             return (
                 <div>
+                    <span>{this.state.status}</span>
                     <Grid colums={3} >
                         <Grid.Row>
                             <Grid.Column width={4}>
@@ -395,7 +394,7 @@ class Scorecard extends Component {
                                     options={cselection}
                                     onChange={this.handleCourseChange}
                                 />
-                                 {this.state.isMissingCourse && (<span >Select course!</span>)}
+                                {this.state.isMissingCourse && (<span >Select course!</span>)}
                             </Grid.Column>
                             <Grid.Column>
 
@@ -429,17 +428,17 @@ class Scorecard extends Component {
 
                             </Grid.Column>
                             <Grid.Column  >
-                                <Button   secondary onClick={this.handleCancel}>Cancel</Button>
+                                <Button secondary onClick={this.handleCancel}>Cancel</Button>
                             </Grid.Column>
                             <Grid.Column floated='right' width={5} >
-                                <Label>Strokes: {isNaN(this.state.sumStrokes)?0:this.state.sumStrokes}</Label>
-                                <Label>Points:  {isNaN(this.state.sumPoints)?0:this.state.sumPoints}</Label>
+                                <Label>Strokes: {isNaN(this.state.sumStrokes) ? 0 : this.state.sumStrokes}</Label>
+                                <Label>Points:  {isNaN(this.state.sumPoints) ? 0 : this.state.sumPoints}</Label>
                             </Grid.Column>
                         </Grid.Row>
                         <Grid.Row>
                             <Grid.Column>
-                            <br />
-                                <Button primary onClick={this.handleSubmit}>Submit</Button>
+                                <br />
+                                <Button primary onClick={this.handleSubmit}>{isSubmitted ? "UnSubmit" : "Submit"}</Button>
                                 {this.state.isIncomplete && (<span >Fill in score for all holes!</span>)}
 
                             </Grid.Column>
