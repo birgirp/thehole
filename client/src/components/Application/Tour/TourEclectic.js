@@ -76,7 +76,7 @@ class TourEclectic extends Component {
     populateGrid = () => {
         let rowData = []
         let eclecticScores = this.state.eclecticScores
-               //  console.log(eclecticScores);
+                 console.log(eclecticScores);
         let p = eclecticScores.length / 18
        // console.log(p)
         var key
@@ -89,12 +89,14 @@ class TourEclectic extends Component {
            
             let row = { player: full_name, sum: 0 }
             for (s = 0; s < 18; s++) {
-               // console.log(k + s)
-                //console.log(eclecticScores[k + s])
+
               let item = eclecticScores[k + s]
                 key = 'h' + item.hole
                 row[key] = item.eclectic
                 sum = sum + parseInt(item.eclectic)
+           // console.log("key " + key)
+           // console.log("item.eclectic " + item.eclectic)
+
             }
             row.sum = sum;
             rowData.push(row)

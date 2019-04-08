@@ -58,36 +58,36 @@ class TourRound extends Component {
     componentDidUpdate = () => {
         if (this.props.roundNum !== this.state.selectedRound) {
             this.fetchScorecards();
-            this.setState({selectedRound: this.props.roundNum})
+            this.setState({ selectedRound: this.props.roundNum })
         }
     }
 
 
     componentDidMount() {
-        this.setState({selectedRound: this.props.roundNum});
+        this.setState({ selectedRound: this.props.roundNum });
         this.fetchScorecards();
 
     }
 
-
     fetchScorecards = () => {
-      
-        if(!this.state.isLoading){
+        if (!this.state.isLoading) {
             this.setState({ isLoading: true })
         }
-     
         axios.post("/api/getroundscorecards", { tourId: this.props.tourId, round: this.props.roundNum })
             .then(res => {
                 if (!res.data) {
+                    let rowData = [];
+                    this.setState({ rowData: rowData })
                     throw new Error('No data found');
                 }
                 this.setState({ rowData: res.data })
-                if(this.state.isLoading){
+                if (this.state.isLoading) {
+
                     this.setState({ isLoading: false })
                 }
             }).catch(err => {
                 console.log(err);
-                if(this.state.isLoading){
+                if (this.state.isLoading) {
                     this.setState({ isLoading: false })
                 }
             })
@@ -103,17 +103,12 @@ class TourRound extends Component {
         this.setState({ isOpenScorecard: true })
     }
 
-
-
     render() {
-
         if (this.state.isLoading) {
             return (<Loading />)
         } else {
-
             return (
                 <div>
-
                     <Button primary onClick={this.handleSubmit}>Open Scorecard</Button>
                     <br />
                     <h2>Scorecards</h2>
@@ -124,20 +119,15 @@ class TourRound extends Component {
                         enterMovesDownAfterEdit={false}
                         enterMovesDown={false}>
                     </AgGridReact>
-
                     <br />
                     <Modal size="fullscreen" open={this.state.isOpenScorecard} onClose={this.closeScorecard}
                         closeOnDimmerClick={false}>
                         <Modal.Header>Scorecard - round {this.props.roundNum}</Modal.Header>
                         <Modal.Content >
-                            {<Scorecard fetchScorecards={this.fetchScorecards}  closeModal={this.closeScorecard} roundNum={this.props.roundNum} playerId={this.props.playerId} tourId={this.props.tourId} courses={this.props.courses} />}
+                            {<Scorecard fetchScorecards={this.fetchScorecards} closeModal={this.closeScorecard} roundNum={this.props.roundNum} playerId={this.props.playerId} tourId={this.props.tourId} courses={this.props.courses} />}
                         </Modal.Content>
                     </Modal>
-
-
                 </div>
-
-
             )
         }
     }

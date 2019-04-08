@@ -334,7 +334,7 @@ console.log(q)
 
     getTourEclectic: function (tourId) {
         return new Promise((resolve, reject) => {
-            pool.query('select player_id, full_name, hole, eclectic  from v_eclectic where tour_id =  $1;', [tourId]).then((results) => {
+            pool.query('select player_id, full_name, hole, eclectic  from v_eclectic where tour_id =  $1 order by full_name, hole;', [tourId]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")
