@@ -424,7 +424,7 @@ class Scorecard extends Component {
                     <Grid colums={3} >
                         <Grid.Row>
                             <Grid.Column  >
-                               {isSubmitted && (<Button primary onClick={this.handleSave}>Save</Button>)}
+                               {!isSubmitted && (<Button primary onClick={this.handleSave}>Save</Button>)}
 
                             </Grid.Column>
                             <Grid.Column  >
