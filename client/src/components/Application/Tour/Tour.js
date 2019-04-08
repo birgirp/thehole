@@ -24,6 +24,11 @@ class Tour extends Component {
         }
     }
 
+    componentWillReceiveProps = () =>{
+
+        console.log("got props...")
+    }
+
     componentDidMount() {
         this.setState({ isLoading: true })
         const tourId = this.props.match.params.id

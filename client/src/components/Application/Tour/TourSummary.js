@@ -81,6 +81,8 @@ class TourSummary extends Component {
     
     
     componentDidMount() {
+
+        console.log("mounting...")
         let tourId = this.props.tourId;
         let rounds = this.props.rounds;
         this.setState({isLoading: true})

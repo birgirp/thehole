@@ -1,6 +1,9 @@
-#mainView {
-    padding: 30px 150px;
+@media (min-width: 800px) {
+    #mainView {
+        padding: 30px 150px;
+    }
 }
+
 
 .ui.inverted.segment {
     border-radius: 0px !important;
