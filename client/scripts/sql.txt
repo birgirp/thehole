@@ -1,56 +1,96 @@
 
-
-  CREATE TABLE "GOLFAPP"."USERS" 
-   (	"NAME" VARCHAR2(500 BYTE), 
-	"EMAIL" VARCHAR2(500 BYTE), 
-	"HANDICAP" NUMBER, 
-	"PASSWORD" VARCHAR2(1000 BYTE), 
-	"ISADMIN" NUMBER(*,0) DEFAULT 0, 
-	"ID" NUMBER(*,0) DEFAULT "GOLFAPP"."USERS_SEQ"."NEXTVAL", 
-	 CONSTRAINT "USERS_PK" PRIMARY KEY ("ID")
-  USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
-  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
-  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
-  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
-  TABLESPACE "USERS"  ENABLE
-   ) SEGMENT CREATION IMMEDIATE 
-  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
- NOCOMPRESS LOGGING
-  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
-  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
-  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
-  TABLESPACE "USERS" ;
+ECLECTIC
+ SELECT s.tour_id,
+    s.player_id,
+    u.full_name,
+    h.hole,
+    min(hs.strokes - h.par) AS eclectic
+   FROM hole_scores hs
+     JOIN holes h ON h.id = hs.hole_id
+     JOIN scorecards s ON s.id = hs.scorecard_id
+     JOIN users u ON s.player_id = u.id
+  WHERE s.status = 'Submitted'::text
+  GROUP BY s.player_id, h.hole, u.full_name, s.tour_id;
 
 
+//ROUND
+   SELECT s.id,
+    u.full_name,
+    c.course_name,
+    s.handicap,
+    s.tour_id,
+    s.tour_round,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 1) AS h1,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 2) AS h2,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 3) AS h3,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 4) AS h4,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 5) AS h5,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 6) AS h6,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 7) AS h7,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 8) AS h8,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 9) AS h9,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 10) AS h10,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 11) AS h11,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 12) AS h12,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 13) AS h13,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 14) AS h14,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 15) AS h15,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 16) AS h16,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 17) AS h17,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 18) AS h18,
+    sum(hs.strokes) AS strokes,
+    sum(hs.points) AS points
+   FROM scorecards s
+     JOIN hole_scores hs ON hs.scorecard_id = s.id
+     JOIN users u ON u.id = s.player_id
+     JOIN courses c ON c.id = s.course_id
+  GROUP BY s.id, u.full_name, c.course_name
+  ORDER BY s.tour_round, u.full_name;
 
-insert into users (name, email, handicap, password, isadmin) values ('Birgir Pálsson', 'birgir.palsson@gmail.com', 13.5, 'birgir', 1);
-
--- Table: public.holes
-
--- DROP TABLE public.holes;
-
-CREATE TABLE public.holes (hole integer NOT NULL, par integer NOT NULL,handicap integer NOT NULL,course_id integer NOT NULL);
-    
-    
-    
-    CONSTRAINT holes_course_id_fkey FOREIGN KEY (course_id)
-        REFERENCES public.courses (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
-
-ALTER TABLE public.holes
-    OWNER to golfapp;
-
--- Index: fk_course_id
-
--- DROP INDEX public.fk_course_id;
-
-CREATE INDEX fk_course_id
-    ON public.holes USING btree
-    (course_id)
-    TABLESPACE pg_default;
+//SUM
+   SELECT s.player_id,
+    s.tour_id,
+    s.tour_round,
+    sum(hs.strokes) AS strokes,
+    sum(hs.points) AS points
+   FROM scorecards s
+     JOIN hole_scores hs ON hs.scorecard_id = s.id
+  WHERE s.status = 'Submitted'::text
+  GROUP BY s.id
+  ORDER BY s.player_id;

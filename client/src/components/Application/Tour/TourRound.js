@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Modal, Button } from "semantic-ui-react";
+import 'semantic-ui-css/semantic.min.css';
 import axios from "axios";
 import Loading from "../../Loading/Loading";
 import Scorecard from "./Scorecard";

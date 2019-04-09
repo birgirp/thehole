@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Button, Grid, Input, Dropdown, Label } from "semantic-ui-react";
+import 'semantic-ui-css/semantic.min.css';
 import axios from "axios";
 import Loading from "../../Loading/Loading";
 import { DateInput } from 'semantic-ui-calendar-react';
