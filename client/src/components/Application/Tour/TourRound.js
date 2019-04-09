@@ -8,6 +8,7 @@ import Scorecard from "./Scorecard";
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import "./TourRoundModal.css";
 
 class TourRound extends Component {
 
@@ -47,6 +48,8 @@ class TourRound extends Component {
                 { headerName: "Points", field: "points", width: 60 }
             ],
             rowData: [],
+            overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
+            overlayNoRowsTemplate: "<span> </span>",
             defaultColDef: {
                 resizable: false,
                 editable: false
@@ -118,10 +121,13 @@ class TourRound extends Component {
                         defaultColDef={this.state.defaultColDef}
                         rowData={this.state.rowData}
                         enterMovesDownAfterEdit={false}
-                        enterMovesDown={false}>
+                        enterMovesDown={false}
+                        overlayLoadingTemplate={this.state.overlayLoadingTemplate}
+                        overlayNoRowsTemplate={this.state.overlayNoRowsTemplate}>
+                        
                     </AgGridReact>
                     <br />
-                    <Modal size="fullscreen" open={this.state.isOpenScorecard} onClose={this.closeScorecard}
+                    <Modal id="tourRoundModal" size="fullscreen" open={this.state.isOpenScorecard} onClose={this.closeScorecard}
                         closeOnDimmerClick={false}>
                         <Modal.Header>Scorecard - round {this.props.roundNum}</Modal.Header>
                         <Modal.Content >

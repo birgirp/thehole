@@ -17,6 +17,8 @@ class TourSummary extends Component {
             loading: false,
             columnDefs: [ ],
             rowData: [ ],
+            overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
+            overlayNoRowsTemplate: "<span> </span>",
             scoreData: [],
             defaultColDef: {
                 resizable: false,
@@ -136,7 +138,9 @@ class TourSummary extends Component {
                         defaultColDef={this.state.defaultColDef}
                         rowData={this.state.rowData}
                         enterMovesDownAfterEdit={false}
-                        enterMovesDown={false}>
+                        enterMovesDown={false}
+                        overlayLoadingTemplate={this.state.overlayLoadingTemplate}
+                        overlayNoRowsTemplate={this.state.overlayNoRowsTemplate}>
                     </AgGridReact>
                     <br />
 

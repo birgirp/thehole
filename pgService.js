@@ -11,22 +11,22 @@ const pgp = require('pg-promise')({
   ssl: true
 });
 */
-/*const pool = new Pool({
+const pool = new Pool({
     user: 'golfapp',
     host: 'localhost',
     database: 'hole2',
     password: 'golf',
     port: 5432,
-})*/
+})
 
-const pool = new Pool({
+/*const pool = new Pool({
     user: dbconfig.dbconnection.user,
     host: dbconfig.dbconnection.host,
     database: dbconfig.dbconnection.database,
     password: dbconfig.dbconnection.password,
     port: dbconfig.dbconnection.port,
     ssl: true
-})
+})*/
 
 module.exports = {
 
@@ -273,6 +273,18 @@ module.exports = {
             })
         })
     },
+
+        
+    updateScoreCardStatus: function ( status, scorecardId ) {
+        return new Promise((resolve, reject) => {
+            pool.query('UPDATE scorecards set status = $1 where id = $2', [ status, scorecardId]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
     insertScores: function (scores) {
         //holes = [[3, 1, 5, 7],.., [3, 18, 3, 1] ]
         console.log("inserting scores...")
@@ -295,9 +307,6 @@ module.exports = {
       q=  pgp.helpers.update(scores, ['?scorecard_id', '?hole_id', 'strokes', 'points'], 'hole_scores') + ' WHERE t.scorecard_id = v.scorecard_id and v.hole_id = t.hole_id';
 //=> UPDATE "my-table" AS t SET "val"=v."val","msg"=v."msg" FROM (VALUES(1,123,'hello'),(2,456,'world!'))
 //   AS v("id","val","msg") WHERE v.id = t.id
-
-console.log(q)
-
 
       //  let query = format('UPDATE hole_scores set ', scores);
         return new Promise((resolve, reject) => {
@@ -353,9 +362,6 @@ console.log(q)
                     reject(error)
                 })
             })
-
-   
-
     },
 }
 

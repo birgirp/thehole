@@ -20,7 +20,8 @@ class TourEclectic extends Component {
             players: [],
             courses: [],
             isLoading: false,
-
+            overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
+            overlayNoRowsTemplate: "<span> </span>",
             columnDefs: [
                 { headerName: "Player", field: "player", width: 140},
                 { headerName: "1", field: "h1", width: 40 },
@@ -128,7 +129,9 @@ class TourEclectic extends Component {
                         defaultColDef={this.state.defaultColDef}
                         rowData={this.state.rowData}
                         enterMovesDownAfterEdit={false}
-                        enterMovesDown={false}>
+                        enterMovesDown={false}
+                        overlayLoadingTemplate={this.state.overlayLoadingTemplate}
+                        overlayNoRowsTemplate={this.state.overlayNoRowsTemplate}>
                     </AgGridReact>
                     <br />
 

@@ -203,6 +203,23 @@ router.post("/api/updatescorecard", (req, res) => {
   })
 });
 
+router.post("/api/updatescorecardstatus", (req, res) => {
+  let scorecardId = req.body.scorecardId
+  let status = req.body.status
+
+   console.log("update scorecard status...   " + status + " ddfd" )
+   console.log(JSON.stringify(req.body))
+  dbdata.updateScoreCardStatus( status, scorecardId).then((response) => {
+    console.log(response)
+    res.json('ok')
+  }).catch((error) => {
+    console.log(error);
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
+
 
 router.post("/api/addtour", (req, res) => {
   const players = req.body.players;
