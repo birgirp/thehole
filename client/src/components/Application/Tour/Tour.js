@@ -5,7 +5,7 @@ import Loading from "../../Loading/Loading";
 import TourSummary from "./TourSummary";
 import TourEclectic from "./TourEclectic";
 import TourRound from "./TourRound";
-
+import "./tour.css";
 class Tour extends Component {
 
 
@@ -88,7 +88,9 @@ class Tour extends Component {
                 <div>
                     <h1>  {this.state.name} </h1>
                     <br />
-                    <Tab panes={panes} />
+                    <Tab 
+                     menu={{ pointing: true, className: "wrapped" }}
+                    panes={panes} />
                     <br />
 
 

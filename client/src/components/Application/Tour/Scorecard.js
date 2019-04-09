@@ -10,7 +10,7 @@ import { DateInput } from 'semantic-ui-calendar-react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
-
+import "./scorecard.css";
 
 class Scorecard extends Component {
 
@@ -468,8 +468,14 @@ class Scorecard extends Component {
 
                                 {!isSubmitted && (<Button primary onClick={this.handleSave}>Save</Button>)}
                                 <Button primary onClick={this.handleSubmit}>{isSubmitted ? "UnSubmit" : "Submit"}</Button>
-                                {this.state.isIncomplete && (<span >Fill in score for all holes!</span>)}
                                 <Button secondary onClick={this.handleCancel}>Cancel</Button>
+                            </Grid.Column>
+
+                        </Grid.Row>
+                        <Grid.Row>
+                            <Grid.Column>
+                                {this.state.isIncomplete && (<span className="errorMessage">Fill in score for all holes!</span>)}
+
                             </Grid.Column>
 
                         </Grid.Row>
