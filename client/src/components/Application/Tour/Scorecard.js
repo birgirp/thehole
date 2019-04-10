@@ -87,9 +87,17 @@ class Scorecard extends Component {
                 , width: 70,
                 suppressMovable: true,
                 onCellValueChanged: this.onCellValueChanged
+            },
+            getCellStyle: function(params) {
+                console.log("jkjkj")
+                console.log(params)
+                if (params.node.rowIndex % 2 === 0) {
+                    return { background: 'blue' }
+                }
             }
         }
     }
+
 
     onCellValueChanged = (e) => {
         let isSubmitted = this.state.status === 'Submitted' ? true : false
@@ -443,7 +451,10 @@ class Scorecard extends Component {
                         rowData={this.state.rowData}
                         enterMovesDownAfterEdit={false}
                         singleClickEdit={true}
-                        enterMovesDown={false}>
+                        enterMovesDown={false}
+                        getCellStyle={this.state.getCellStyle}
+                        
+                        >
                     </AgGridReact>
                     <br />
 
