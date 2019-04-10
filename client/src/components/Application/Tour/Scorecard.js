@@ -56,7 +56,8 @@ class Scorecard extends Component {
             submitting: false,
             columnDefs: [
                 { headerName: "", field: "rowname" },
-                { headerName: "1", field: "h1", width: 40 },
+                { headerName: "1", field: "h1", width: 40,  cellStyle: this.cellStyling },
+            
                 { headerName: "2", field: "h2", width: 40 },
                 { headerName: "3", field: "h3", width: 40 },
                 { headerName: "4", field: "h4", width: 40 },
@@ -88,15 +89,29 @@ class Scorecard extends Component {
                 suppressMovable: true,
                 onCellValueChanged: this.onCellValueChanged
             },
-            getCellStyle: function(params) {
+            getRowStyle: function(params) {
                 console.log("jkjkj")
                 console.log(params)
+                let a = params.node
                 if (params.node.rowIndex % 2 === 0) {
                     return { background: 'blue' }
                 }
             }
         }
     }
+
+   
+
+ 
+    cellStyling(params){  
+        //let rowData = this.state.rowData
+        //console.log(rowData[2])
+        console.log(params)
+        //if(params.node.TripStatusCode==='CO')   
+        return {'background-color': 'red'};
+   }
+
+
 
 
     onCellValueChanged = (e) => {
@@ -402,7 +417,6 @@ class Scorecard extends Component {
             let cselection = courses.map((val, index, arr) => {
                 return { key: parseInt(val.course_id), text: val.course_name + "-" + val.tee, value: parseInt(val.course_id) }
             });
-
             return (
                 <div>
                     <Grid colums={3} >
@@ -432,7 +446,6 @@ class Scorecard extends Component {
                                 {this.state.isMissingCourse && (<span >Select course!</span>)}
                             </Grid.Column>
                             <Grid.Column >
-
                                 <DateInput
                                     name="date"
                                     placeholder="Date"
@@ -452,47 +465,32 @@ class Scorecard extends Component {
                         enterMovesDownAfterEdit={false}
                         singleClickEdit={true}
                         enterMovesDown={false}
-                        getCellStyle={this.state.getCellStyle}
-                        
                         >
                     </AgGridReact>
                     <br />
-
-
-
                     <Grid>
                         <Grid.Column floated='right'>
                             <Grid.Row>
                                 <Label floated='right'>Strokes: {isNaN(this.state.sumStrokes) ? 0 : this.state.sumStrokes}</Label>
                                 <Label floated='right'>Points:  {isNaN(this.state.sumPoints) ? 0 : this.state.sumPoints}</Label>
                             </Grid.Row>
-
                         </Grid.Column>
-
                     </Grid>
-
-
-
                     <Grid colums={1} >
                         <Grid.Row>
                             <Grid.Column>
-
                                 {!isSubmitted && (<Button primary onClick={this.handleSave}>Save</Button>)}
                                 <Button primary onClick={this.handleSubmit}>{isSubmitted ? "UnSubmit" : "Submit"}</Button>
                                 <Button secondary onClick={this.handleCancel}>Cancel</Button>
                             </Grid.Column>
-
                         </Grid.Row>
                         <Grid.Row>
                             <Grid.Column>
                                 {this.state.isIncomplete && (<span className="errorMessage">Fill in score for all holes!</span>)}
 
                             </Grid.Column>
-
                         </Grid.Row>
-
                     </Grid>
-
                 </div>
             )
         }
