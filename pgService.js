@@ -11,15 +11,15 @@ const pgp = require('pg-promise')({
   ssl: true
 });*/
 
-/*const pool = new Pool({
+const pool = new Pool({
     user: 'golfapp',
     host: 'localhost',
     database: 'hole2',
     password: 'golf',
     port: 5432,
-})*/
+})
 
-const pool = new Pool({
+/*const pool = new Pool({
     user: dbconfig.dbconnection.user,
     host: dbconfig.dbconnection.host,
     database: dbconfig.dbconnection.database,
@@ -27,7 +27,7 @@ const pool = new Pool({
     port: dbconfig.dbconnection.port,
     ssl: true
 })
-
+*/
 module.exports = {
 
     getUserbyEmail: function (e_mail, passw) {

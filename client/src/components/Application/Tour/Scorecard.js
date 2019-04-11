@@ -12,6 +12,7 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import "./scorecard.css";
 
+
 class Scorecard extends Component {
 
     constructor(props) {
@@ -56,25 +57,24 @@ class Scorecard extends Component {
             submitting: false,
             columnDefs: [
                 { headerName: "", field: "rowname" },
-                { headerName: "1", field: "h1", width: 40,  cellStyle: this.cellStyling },
-            
-                { headerName: "2", field: "h2", width: 40 },
-                { headerName: "3", field: "h3", width: 40 },
-                { headerName: "4", field: "h4", width: 40 },
-                { headerName: "5", field: "h5", width: 40 },
-                { headerName: "6", field: "h6", width: 40 },
-                { headerName: "7", field: "h7", width: 40 },
-                { headerName: "8", field: "h8", width: 40 },
-                { headerName: "9", field: "h9", width: 40 },
-                { headerName: "10", field: "h10", width: 40 },
-                { headerName: "11", field: "h11", width: 40 },
-                { headerName: "12", field: "h12", width: 40 },
-                { headerName: "13", field: "h13", width: 40 },
-                { headerName: "14", field: "h14", width: 40 },
-                { headerName: "15", field: "h15", width: 40 },
-                { headerName: "16", field: "h16", width: 40 },
-                { headerName: "17", field: "h17", width: 40 },
-                { headerName: "18", field: "h18", width: 40 },
+                { headerName: "1", field: "h1", width: 40, cellStyle: this.cellStyling },
+                { headerName: "2", field: "h2", width: 40, cellStyle: this.cellStyling },
+                { headerName: "3", field: "h3", width: 40, cellStyle: this.cellStyling },
+                { headerName: "4", field: "h4", width: 40, cellStyle: this.cellStyling },
+                { headerName: "5", field: "h5", width: 40, cellStyle: this.cellStyling },
+                { headerName: "6", field: "h6", width: 40, cellStyle: this.cellStyling },
+                { headerName: "7", field: "h7", width: 40, cellStyle: this.cellStyling },
+                { headerName: "8", field: "h8", width: 40, cellStyle: this.cellStyling },
+                { headerName: "9", field: "h9", width: 40, cellStyle: this.cellStyling },
+                { headerName: "10", field: "h10", width: 40, cellStyle: this.cellStyling },
+                { headerName: "11", field: "h11", width: 40, cellStyle: this.cellStyling },
+                { headerName: "12", field: "h12", width: 40, cellStyle: this.cellStyling },
+                { headerName: "13", field: "h13", width: 40, cellStyle: this.cellStyling },
+                { headerName: "14", field: "h14", width: 40, cellStyle: this.cellStyling },
+                { headerName: "15", field: "h15", width: 40, cellStyle: this.cellStyling },
+                { headerName: "16", field: "h16", width: 40, cellStyle: this.cellStyling },
+                { headerName: "17", field: "h17", width: 40, cellStyle: this.cellStyling },
+                { headerName: "18", field: "h18", width: 40, cellStyle: this.cellStyling },
             ],
             rowData: [
                 { rowname: "Par", h1: "", h2: "", h3: "", h4: "", h5: "", h6: "", h7: "", h8: "", h9: "", h10: "", h11: "", h12: "", h13: "", h14: "", h15: "", h16: "", h17: "", h18: "" },
@@ -89,10 +89,10 @@ class Scorecard extends Component {
                 suppressMovable: true,
                 onCellValueChanged: this.onCellValueChanged
             },
-            getRowStyle: function(params) {
+            getRowStyle: function (params) {
+
                 console.log("jkjkj")
                 console.log(params)
-                let a = params.node
                 if (params.node.rowIndex % 2 === 0) {
                     return { background: 'blue' }
                 }
@@ -100,18 +100,24 @@ class Scorecard extends Component {
         }
     }
 
-   
-
- 
-    cellStyling(params){  
-        //let rowData = this.state.rowData
-        //console.log(rowData[2])
-        console.log(params)
-        //if(params.node.TripStatusCode==='CO')   
-        return {'background-color': 'red'};
-   }
-
-
+    cellStyling = (params) => {
+        let background = { background: 'white', textAlign: 'center' }
+        let rowData = this.state.rowData
+        let hole = params.colDef.field
+        let rowName = params.node.data.rowname
+        let par = rowData[0][hole]
+        let score = params.value
+        if (rowName === 'Score') {
+            background = { background: '#ffffcc' }
+            let delta = (score - par)
+            if (delta > 2) { background = { background: '#ff3333' } }
+            if (delta === 1) { background = { background: '#ffb3b3' } }
+            if (delta === 0) { background = { background: '#99ddff' } }
+            if (delta === -1) { background = { background: '#b3ffb3', borderRadius: '50%' } }
+            if (delta === -2) { background = { background: '#66ff66' } }
+        }
+        return background;
+    }
 
 
     onCellValueChanged = (e) => {
@@ -165,7 +171,6 @@ class Scorecard extends Component {
                     throw new Error('No scorecard found');
                 }
                 firstline = res.data[0]
-
                 let date = firstline.round_date.split("T")[0]
                 this.setState({ scorecardId: firstline.id, status: firstline.status, selectedCourseId: firstline.course_id, roundDate: date, handicap: firstline.handicap });
                 let holeIds = [];
@@ -189,13 +194,13 @@ class Scorecard extends Component {
     }
 
     handleSubmit = () => {
-     
+
         let status = this.state.status;
-        
+
         console.log(status)
         if (status === 'Submitted') {
             console.log(status)
-           this.changeStatus('Saved')
+            this.changeStatus('Saved')
 
         } else {
 
@@ -211,11 +216,11 @@ class Scorecard extends Component {
                 this.setState({ isIncomplete: true })
                 console.log(incomplete)
             } else {
-                if (!this.state.courseTouched && !this.state.dateTouched &&  !this.state.handicapTouched && !this.state.scoresTouched){
+                if (!this.state.courseTouched && !this.state.dateTouched && !this.state.handicapTouched && !this.state.scoresTouched) {
                     this.setState({ status: "Submitted" }, () => this.changeStatus('Submitted'))
-//                   
-                }else{
-                this.setState({ status: "Submitted", submitting: true }, () => this.handleSave(true))
+                    //                   
+                } else {
+                    this.setState({ status: "Submitted", submitting: true }, () => this.handleSave(true))
                 }
             }
         }
@@ -230,10 +235,10 @@ class Scorecard extends Component {
             status: status
         }).then((res => {
 
-           this.setState({ isLoading: false, status: status })
-           if(status==='Submitted') {
-            this.props.closeModal();
-           }
+            this.setState({ isLoading: false, status: status })
+            if (status === 'Submitted') {
+                this.props.closeModal();
+            }
         })).catch(err => {
             console.log(err);
             this.setState({ isLoading: false })
@@ -303,7 +308,7 @@ class Scorecard extends Component {
                     })
                 }
             }
-        }else{
+        } else {
             this.props.closeModal();
         }
     }
@@ -465,7 +470,7 @@ class Scorecard extends Component {
                         enterMovesDownAfterEdit={false}
                         singleClickEdit={true}
                         enterMovesDown={false}
-                        >
+                    >
                     </AgGridReact>
                     <br />
                     <Grid>
