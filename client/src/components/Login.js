@@ -73,7 +73,7 @@ class Login extends Component {
           <Grid id="loginForm" centered columns={2}>
             <Grid.Column>
               <Header as="h2" textAlign="center" color="violet">
-                yyy
+              
                 </Header>
               <Segment>
                 <Form size="large">

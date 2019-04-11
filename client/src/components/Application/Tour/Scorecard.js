@@ -28,11 +28,8 @@ class Scorecard extends Component {
         if (mm < 10) {
             mm = '0' + mm
         }
-
         today = yyyy + '-' + mm + '-' + dd;
-
-        super(props);
-
+       super(props);
         this.state = {
             scorecardId: "",
             courses: [],
@@ -101,7 +98,8 @@ class Scorecard extends Component {
     }
 
     cellStyling = (params) => {
-        let background = { background: 'white', textAlign: 'center' }
+       // let background = { background: 'white', textAlign: 'center' }
+        let background = { background: 'white' }
         let rowData = this.state.rowData
         let hole = params.colDef.field
         let rowName = params.node.data.rowname
@@ -113,7 +111,7 @@ class Scorecard extends Component {
             if (delta > 2) { background = { background: '#ff3333' } }
             if (delta === 1) { background = { background: '#ffb3b3' } }
             if (delta === 0) { background = { background: '#99ddff' } }
-            if (delta === -1) { background = { background: '#b3ffb3', borderRadius: '50%' } }
+            if (delta === -1) { background = { background: '#b3ffb3' } }
             if (delta === -2) { background = { background: '#66ff66' } }
         }
         return background;
