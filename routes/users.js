@@ -33,7 +33,7 @@ passport.use('local-login', new LocalStrategy({
   passReqToCallback: true
 },
   function (req, username, password, done) {
-    dbdata.getUserbyEmail(username.toUpperCase(), password).then((data) => {
+    dbdata.getUserbyEmail(username, password).then((data) => {
       if (data.rows.length > 0) {
         console.log("success")
         user = data.rows[0]
