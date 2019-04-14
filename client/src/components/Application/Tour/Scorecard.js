@@ -424,10 +424,9 @@ class Scorecard extends Component {
                 <div>
                     <Grid colums={3} >
                         <Grid.Row>
-                            <Grid.Column width={4}>
+                            <Grid.Column width={2}>
                                 <Input
                                     name='Handicap'
-                                    label='Handicap'
                                     placeholder='Handicap'
                                     max="54"
                                     min="0"
@@ -436,7 +435,7 @@ class Scorecard extends Component {
                                     onChange={this.handleHandicapChange}
                                 />
                             </Grid.Column>
-                            <Grid.Column width={6}>
+                            <Grid.Column width={8}>
                                 <Dropdown
                                     fluid
                                     selection
@@ -448,7 +447,7 @@ class Scorecard extends Component {
                                 />
                                 {this.state.isMissingCourse && (<span >Select course!</span>)}
                             </Grid.Column>
-                            <Grid.Column >
+                            <Grid.Column width={6}>
                                 <DateInput
                                     name="date"
                                     placeholder="Date"

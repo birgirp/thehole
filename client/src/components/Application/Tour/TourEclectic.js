@@ -24,6 +24,7 @@ class TourEclectic extends Component {
             overlayNoRowsTemplate: "<span> </span>",
             columnDefs: [
                 { headerName: "Player", field: "player", width: 140},
+                { headerName: "Sum", field: "sum", width: 40 },
                 { headerName: "1", field: "h1", width: 40 },
                 { headerName: "2", field: "h2", width: 40 },
                 { headerName: "3", field: "h3", width: 40 },
@@ -41,8 +42,7 @@ class TourEclectic extends Component {
                 { headerName: "15", field: "h15", width: 40 },
                 { headerName: "16", field: "h16", width: 40 },
                 { headerName: "17", field: "h17", width: 40 },
-                { headerName: "18", field: "h18", width: 40 },
-                { headerName: "Sum", field: "sum", width: 40 }
+                { headerName: "18", field: "h18", width: 40 },              
             ],
             rowData: [],
             defaultColDef: {

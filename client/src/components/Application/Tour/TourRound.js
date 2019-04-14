@@ -26,6 +26,8 @@ class TourRound extends Component {
                 { headerName: "Player", field: "full_name", width: 140 },
                 { headerName: "Course", field: "course_name", width: 160 },
                 { headerName: "Hcp", field: "handicap", width: 40 },
+                { headerName: "Sum", field: "strokes", width: 60 },
+                { headerName: "Points", field: "points", width: 60 },
                 { headerName: "1", field: "h1", width: 30 },
                 { headerName: "2", field: "h2", width: 30 },
                 { headerName: "3", field: "h3", width: 30 },
@@ -44,8 +46,7 @@ class TourRound extends Component {
                 { headerName: "16", field: "h16", width: 30 },
                 { headerName: "17", field: "h17", width: 30 },
                 { headerName: "18", field: "h18", width: 30 },
-                { headerName: "Sum", field: "strokes", width: 60 },
-                { headerName: "Points", field: "points", width: 60 }
+              
             ],
             rowData: [],
             overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',

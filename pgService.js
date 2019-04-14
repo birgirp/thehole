@@ -11,30 +11,30 @@ const pgp = require('pg-promise')({
   ssl: true
 });*/
 
-/*const pool = new Pool({
+const pool = new Pool({
     user: 'golfapp',
     host: 'localhost',
     database: 'hole2',
     password: 'golf',
     port: 5432,
-})*/
+})
 
-const pool = new Pool({
+/*const pool = new Pool({
     user: dbconfig.dbconnection.user,
     host: dbconfig.dbconnection.host,
     database: dbconfig.dbconnection.database,
     password: dbconfig.dbconnection.password,
     port: dbconfig.dbconnection.port,
     ssl: true
-})
+})*/
 
 module.exports = {
 
     getUserbyEmail: function (e_mail, passw) {
 
         return new Promise((resolve, reject) => {
-
-            pool.query('SELECT id, full_name, email, handicap, is_admin FROM users where "email" = $1 and "password" = $2', [e_mail, passw]).then((results) => {
+                console.log(e_mail)
+            pool.query('SELECT id, full_name, email, handicap, is_admin FROM users where upper(email) = $1 and "password" = $2', [e_mail, passw]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")
