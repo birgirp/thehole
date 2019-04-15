@@ -6,19 +6,19 @@ const pgp = require('pg-promise')({
  });
 
 
-/*const pool = new Pool({
+const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
-});*/
+});
 
-const pool = new Pool({
+/*const pool = new Pool({
     user: 'golfapp',
     host: 'localhost',
     database: 'hole2',
     password: 'golf',
     port: 5432,
 })
-
+*/
 /*const pool = new Pool({
     user: dbconfig.dbconnection.user,
     host: dbconfig.dbconnection.host,
@@ -34,7 +34,7 @@ module.exports = {
 
         return new Promise((resolve, reject) => {
                 console.log(e_mail)
-            pool.query('SELECT id, full_name, email, handicap, is_admin FROM users where lower("email") = $1 and "password" = $2', [e_mail, passw]).then((results) => {
+            pool.query('SELECT id, full_name, email, handicap, is_admin FROM users where "email" = $1 and "password" = $2', [e_mail, passw]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")
