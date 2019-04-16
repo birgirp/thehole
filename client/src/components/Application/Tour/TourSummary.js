@@ -15,8 +15,8 @@ class TourSummary extends Component {
         this.state = {
 
             loading: false,
-            columnDefs: [ ],
-            rowData: [ ],
+            columnDefs: [],
+            rowData: [],
             overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
             overlayNoRowsTemplate: "<span> </span>",
             scoreData: [],
@@ -40,7 +40,7 @@ class TourSummary extends Component {
         return false
     }
 
-    
+
     createRowData = () => {
         let rounds = this.props.rounds;
         let players = this.props.players;
@@ -55,13 +55,13 @@ class TourSummary extends Component {
                 key = 'r' + z
                 row[key] = ""
             }
-          //  row['eclectic'] = ""
-         
+            //  row['eclectic'] = ""
+
 
             let p_id = element.player_id
 
-            scoreData.forEach(item =>{
-                if(item.player_id === p_id){
+            scoreData.forEach(item => {
+                if (item.player_id === p_id) {
                     var key2 = 'r' + item.tour_round
                     row[key2] = item.points
                     sum = sum + parseInt(item.points)
@@ -73,50 +73,93 @@ class TourSummary extends Component {
             rowData.push(row)
         });
 
-        this.setState({ rowData:rowData })
+        this.setState({ rowData: rowData },  () => this.fetchPars())
 
 
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     componentDidMount() {
 
         let tourId = this.props.tourId;
         let rounds = this.props.rounds;
-        this.setState({isLoading: true})
-        let columnDefs = [{ headerName: "Player", field: "player",  width: 180 }]
+        this.setState({ isLoading: true })
+        let columnDefs = [{ headerName: "Player", field: "player", width: 180 }]
+        let sumcol = { headerName: "Sum", field: "sum", width: 80 }
+        columnDefs.push(sumcol)
+
         var i;
         for (i = 1; i < rounds + 1; i++) {
             let col = { headerName: "Round" + i, field: "r" + i, width: 80 }
             columnDefs.push(col)
         }
 
-        let sumcol = {headerName: "Sum", field: "sum", width:80}
-        columnDefs.push(sumcol)
-        
-        this.setState({ columnDefs:columnDefs })
-      
+        let parscol = { headerName: "Pars", field: "pars", width: 80 }
+        columnDefs.push(parscol)
+
+        let birdiescol = { headerName: "Birdies", field: "birdies", width: 80 }
+        columnDefs.push(birdiescol)
+
+        let eaglescol = { headerName: "Eagles", field: "eagles", width: 80 }
+        columnDefs.push(eaglescol)
+
+
+        this.setState({ columnDefs: columnDefs })
+
         axios.post("/api/gettourscorecards", { tourId: tourId })
             .then(res => {
                 if (!res.data) {
                     throw new Error('No scorecards found');
                 }
-           
-                this.setState({ scoreData: res.data , isLoading: false }, () => this.createRowData());
-                this.setState({isLoading: false})
+
+                this.setState({ scoreData: res.data, isLoading: false }, () => this.createRowData());
+              //  this.setState({ isLoading: false })
             })
             .catch(err => {
                 console.log(err);
-                this.setState({isLoading: false})
+                this.setState({ isLoading: false })
+            })
+    }
+
+
+    fetchPars = () => {
+        let tourId = this.props.tourId;
+        axios.post("/api/getpars", { tourId: tourId })
+        .then(res => {
+            if (!res.data) {
+                throw new Error('No pars found');
+            }
+            let parData = res.data
+           // console.log(res.data)
+            let rowData =this.state.rowData
+
+            parData.forEach(item =>{
+                let index = rowData.findIndex(x => x.player ===item.full_name);
+                rowData[index]["pars"] = item.pars
+                rowData[index]["birdies"] = item.birdies
+                rowData[index]["eagles"] = item.eagles
+                //console.log(index)
+
             })
 
-          
 
+
+
+
+            this.setState({rowData: rowData, isLoading: false })
+        })
+        .catch(err => {
+            console.log(err);
+            this.setState({ isLoading: false })
+        })
 
     }
+
+
+
 
 
 

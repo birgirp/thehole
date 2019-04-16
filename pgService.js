@@ -6,10 +6,10 @@ const pgp = require('pg-promise')({
  });
 
 
-const pool = new Pool({
+/*const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
-});
+});*/
 
 /*const pool = new Pool({
     user: 'golfapp',
@@ -19,14 +19,14 @@ const pool = new Pool({
     port: 5432,
 })
 */
-/*const pool = new Pool({
+const pool = new Pool({
     user: dbconfig.dbconnection.user,
     host: dbconfig.dbconnection.host,
     database: dbconfig.dbconnection.database,
     password: dbconfig.dbconnection.password,
     port: dbconfig.dbconnection.port,
     ssl: true
-})*/
+})
 
 module.exports = {
 
@@ -333,6 +333,17 @@ module.exports = {
     getTourScorecards: function (tourId) {
         return new Promise((resolve, reject) => {
             pool.query('select player_id, tour_round, strokes, points  from v_scorecards_sum where tour_id =  $1;', [tourId]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+
+    getTourPars: function (tourId) {
+        return new Promise((resolve, reject) => {
+            pool.query('select player_id, full_name, pars, birdies, eagles  from v_countpars where tour_id =  $1;', [tourId]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")

@@ -391,6 +391,23 @@ router.post("/api/geteclectic", (req, res) => {
   })
 });
 
+router.post("/api/getpars", (req, res) => {
+
+  let tourId = req.body.tourId
+  dbdata.getTourPars(tourId).then((data) => {
+    if (data.rows.length === 0) {
+      console.log("No par found")
+      res.json(null);
+    } else {
+      res.json(data.rows)
+    }
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
 router.post("/api/getroundscorecards", (req, res) => {
 
   let tourId = req.body.tourId
