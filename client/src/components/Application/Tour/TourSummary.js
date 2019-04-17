@@ -22,7 +22,7 @@ class TourSummary extends Component {
             scoreData: [],
             defaultColDef: {
                 resizable: false,
-                editable: this.checkEditFunction
+                 editable: this.checkEditFunction
                 , width: 70,
                 suppressMovable: true
             }
@@ -78,16 +78,12 @@ class TourSummary extends Component {
 
     }
 
-
-
-
-
     componentDidMount() {
 
         let tourId = this.props.tourId;
         let rounds = this.props.rounds;
         this.setState({ isLoading: true })
-        let columnDefs = [{ headerName: "Player", field: "player", width: 180 }]
+        let columnDefs = [{ headerName: "Player", field: "player", width: 100 ,  pinned: "left"}]
         let sumcol = { headerName: "Sum", field: "sum", width: 80 }
         columnDefs.push(sumcol)
 
