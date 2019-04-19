@@ -84,7 +84,7 @@ class TourSummary extends Component {
         let rounds = this.props.rounds;
         this.setState({ isLoading: true })
         let columnDefs = [{ headerName: "Player", field: "player", width: 100 ,  pinned: "left"}]
-        let sumcol = { headerName: "Sum", field: "sum", width: 80 }
+        let sumcol = { headerName: "Sum", field: "sum", width: 80,  sort: "desc" }
         columnDefs.push(sumcol)
 
         var i;

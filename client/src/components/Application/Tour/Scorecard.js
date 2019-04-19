@@ -262,19 +262,26 @@ class Scorecard extends Component {
                 var i;
                 let score = 0
                 let points = 0
+                console.log(holeIds)
                 for (i = 1; i < 19; i++) {
+                   // console.log(i)
                     let holeId = holeIds[i - 1]
-                    if (rowData[2]["h" + i] !== "") {
+                    if (rowData[2]["h" + i] !== "" && rowData[2]["h" + i] !==0) {
                         score = rowData[2]["h" + i]
                         points = rowData[3]["h" + i]
+                       
+                        //console.log("s " + score)
                     } else {
                         score = 0
                         points = 0
                     }
                     if (this.state.createNew) {
+                      //  console.log(this.state.createNew)
                         scores.push([holeId, score, points])
                     } else {
-                        scores.push({ scorecard_id: scorecardId, hole_id: holeId, strokes: parseInt(score), points: parseInt(points) })
+                      
+                        scores.push({ scorecard_id: scorecardId, hole_id: holeId, strokes: score, points: parseInt(points) })
+                       // console.log(scores)
                     }
                 }
                 if (this.state.createNew) {
@@ -291,7 +298,8 @@ class Scorecard extends Component {
                         this.setState({ isLoading: false })
                     })
                 } else {
-
+                      //  console.log("updateingss")
+                      //  console.log(scores)
                     axios.post("/api/updatescorecard", {
                         scorecardId: scorecardId, courseId: this.state.selectedCourseId, roundDate: this.state.roundDate,
                         handicap: this.state.handicap, status: this.state.status, scores: scores

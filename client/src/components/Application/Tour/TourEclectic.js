@@ -23,8 +23,8 @@ class TourEclectic extends Component {
             overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
             overlayNoRowsTemplate: "<span> </span>",
             columnDefs: [
-                { headerName: "Player", field: "player", width: 140},
-                { headerName: "Sum", field: "sum", width: 40 },
+                { headerName: "Player", field: "player", width: 100,  pinned: "left"},
+                { headerName: "Sum", field: "sum", width: 40,   sort: "asc" },
                 { headerName: "1", field: "h1", width: 40 },
                 { headerName: "2", field: "h2", width: 40 },
                 { headerName: "3", field: "h3", width: 40 },
