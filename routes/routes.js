@@ -160,7 +160,13 @@ router.post("/api/addscorecard", (req, res) => {
   let handicap = req.body.handicap
   let status = req.body.status
   let scores = req.body.scores
-  console.log(JSON.stringify())
+  scores.forEach(score => {
+    if (score[1] === "") {
+      score[1] = null
+      score[2] = null
+    }
+  })
+  console.log(JSON.stringify(scores))
   dbdata.insertScoreCard(tourId, roundNum, courseId, playerId, roundDate, handicap, status).then((response) => {
     let scorecardId = response.rows[0].id
     console.log(JSON.stringify(scorecardId))
@@ -188,6 +194,13 @@ router.post("/api/updatescorecard", (req, res) => {
   let status = req.body.status
   let scores = req.body.scores
   console.log("update scorecard...")
+  scores.forEach(score => {
+    if (score[1] === "") {
+      score[1] = null
+      score[2] = null
+    }
+  })
+  console.log(JSON.stringify(scores))
   dbdata.updateScoreCard(courseId, roundDate, handicap, status, scorecardId).then((response) => {
 
     return dbdata.updateScores(scores)
@@ -207,9 +220,9 @@ router.post("/api/updatescorecardstatus", (req, res) => {
   let scorecardId = req.body.scorecardId
   let status = req.body.status
 
-   console.log("update scorecard status...   " + status + " ddfd" )
-   console.log(JSON.stringify(req.body))
-  dbdata.updateScoreCardStatus( status, scorecardId).then((response) => {
+  console.log("update scorecard status...   " + status + " ddfd")
+  console.log(JSON.stringify(req.body))
+  dbdata.updateScoreCardStatus(status, scorecardId).then((response) => {
     console.log(response)
     res.json('ok')
   }).catch((error) => {
@@ -244,6 +257,23 @@ router.post("/api/addtour", (req, res) => {
       res.json({ error: error });
     })
 });
+
+router.post("/api/updatetour", (req, res) => {
+  const  tourId = req.body.tourId;
+  const rounds = req.body.rounds;
+  const tourStatus = req.body.tourStatus;
+  const tourName = req.body.tourName;
+  dbdata.updateTour(tourId, tourName,tourStatus, rounds).then((response) =>{
+    res.json(response)
+
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+
+
+} )
 
 router.get("/api/getalltours", (req, res) => {
   dbdata.getAllTours().then((data) => {

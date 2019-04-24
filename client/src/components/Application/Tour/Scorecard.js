@@ -11,6 +11,8 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import "./scorecard.css";
+import { ScoreCellRenderer } from "./ScoreCellRenderer"
+import NumericEditor from "./NumericEditor.js";
 
 
 class Scorecard extends Component {
@@ -23,8 +25,7 @@ class Scorecard extends Component {
 
         if (dd < 10) {
             dd = '0' + dd
-        }
-
+        }   
         if (mm < 10) {
             mm = '0' + mm
         }
@@ -54,24 +55,25 @@ class Scorecard extends Component {
             submitting: false,
             columnDefs: [
                 { headerName: "", field: "rowname" },
-                { headerName: "1", field: "h1", width: 40, cellStyle: this.cellStyling },
-                { headerName: "2", field: "h2", width: 40, cellStyle: this.cellStyling },
-                { headerName: "3", field: "h3", width: 40, cellStyle: this.cellStyling },
-                { headerName: "4", field: "h4", width: 40, cellStyle: this.cellStyling },
-                { headerName: "5", field: "h5", width: 40, cellStyle: this.cellStyling },
-                { headerName: "6", field: "h6", width: 40, cellStyle: this.cellStyling },
-                { headerName: "7", field: "h7", width: 40, cellStyle: this.cellStyling },
-                { headerName: "8", field: "h8", width: 40, cellStyle: this.cellStyling },
-                { headerName: "9", field: "h9", width: 40, cellStyle: this.cellStyling },
-                { headerName: "10", field: "h10", width: 40, cellStyle: this.cellStyling },
-                { headerName: "11", field: "h11", width: 40, cellStyle: this.cellStyling },
-                { headerName: "12", field: "h12", width: 40, cellStyle: this.cellStyling },
-                { headerName: "13", field: "h13", width: 40, cellStyle: this.cellStyling },
-                { headerName: "14", field: "h14", width: 40, cellStyle: this.cellStyling },
-                { headerName: "15", field: "h15", width: 40, cellStyle: this.cellStyling },
-                { headerName: "16", field: "h16", width: 40, cellStyle: this.cellStyling },
-                { headerName: "17", field: "h17", width: 40, cellStyle: this.cellStyling },
-                { headerName: "18", field: "h18", width: 40, cellStyle: this.cellStyling },
+            { headerName: "1", field: "h1", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor},
+// { headerName: "1", field: "h1", width: 40, cellStyle: this.cellStyling },
+                { headerName: "2", field: "h2", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
+                { headerName: "3", field: "h3", width: 40, cellStyle: this.cellStyling ,   cellEditorFramework: NumericEditor},
+                { headerName: "4", field: "h4", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
+                { headerName: "5", field: "h5", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
+                { headerName: "6", field: "h6", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
+                { headerName: "7", field: "h7", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
+                { headerName: "8", field: "h8", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
+                { headerName: "9", field: "h9", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
+                { headerName: "10", field: "h10", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
+                { headerName: "11", field: "h11", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
+                { headerName: "12", field: "h12", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
+                { headerName: "13", field: "h13", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
+                { headerName: "14", field: "h14", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
+                { headerName: "15", field: "h15", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
+                { headerName: "16", field: "h16", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
+                { headerName: "17", field: "h17", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
+                { headerName: "18", field: "h18", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
             ],
             rowData: [
                 { rowname: "Par", h1: "", h2: "", h3: "", h4: "", h5: "", h6: "", h7: "", h8: "", h9: "", h10: "", h11: "", h12: "", h13: "", h14: "", h15: "", h16: "", h17: "", h18: "" },
@@ -86,15 +88,19 @@ class Scorecard extends Component {
                 suppressMovable: true,
                 onCellValueChanged: this.onCellValueChanged
             },
-            getRowStyle: function (params) {
-
-                console.log("jkjkj")
-                console.log(params)
-                if (params.node.rowIndex % 2 === 0) {
-                    return { background: 'blue' }
-                }
-            }
+            frameworkComponents: { 'scoreCellRenderer': ScoreCellRenderer}
         }
+    }
+
+    cellEditing = (params) => {
+        return <input type="number"></input>
+    }
+
+    cellRendering = (params) =>{
+       // return {inputType: 'number'}
+       // return params.value.toString()
+       return(<input type="number">{params.value}</input>)
+        
     }
 
     cellStyling = (params) => {
@@ -105,7 +111,7 @@ class Scorecard extends Component {
         let rowName = params.node.data.rowname
         let par = rowData[0][hole]
         let score = params.value
-        if (rowName === 'Score') {
+        if (rowName === 'Score' && score) {
             background = { background: '#ffffcc' }
             let delta = (score - par)
             if (delta > 2) { background = { background: '#ff3333' } }
@@ -136,6 +142,13 @@ class Scorecard extends Component {
             this.setState({ rowData: rowData }, () => this.sumScores())
         }
         e.api.refreshCells()
+    }
+
+    onGridReady = (params) =>{
+        this.gridApi = params.api;
+        this.columnApi = params.columnApi;
+
+      //  this.gridApi.sizeColumnsToFit();
     }
 
     sumScores = () => {
@@ -174,8 +187,9 @@ class Scorecard extends Component {
                 let holeIds = [];
                 let rowData = this.state.rowData;
                 res.data.forEach(hole => {
-                    rowData[2]["h" + hole.hole] = hole.strokes;
-                    rowData[3]["h" + hole.hole] = hole.points;
+
+                    hole.strokes ? rowData[2]["h" + hole.hole] = hole.strokes : rowData[2]["h" + hole.hole] = ""
+                    hole.points ?  rowData[3]["h" + hole.hole] = hole.points :  rowData[3]["h" + hole.hole] = ""
                     holeIds.push(hole.id)
                 });
 
@@ -212,7 +226,7 @@ class Scorecard extends Component {
             }
             if (incomplete) {
                 this.setState({ isIncomplete: true })
-                console.log(incomplete)
+                console.log("incomplete")
             } else {
                 if (!this.state.courseTouched && !this.state.dateTouched && !this.state.handicapTouched && !this.state.scoresTouched) {
                     this.setState({ status: "Submitted" }, () => this.changeStatus('Submitted'))
@@ -259,28 +273,21 @@ class Scorecard extends Component {
                 let scores = [];
                 let scorecardId = this.state.scorecardId;
                 this.setState({ isLoading: true })
+             
+                let score = "";
+                let points = "";
                 var i;
-                let score = 0
-                let points = 0
-                console.log(holeIds)
                 for (i = 1; i < 19; i++) {
                    // console.log(i)
                     let holeId = holeIds[i - 1]
-                    if (rowData[2]["h" + i] !== "" && rowData[2]["h" + i] !==0) {
-                        score = rowData[2]["h" + i]
-                        points = rowData[3]["h" + i]
-                       
-                        //console.log("s " + score)
-                    } else {
-                        score = 0
-                        points = 0
-                    }
+                    score = rowData[2]["h" + i]
+                    points = rowData[3]["h" + i]
                     if (this.state.createNew) {
                       //  console.log(this.state.createNew)
                         scores.push([holeId, score, points])
                     } else {
                       
-                        scores.push({ scorecard_id: scorecardId, hole_id: holeId, strokes: score, points: parseInt(points) })
+                        scores.push({ scorecard_id: scorecardId, hole_id: holeId, strokes: parseInt(score), points: parseInt(points) })
                        // console.log(scores)
                     }
                 }
@@ -328,7 +335,7 @@ class Scorecard extends Component {
             let par = rowData[0]["h" + i]
             let hcp = rowData[1]["h" + i]
             let score = rowData[2]["h" + i]
-            if (score !== "" && score !== 0) {
+            if (score !== "") {
                 let points = this.calculatePointsPerHole(par, hcp, score, handicap)
                 rowData[3]["h" + i] = points;
             }
@@ -354,6 +361,8 @@ class Scorecard extends Component {
     }
 
     staplefordPoints = (strokes) => {
+
+
         let points = 0
         switch (strokes) {
             case -3:
@@ -386,6 +395,7 @@ class Scorecard extends Component {
 
         axios.post("/api/getholes", { courseId })
             .then(res => {
+              
                 let holeIds = [];
                 let rowData = this.state.rowData
                 res.data.forEach(hole => {
@@ -475,6 +485,8 @@ class Scorecard extends Component {
                         enterMovesDownAfterEdit={false}
                         singleClickEdit={true}
                         enterMovesDown={false}
+                        onGridReady={this.onGridReady}
+                        frameworkComponents={this.state.frameworkComponents}
                     >
                     </AgGridReact>
                     <br />

@@ -156,6 +156,17 @@ module.exports = {
         })
     },
 
+    updateTour: function (tourId, tourName, tourStatus, rounds) {
+        return new Promise((resolve, reject) => {
+            pool.query('UPDATE tours set tour_name = $1, tour_status = $2, rounds = $3 where id = $4', [tourName, tourStatus, rounds, tourId]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+/*
     insertTourRound: function (tourId) {
         // insert into tour_rounds (tour_id, round_number) values(5,(select max(round_number)+1 from tour_rounds where tour_id = 5) );
         return new Promise((resolve, reject) => {
@@ -167,6 +178,9 @@ module.exports = {
             })
         })
     },
+
+
+*/
 
     insertTourPlayers: function (tour_id, players) {
         let data = players.map((val, index, arr) => { return [tour_id, val] });

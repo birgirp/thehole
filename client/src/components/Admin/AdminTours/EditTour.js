@@ -61,10 +61,25 @@ class EditTour extends Component {
 
         let initial = this.props.editingTour
         if (initial.name !== this.state.name || initial.status !== this.state.status || parseInt(initial.rounds) !== parseInt(this.state.rounds) ) {
-            console.log("i need to update tour name or status")
+            console.log("i need to update tour name or status or rounds")
+            this.setState({ loading: true });
+
+            axios.post("/api/updatetour", {
+                tourId: this.state.id,
+                tourStatus: this.state.status,
+                tourName: this.state.name,
+                rounds: this.state.rounds
+            })
+                .then(response => {
+                    this.setState({ loading: false })
+                    this.props.closeModal();
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         }
         if (JSON.stringify(this.state.initialCourses.sort()) !== JSON.stringify(this.state.selectedCourses.sort())) {
-            console.log("i need to updated courses")
+            console.log("i need to update courses")
         }
         if (JSON.stringify(this.state.initialPlayers.sort()) !== JSON.stringify(this.state.selectedPlayers.sort())) {
             console.log("i need to updated players")
