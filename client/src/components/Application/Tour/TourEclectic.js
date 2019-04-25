@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-//import { Tab, Form, Input, Dropdown } from "semantic-ui-react";
+import { Modal, Button } from "semantic-ui-react";
 import axios from "axios";
 import Loading from "../../Loading/Loading";
+import EclecticGraph from "./EclecticGraph";
 
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -13,6 +14,7 @@ class TourEclectic extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isOpenGraph:false,
             id: "",
             name: "",
             isNoData: "",
@@ -77,7 +79,6 @@ class TourEclectic extends Component {
     populateGrid = () => {
         let rowData = []
         let eclecticScores = this.state.eclecticScores
-                 console.log(eclecticScores);
         let p = eclecticScores.length / 18
        // console.log(p)
         var key
@@ -103,15 +104,18 @@ class TourEclectic extends Component {
             rowData.push(row)
             k = k + 18
         }
-        console.log(rowData)
-
+      
         this.setState({rowData: rowData})
-
 
     }
 
+    closeGraph = () =>{
+        this.setState({isOpenGraph:false})
+    }
 
-
+    handleOpenGraph = () =>{
+        this.setState({isOpenGraph:true})
+    }
 
     render() {
 
@@ -134,7 +138,14 @@ class TourEclectic extends Component {
                         overlayNoRowsTemplate={this.state.overlayNoRowsTemplate}>
                     </AgGridReact>
                     <br />
-
+                    <Button primary onClick={this.handleOpenGraph}>View Graph</Button>
+                    <Modal id="tourRoundModal" size="fullscreen" open={this.state.isOpenGraph} onClose={this.closeGraph}
+                        closeOnDimmerClick={false}>
+                        <Modal.Header>Eclectic graph</Modal.Header>
+                        <Modal.Content >
+                            {<EclecticGraph  closeModal={this.closeGraph}  playerId={this.props.playerId} tourId={this.props.tourId} />}
+                        </Modal.Content>
+                    </Modal>
 
                 </div>
             )

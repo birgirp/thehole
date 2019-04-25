@@ -263,7 +263,7 @@ router.post("/api/updatetour", (req, res) => {
   const rounds = req.body.rounds;
   const tourStatus = req.body.tourStatus;
   const tourName = req.body.tourName;
-  dbdata.updateTour(tourId, tourName,tourStatus, rounds).then((response) =>{
+  dbdata.updateTour(tourId, tourName, tourStatus, rounds).then((response) =>{
     res.json(response)
 
   }).catch((error) => {
@@ -458,6 +458,28 @@ router.post("/api/getroundscorecards", (req, res) => {
     res.json({ error: error });
   })
 });
+
+router.post("/api/geteclectictrend", (req, res) => {
+
+  let tourId = req.body.tourId
+  let playerId = req.body.playerId
+
+  dbdata.getEclecticTrend(tourId, playerId).then((data) => {
+    if (data.rows.length === 0) {
+      console.log("No eclectic scores found")
+      res.json(null);
+
+    } else {
+      res.json(data.rows)
+    }
+
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
 
 
 

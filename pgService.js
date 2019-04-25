@@ -377,6 +377,20 @@ module.exports = {
         })
     },
 
+    getEclecticTrend: function (tourId, playerId) {
+        return new Promise((resolve, reject) => {
+            console.log("tourId " + tourId)
+            console.log("playerId " + playerId)
+            pool.query('select full_name, tour_round, score from v_eclectic_trend_per_round where tour_id = $1 and  player_id = $2 ', [tourId, playerId]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+
+
     getRoundScorecards: function(tourId, round){
         console.log("fetchingf  " + tourId + "  " + round)
             return new Promise((resolve, reject) => {

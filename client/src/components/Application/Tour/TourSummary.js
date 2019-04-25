@@ -44,8 +44,6 @@ class TourSummary extends Component {
     createRowData = () => {
         let rounds = this.props.rounds;
         let players = this.props.players;
-        console.log(players)
-        console.log(rounds)
         let scoreData = this.state.scoreData
         let rowData = [];
         players.forEach(element => {
@@ -124,7 +122,7 @@ class TourSummary extends Component {
 
 
     fetchPars = () => {
-        console.log("fetchinf pars")
+      
 
         let tourId = this.props.tourId;
         axios.post("/api/getpars", { tourId: tourId })
@@ -133,7 +131,7 @@ class TourSummary extends Component {
                 throw new Error('No pars found');
             }
             let parData = res.data
-           console.log(res.data)
+       
             let rowData =this.state.rowData
 
             parData.forEach(item =>{
