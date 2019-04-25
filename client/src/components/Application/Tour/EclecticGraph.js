@@ -75,8 +75,8 @@ export default class EclecticGraph extends PureComponent {
             return (
                 <div>
                     <LineChart
-                        width={800}
-                        height={300}
+                        width={600}
+                        height={220}
                         data={this.state.data}
                         margin={{
                             top: 5, right: 30, left: 20, bottom: 5,
@@ -90,7 +90,7 @@ export default class EclecticGraph extends PureComponent {
                         <Line type="monotone" dataKey="score" stroke="#8884d8" activeDot={{ r: 8 }} />
 
                     </LineChart>
-                    <br />
+                  
                     <Button primary onClick={this.handleCloseGraph}>Close</Button>
                 </div>
             );
