@@ -18,7 +18,6 @@ class Login extends Component {
     success: false
   }
 
-
   close = () => {
     this.setState({ unknownuser: false, password: "" });
   }
@@ -51,7 +50,6 @@ class Login extends Component {
     this.setState({ submitting: false });
   }
 
-
   render() {
     if (this.state.success === true) {
       return <Redirect to='/home' />
@@ -62,8 +60,6 @@ class Login extends Component {
         backgroundImage: 'url(' + imgUrl + ')',
         backgroundSize: 'cover',
         height: '100vh',
-        textAlign:"center",
-        fontSize:"400px"
       };
 
       return (

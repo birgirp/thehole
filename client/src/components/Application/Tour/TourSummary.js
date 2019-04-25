@@ -41,42 +41,7 @@ class TourSummary extends Component {
     }
 
 
-    createRowData = () => {
-        let rounds = this.props.rounds;
-        let players = this.props.players;
-        let scoreData = this.state.scoreData
-        let rowData = [];
-        players.forEach(element => {
-            let row = { player: element.full_name }
-            let sum = 0;
-            var key
-            var z
-            for (z = 1; z < rounds + 1; z++) {
-                key = 'r' + z
-                row[key] = ""
-            }
-            //  row['eclectic'] = ""
 
-
-            let p_id = element.player_id
-
-            scoreData.forEach(item => {
-                if (item.player_id === p_id) {
-                    var key2 = 'r' + item.tour_round
-                    row[key2] = item.points
-                    sum = sum + parseInt(item.points)
-                }
-
-            })
-            row['sum'] = sum
-
-            rowData.push(row)
-        });
-
-        this.setState({ rowData: rowData },  () => this.fetchPars())
-
-
-    }
 
     componentDidMount() {
 
@@ -111,7 +76,7 @@ class TourSummary extends Component {
                     throw new Error('No scorecards found');
                 }
 
-                this.setState({ scoreData: res.data, isLoading: false }, () => this.createRowData());
+                this.setState({ scoreData: res.data }, () => this.createRowData());
               //  this.setState({ isLoading: false })
             })
             .catch(err => {
@@ -121,10 +86,42 @@ class TourSummary extends Component {
     }
 
 
-    fetchPars = () => {
-      
+    createRowData = () => {
+        let rounds = this.props.rounds;
+        let players = this.props.players;
+        let scoreData = this.state.scoreData
+        let rowData = [];
+        players.forEach(element => {
+            let row = { player: element.full_name }
+            let sum = 0;
+            var key
+            var z
+            for (z = 1; z < rounds + 1; z++) {
+                key = 'r' + z
+                row[key] = ""
+            }
+            let p_id = element.player_id
 
-        let tourId = this.props.tourId;
+            scoreData.forEach(item => {
+                if (item.player_id === p_id) {
+                    var key2 = 'r' + item.tour_round
+                    row[key2] = item.points
+                    sum = sum + parseInt(item.points)
+                }
+
+            })
+            row['sum'] = sum
+
+            rowData.push(row)
+        });
+
+        this.setState({ rowData: rowData } )
+        this.fetchPars()
+
+    }
+
+    fetchPars = () => {
+          let tourId = this.props.tourId;
         axios.post("/api/getpars", { tourId: tourId })
         .then(res => {
             if (!res.data) {

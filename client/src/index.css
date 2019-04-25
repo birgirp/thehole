@@ -5,18 +5,13 @@
 }
 
 
+
 .ui.inverted.segment {
     border-radius: 0px !important;
 }
-/*
-#adminUsersModal {
-    width: 50vw !important;
-    height: 60vh;
-    top: 50vh;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-*/
+
+
+
 #loginErrorModal {
      height: 185px; 
     height: 20vh;
@@ -41,9 +36,7 @@
 }
 
 
-    #loginForm {
-        width: 100vw !important;
-    }
+
 
 
 

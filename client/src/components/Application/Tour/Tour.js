@@ -43,6 +43,11 @@ class Tour extends Component {
                 rounds = parseInt(t.tour_rounds)
                 return axios.post("/api/gettourplayers", { tourId: tourId })
             }).then(res => {
+                console.log(res.data)
+
+                let index = res.data.findIndex(x => x.player_id ===this.props.userId);
+                let handicap = res.data[index].handicap
+                console.log(handicap)
                 this.setState({ players: res.data });
                 return axios.post("/api/gettourcourses", { tourId: tourId })
                     .then(res2 => {
@@ -54,7 +59,7 @@ class Tour extends Component {
                         var i ;
                         for (i = 1; i < rounds +1; i++) {
                             let x = i
-                            let r = { menuItem: 'Round ' + i, render: () => <Tab.Pane><TourRound roundNum={x} playerId={this.props.userId} tourId={this.props.match.params.id} courses={res2.data}/></Tab.Pane> }
+                            let r = { menuItem: 'Round ' + i, render: () => <Tab.Pane><TourRound handicap={handicap} roundNum={x} playerId={this.props.userId} tourId={this.props.match.params.id} courses={res2.data}/></Tab.Pane> }
                             tabs.push(r)
                         }
                         tabs.push({ menuItem: 'Eclectic', render: () => <Tab.Pane><TourEclectic playerId={this.props.userId}  players={this.state.players}  tourId={this.props.match.params.id} courses={res2.data}/></Tab.Pane> })

@@ -245,7 +245,7 @@ module.exports = {
 
     getTourPlayers: function (tourId) {
         return new Promise((resolve, reject) => {
-            pool.query('select p.player_id , u.full_name  from tour_players p join users u on u.id = p.player_id where p.tour_id =$1', [tourId]).then((results) => {
+            pool.query('select p.player_id , u.full_name, u.handicap  from tour_players p join users u on u.id = p.player_id where p.tour_id =$1', [tourId]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")

@@ -132,7 +132,7 @@ class TourRound extends Component {
                         closeOnDimmerClick={false}>
                         <Modal.Header>Scorecard - round {this.props.roundNum}</Modal.Header>
                         <Modal.Content >
-                            {<Scorecard fetchScorecards={this.fetchScorecards} closeModal={this.closeScorecard} roundNum={this.props.roundNum} playerId={this.props.playerId} tourId={this.props.tourId} courses={this.props.courses} />}
+                            {<Scorecard handicap={this.props.handicap} fetchScorecards={this.fetchScorecards} closeModal={this.closeScorecard} roundNum={this.props.roundNum} playerId={this.props.playerId} tourId={this.props.tourId} courses={this.props.courses} />}
                         </Modal.Content>
                     </Modal>
                 </div>

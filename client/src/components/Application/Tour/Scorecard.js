@@ -178,7 +178,8 @@ class Scorecard extends Component {
         axios.post("/api/getscorecard", { tourId: this.props.tourId, roundNum: this.props.roundNum, playerId: this.props.playerId })
             .then(res => {
                 if (!res.data) {
-                    this.setState({ createNew: true })
+                    this.setState({ createNew: true, handicap:this.props.handicap })
+
                     throw new Error('No scorecard found');
                 }
                 firstline = res.data[0]
