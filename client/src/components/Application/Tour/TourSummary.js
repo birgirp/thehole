@@ -9,7 +9,6 @@ import Loading from "../../Loading/Loading";
 
 class TourSummary extends Component {
 
-
     constructor(props) {
         super(props);
         this.state = {

@@ -26,7 +26,7 @@ class TourRound extends Component {
             selectedRound: null,
             scorecardData:null,
             columnDefs: [
-                { headerName: "Player", field: "full_name", width: 140 },
+                { headerName: "Player", field: "full_name", width: 100, pinned: "left" },
                 { headerName: "Course", field: "course_name", width: 160 },
                 { headerName: "Hcp", field: "handicap", width: 40 },
                 { headerName: "Sum", field: "strokes", width: 60 },
@@ -141,7 +141,7 @@ class TourRound extends Component {
                         onCellDoubleClicked={this.handleCellClicked}>
                         
                         
-                    </AgGridReact>
+                    </AgGridReact >
                     <br />
                     <Modal id="tourRoundModal" size="fullscreen" open={this.state.isOpenScorecard} onClose={this.closeScorecard}
                         closeOnDimmerClick={false}>

@@ -117,7 +117,6 @@ class Scorecard extends Component {
     }
 
 
-
     componentDidMount() {
         this.setState({ isLoading: true })
         let courseId = this.props.scorecardData.course_id
