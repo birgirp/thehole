@@ -67,7 +67,7 @@ class Login extends Component {
            <br /><br />
            <br /><br />
           <Grid id="loginForm" centered columns={2}>
-            <Grid.Column>
+            <Grid.Column id="loginBox">
               <Header as="h2" textAlign="center" color="violet">
               
                 </Header>

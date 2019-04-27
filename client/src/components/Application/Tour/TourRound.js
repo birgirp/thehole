@@ -4,6 +4,7 @@ import 'semantic-ui-css/semantic.min.css';
 import axios from "axios";
 import Loading from "../../Loading/Loading";
 import Scorecard from "./Scorecard";
+import ViewScorecard from "./ViewScorecard";
 
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -20,8 +21,10 @@ class TourRound extends Component {
             courses: [],
             isLoading: false,
             isOpenScorecard: false,
+            isOpenViewScorecard: false,
+            scoreCardPlayer:"",
             selectedRound: null,
-
+            scorecardData:null,
             columnDefs: [
                 { headerName: "Player", field: "full_name", width: 140 },
                 { headerName: "Course", field: "course_name", width: 160 },
@@ -104,8 +107,18 @@ class TourRound extends Component {
         this.setState({ isOpenScorecard: false })
     }
 
+    closeViewScorecard = () => {
+        this.setState({ isOpenViewScorecard: false })
+    }
+
+
     handleSubmit = () => {
         this.setState({ isOpenScorecard: true })
+    }
+
+    handleCellClicked = (e) =>{
+        this.setState({ scoreCardPlayer:e.data.full_name, scorecardData: e.data, isOpenViewScorecard: true })
+      
     }
 
     render() {
@@ -124,7 +137,9 @@ class TourRound extends Component {
                         enterMovesDownAfterEdit={false}
                         enterMovesDown={false}
                         overlayLoadingTemplate={this.state.overlayLoadingTemplate}
-                        overlayNoRowsTemplate={this.state.overlayNoRowsTemplate}>
+                        overlayNoRowsTemplate={this.state.overlayNoRowsTemplate}
+                        onCellDoubleClicked={this.handleCellClicked}>
+                        
                         
                     </AgGridReact>
                     <br />
@@ -133,6 +148,13 @@ class TourRound extends Component {
                         <Modal.Header>Scorecard - round {this.props.roundNum}</Modal.Header>
                         <Modal.Content >
                             {<Scorecard handicap={this.props.handicap} fetchScorecards={this.fetchScorecards} closeModal={this.closeScorecard} roundNum={this.props.roundNum} playerId={this.props.playerId} tourId={this.props.tourId} courses={this.props.courses} />}
+                        </Modal.Content>
+                    </Modal>
+                    <Modal id="tourRoundModal" size="fullscreen" open={this.state.isOpenViewScorecard} onClose={this.closeViewScorecard}
+                        closeOnDimmerClick={false}>
+                        <Modal.Header>{this.state.scoreCardPlayer}: Round {this.props.roundNum}</Modal.Header>
+                        <Modal.Content >
+                            {<ViewScorecard scorecardData={this.state.scorecardData} closeModal={this.closeViewScorecard}/>}
                         </Modal.Content>
                     </Modal>
                 </div>

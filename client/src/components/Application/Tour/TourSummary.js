@@ -120,6 +120,7 @@ class TourSummary extends Component {
 
     }
 
+    
     fetchPars = () => {
           let tourId = this.props.tourId;
         axios.post("/api/getpars", { tourId: tourId })

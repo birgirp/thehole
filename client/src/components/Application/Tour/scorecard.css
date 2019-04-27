@@ -4,4 +4,7 @@
     font-size: 0.75em;
     display: relative;
   }
+  .ag-theme-balham .ag-row-hover{
 
+    background-color: #ECF0F1;
+}

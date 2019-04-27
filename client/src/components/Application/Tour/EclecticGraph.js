@@ -6,6 +6,7 @@ import {
 
 import axios from "axios";
 import Loading from "../../Loading/Loading";
+import "./graph.css"
 
 /*const data = [
     {
@@ -23,6 +24,7 @@ import Loading from "../../Loading/Loading";
     {
         name: 'Round 5', score: -2,
     }
+
 
 ];*/
 
@@ -73,7 +75,7 @@ export default class EclecticGraph extends PureComponent {
             )
         } else {
             return (
-                <div>
+                <div id="x">
                     <LineChart
                         width={600}
                         height={220}

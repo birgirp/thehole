@@ -11,7 +11,6 @@ import "./TourRoundModal.css";
 
 class TourEclectic extends Component {
 
-
     constructor(props) {
         super(props);
         this.state = {

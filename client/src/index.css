@@ -4,6 +4,17 @@
     }
 }
 
+@media (min-width: 900px) {
+    #loginBox {
+        width: 50%;
+    }
+}
+
+@media (max-width: 900px) {
+    #loginBox {
+        width: 90vw;
+    }
+}
 
 
 .ui.inverted.segment {
