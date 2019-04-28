@@ -43,8 +43,6 @@ class Tour extends Component {
                 rounds = parseInt(t.tour_rounds)
                 return axios.post("/api/gettourplayers", { tourId: tourId })
             }).then(res => {
-                console.log(res.data)
-
                 let index = res.data.findIndex(x => x.player_id ===this.props.userId);
                 let handicap = res.data[index].handicap
                 console.log(handicap)

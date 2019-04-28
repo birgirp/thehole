@@ -480,6 +480,25 @@ router.post("/api/geteclectictrend", (req, res) => {
   })
 });
 
+router.post("/api/geteclecticbars", (req, res) => {
+
+  let tourId = req.body.tourId
+  dbdata.getEclecticBars(tourId).then((data) => {
+    if (data.rows.length === 0) {
+      console.log("No eclectic bars found")
+      res.json(null);
+
+    } else {
+      res.json(data.rows)
+    }
+
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
 
 
 

@@ -78,7 +78,7 @@ export default class EclecticGraph extends PureComponent {
                 <div id="x">
                     <LineChart
                         width={600}
-                        height={220}
+                        height={210}
                         data={this.state.data}
                         margin={{
                             top: 5, right: 30, left: 20, bottom: 5,
@@ -86,7 +86,7 @@ export default class EclecticGraph extends PureComponent {
                     >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="tour_round" />
-                        <YAxis />
+                        <YAxis interval="preserveStartEnd"/>
                         <Tooltip />
                         <Legend />
                         <Line type="monotone" dataKey="score" stroke="#8884d8" activeDot={{ r: 8 }} />

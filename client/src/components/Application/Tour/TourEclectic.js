@@ -3,6 +3,7 @@ import { Modal, Button } from "semantic-ui-react";
 import axios from "axios";
 import Loading from "../../Loading/Loading";
 import EclecticGraph from "./EclecticGraph";
+import EclecticBarChart from "./EclecticBarChart";
 
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -15,6 +16,8 @@ class TourEclectic extends Component {
         super(props);
         this.state = {
             isOpenGraph:false,
+            isOpenBarChart: false,
+            viewPlayerId:"",
             id: "",
             name: "",
             isNoData: "",
@@ -88,8 +91,9 @@ class TourEclectic extends Component {
         for (i = 0; i < p; i++) {
             let sum = 0
             let full_name = eclecticScores[k].full_name
+            let player_id = eclecticScores[k].player_id
            
-            let row = { player: full_name, sum: 0 }
+            let row = { player_id:player_id,  player: full_name, sum: 0 }
             for (s = 0; s < 18; s++) {
 
               let item = eclecticScores[k + s]
@@ -113,8 +117,18 @@ class TourEclectic extends Component {
         this.setState({isOpenGraph:false})
     }
 
+    closeBarChart = () =>{
+        this.setState({isOpenBarChart:false})
+    }
+
     handleOpenGraph = () =>{
-        this.setState({isOpenGraph:true})
+        this.setState({isOpenBarChart:true})
+    }
+
+    handleCellClicked = (e) =>{
+        console.log(e.data)
+        this.setState({ viewPlayerId:e.data.player_id,isOpenGraph:true  })
+      
     }
 
     render() {
@@ -134,16 +148,25 @@ class TourEclectic extends Component {
                         rowData={this.state.rowData}
                         enterMovesDownAfterEdit={false}
                         enterMovesDown={false}
+                        onCellDoubleClicked={this.handleCellClicked}
                         overlayLoadingTemplate={this.state.overlayLoadingTemplate}
                         overlayNoRowsTemplate={this.state.overlayNoRowsTemplate}>
                     </AgGridReact>
                     <br />
                     <Button primary onClick={this.handleOpenGraph}>View Graph</Button>
+                    <Modal id="tourRoundModal" size="fullscreen" open={this.state.isOpenBarChart} onClose={this.closeGraph}
+                        closeOnDimmerClick={false}>
+                        <Modal.Header>Eclectic graph</Modal.Header>
+                        <Modal.Content >
+                            {<EclecticBarChart  closeModal={this.closeBarChart}  tourId={this.props.tourId} />}
+                        </Modal.Content>
+                    </Modal>
+
                     <Modal id="tourRoundModal" size="fullscreen" open={this.state.isOpenGraph} onClose={this.closeGraph}
                         closeOnDimmerClick={false}>
                         <Modal.Header>Eclectic graph</Modal.Header>
                         <Modal.Content >
-                            {<EclecticGraph  closeModal={this.closeGraph}  playerId={this.props.playerId} tourId={this.props.tourId} />}
+                            {<EclecticGraph  closeModal={this.closeGraph}  playerId={this.state.viewPlayerId} tourId={this.props.tourId} />}
                         </Modal.Content>
                     </Modal>
 
