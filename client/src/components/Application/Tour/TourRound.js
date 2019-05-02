@@ -31,7 +31,7 @@ class TourRound extends Component {
                 { headerName: "Hcp", field: "handicap", width: 40 },
                 { headerName: "Sum", field: "strokes", width: 60 },
                 { headerName: "Points", field: "points", width: 60 },
-                { headerName: "1", field: "h1", width: 30 },
+               /* { headerName: "1", field: "h1", width: 30 },
                 { headerName: "2", field: "h2", width: 30 },
                 { headerName: "3", field: "h3", width: 30 },
                 { headerName: "4", field: "h4", width: 30 },
@@ -48,7 +48,7 @@ class TourRound extends Component {
                 { headerName: "15", field: "h15", width: 30 },
                 { headerName: "16", field: "h16", width: 30 },
                 { headerName: "17", field: "h17", width: 30 },
-                { headerName: "18", field: "h18", width: 30 },
+                { headerName: "18", field: "h18", width: 30 },*/
               
             ],
             rowData: [],
