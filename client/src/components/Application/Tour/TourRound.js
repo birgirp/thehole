@@ -27,10 +27,10 @@ class TourRound extends Component {
             scorecardData:null,
             columnDefs: [
                 { headerName: "Player", field: "full_name", width: 100, pinned: "left" },
-                { headerName: "Course", field: "course_name", width: 160 },
+                { headerName: "Course", field: "course_name", width: 100 },
                 { headerName: "Hcp", field: "handicap", width: 40 },
                 { headerName: "Sum", field: "strokes", width: 60 },
-                { headerName: "Points", field: "points", width: 60 },
+                { headerName: "Points", field: "points", width: 60,  sort: "desc" },
                /* { headerName: "1", field: "h1", width: 30 },
                 { headerName: "2", field: "h2", width: 30 },
                 { headerName: "3", field: "h3", width: 30 },
