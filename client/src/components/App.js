@@ -11,7 +11,7 @@ import AdminUsers from "./Admin/AdminUsers/AdminUsers"
 import AdminCourses from "./Admin/AdminCourses/AdminCourses"
 //import EditCourse from "./Admin/AdminCourses/EditCourse"
 import AdminTours from "./Admin/AdminTours/AdminTours"
-//import Loading from "./Loading/Loading";
+import Loading from "./Loading/Loading";
 
 class App extends Component {
 
@@ -20,7 +20,8 @@ class App extends Component {
     this.state = {
       isLoggedIn: false,
       isAdmin: false,
-      userId: null
+      userId: null,
+      isLoading: false
     };
 
   }
@@ -42,7 +43,7 @@ class App extends Component {
 
 
   componentDidMount() {
-
+    this.setState({ isLoading: true });
 
    
     axios.get("/api/isloggedin")
@@ -57,6 +58,7 @@ class App extends Component {
             window.location = "/"
           }
         }
+        this.setState({ isLoading: false });
       })
       .catch(err => {
         console.log(err);
@@ -64,6 +66,10 @@ class App extends Component {
   }
 
   render() {
+    
+    if (this.state.isLoading) {
+      return (<Loading />)
+    } else{
    
     if (!this.state.isLoggedIn) {
       console.log("not logged in")
@@ -110,6 +116,7 @@ class App extends Component {
       )
     }
   }
+}
 }
 
 export default App;
