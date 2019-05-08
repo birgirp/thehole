@@ -19,9 +19,8 @@ router.post('/login', function (req, res, next) {
       return;
     }
     req.logIn(user, function () {
-      res.status(200).send({
-        user
-      });
+     
+      res.status(200).send({ user });
     });
   })(req, res, next);
 });
@@ -35,9 +34,7 @@ passport.use('local-login', new LocalStrategy({
   function (req, username, password, done) {
     dbdata.getUserbyEmail(username.toLowerCase().trim(), password).then((data) => {
       if (data.rows.length > 0) {
-        console.log("success")
         user = data.rows[0]
-        console.log("user: " + user.isadmin)
         return done(null, user);
       }
       console.log("unknown user")

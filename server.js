@@ -8,8 +8,9 @@ const routes = require("./routes/routes");
 const users = require("./routes/users");
 //const dbservice = require("./oracleService");
 var session = require("express-session");
+const FileStore = require("session-file-store")(session)
 var passport = require("passport");
-var LocalStrategy = require("passport-local").Strategy;
+//var LocalStrategy = require("passport-local").Strategy;
 var expressValidator = require("express-validator");
 
 //console.log(" dbConf: ", dbservice)
@@ -28,9 +29,14 @@ app.use(bodyParser.json());
 
 // Handle sessions
 app.use(session({
+
+    store: new FileStore({
+        path: "./session-store"
+    }),
     secret:'secret',
     saveUninitialized: true,
-    resave: true
+    resave: true,
+    maxAge: 24 * 60 * 60 * 1000
 }));
 // required for passport
 app.use(passport.initialize());
@@ -47,7 +53,7 @@ app.use("/", express.static(path.join(__dirname, "/client/build/")));
 
 
 // Validator
-app.use(expressValidator({
+/*app.use(expressValidator({
     errorFormatter: function(param, msg, value){
         var namespace = param.split('.'),
         root = namespace.shift(),
@@ -63,7 +69,7 @@ app.use(expressValidator({
             
         }
     }
-}));
+}));*/
 
 //app.get('/', (req, res) => res.sendFile(path.join(__dirname + "/client/build/index.html")));
 app.get('*', (req, res) => res.sendFile(path.join(__dirname + "/client/build/index.html")));

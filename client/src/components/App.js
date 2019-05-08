@@ -20,25 +20,42 @@ class App extends Component {
     this.state = {
       isLoggedIn: false,
       isAdmin: false,
-      userId:null
+      userId: null
     };
 
   }
 
   changeLoggedIn = (isadmin, userId) => {
-    this.setState({ userId: userId });
-    this.setState({ isLoggedIn: true });
-    this.setState({ isAdmin: isadmin });
+    this.setState({ userId: userId, isLoggedIn: true, isAdmin: isadmin }, () => this.changePath());
+   
+  }
 
+  changePath = () => {
+    if (window.location.pathname === "/") {
+      window.location = "/home"
+    }
+  }
 
+  logout = () => {
+    this.setState({ userId: null, isLoggedIn: false, isAdmin: false });
   }
 
 
   componentDidMount() {
+
+
+   
     axios.get("/api/isloggedin")
       .then(res => {
         if (res.data.loggedIn) {
           this.setState({ isLoggedIn: res.data.loggedIn, isAdmin: res.data.isAdmin, userId: res.data.userId });
+          if (window.location.pathname === "/") {
+            window.location = "/home"
+          }
+        } else {
+          if (window.location.pathname !== "/") {
+            window.location = "/"
+          }
         }
       })
       .catch(err => {
@@ -47,12 +64,19 @@ class App extends Component {
   }
 
   render() {
+   
+    if (!this.state.isLoggedIn) {
+      console.log("not logged in")
+      if (window.location.pathname !== "/") {
+        console.log("path not slash")
+    //    window.location = "/"
+      }
 
-    if (!this.state.isLoggedIn ) {
       return (
         <Router>
           <div>
             <Route exact path="/" render={(props) => <Login {...props} changeLoggedIn={this.changeLoggedIn} />} />
+
           </div>
         </Router>
       )
@@ -62,7 +86,7 @@ class App extends Component {
           <div>
             <MenuBar getIsAdmin={this.state.isAdmin}></MenuBar>
             <div id="mainView">
-              <Route exact path="/home"render={(props) => <Home {...props} userId={this.state.userId} />} />
+              <Route exact path="/home" render={(props) => <Home {...props} userId={this.state.userId} />} />
               <Route exact path="/admin/users" component={AdminUsers} />
               <Route exact path="/admin/courses" component={AdminCourses} />
               <Route exact path="/admin/tours" component={AdminTours} />
@@ -70,18 +94,17 @@ class App extends Component {
           </div>
         </Router>
       )
-    } else if (this.state.isLoggedIn && !this.state.isAdmin) {
-
-      return(
+    } else if (this.state.isLoggedIn) {
+      return (
         <Router>
-        <div>
-          <MenuBar getIsAdmin={this.state.isAdmin}></MenuBar>
-          <div id="mainView">
-          <Route exact path="/home"render={(props) => <Home {...props} userId={this.state.userId} />} />
-          <Route exact path="/tour/:id"render={(props) => <Tour {...props} userId={this.state.userId} />} />
+          <div>
+            <MenuBar getIsAdmin={this.state.isAdmin} logout={this.logout}></MenuBar>
+            <div id="mainView">
+              <Route exact path="/home" render={(props) => <Home {...props} userId={this.state.userId} />} />
+              <Route exact path="/tour/:id" render={(props) => <Tour {...props} userId={this.state.userId} />} />
+            </div>
           </div>
-        </div>
-      </Router>
+        </Router>
 
 
       )

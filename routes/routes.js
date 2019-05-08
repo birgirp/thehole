@@ -310,7 +310,7 @@ router.post("/api/gettourbyid", (req, res) => {
 
 router.post("/api/getplayertours", (req, res) => {
   let playerId = req.body.playerId
-  console.log("playerId " + playerId)
+
   dbdata.getPlayerTours(playerId).then((data) => {
     if (data.rows.length > 0) {
       tours = data.rows
@@ -498,9 +498,6 @@ router.post("/api/geteclecticbars", (req, res) => {
     res.json({ error: error });
   })
 });
-
-
-
 
 
 //------------------------------------------------------------------

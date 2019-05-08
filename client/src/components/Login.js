@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import "semantic-ui-css/semantic.min.css";
 import { Button, Form, Grid, Header, Segment, Modal, Message } from 'semantic-ui-react';
 import axios from "axios";
-import { Redirect, withRouter } from "react-router-dom";
+import {  withRouter } from "react-router-dom";
 import "../index.css"
 
 
@@ -31,7 +31,7 @@ class Login extends Component {
   }
 
   handleSubmit = () => {
-    this.setState({ submitting: true });
+   // this.setState({ submitting: true });
 
     axios.post("/users/login/", { email: this.state.email, password: this.state.password })
       .then(response => {
@@ -41,19 +41,21 @@ class Login extends Component {
         } else {
           this.setState({ success: true });
           this.props.changeLoggedIn(response.data.user.is_admin, response.data.user.id);
+         
         }
       })
       .catch(error => {
         console.log(error);
       });
 
-    this.setState({ submitting: false });
+   // this.setState({ submitting: false });
   }
 
   render() {
-    if (this.state.success === true) {
+   /* if (this.state.success === true) {
       return <Redirect to='/home' />
-    } else {
+    } else */{
+     
       let imgUrl ="./hole.png"
       const divStyle = {
         color: 'black',
@@ -61,7 +63,7 @@ class Login extends Component {
         backgroundSize: 'cover',
         height: '100vh',
       };
-
+    
       return (
         <div style={divStyle}>
            <br /><br />
