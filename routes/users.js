@@ -19,7 +19,7 @@ router.post('/login', function (req, res, next) {
       return;
     }
     req.logIn(user, function () {
-     
+      req.session.cookie.maxAge = 365 * 24 * 60 * 60 * 1000;
       res.status(200).send({ user });
     });
   })(req, res, next);

@@ -256,8 +256,6 @@ class Scorecard extends Component {
             console.log(err);
             this.setState({ isLoading: false })
         })
-
-
     }
 
 
@@ -306,8 +304,6 @@ class Scorecard extends Component {
                         this.setState({ isLoading: false })
                     })
                 } else {
-                      //  console.log("updateingss")
-                      //  console.log(scores)
                     axios.post("/api/updatescorecard", {
                         scorecardId: scorecardId, courseId: this.state.selectedCourseId, roundDate: this.state.roundDate,
                         handicap: this.state.handicap, status: this.state.status, scores: scores
