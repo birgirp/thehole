@@ -198,7 +198,10 @@ class Scorecard extends Component {
                 this.fetchCourse(firstline.course_id);
             }).catch(err => {
                 console.log(err);
+                axios.get("/users/logout")
+                
                 this.setState({ isLoading: false })
+                window.location = "/"
             })
     }
 

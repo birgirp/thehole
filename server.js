@@ -3,15 +3,23 @@ const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 
+
+
+var session = require("express-session");
+//const FileStore = require("session-file-store")(session)
+var passport = require("passport");
+var mongoose = require("mongoose")
+var MongoStore = require("connect-mongo")(session)
+var mongourl = "mongodb://thehole:thehole123@ds155086.mlab.com:55086/heroku_bslwmg0n"
+
+mongoose.connect(mongourl,  { useNewUrlParser: true })
+
+mongoose.Promise = global.Promise;
+const db = mongoose.connection;
+
 // Internal imports
 const routes = require("./routes/routes");
 const users = require("./routes/users");
-//const dbservice = require("./oracleService");
-var session = require("express-session");
-const FileStore = require("session-file-store")(session)
-var passport = require("passport");
-//var LocalStrategy = require("passport-local").Strategy;
-var expressValidator = require("express-validator");
 
 //console.log(" dbConf: ", dbservice)
 //dbservice.initializeDB()
@@ -30,9 +38,10 @@ app.use(bodyParser.json());
 // Handle sessions
 app.use(session({
 
-    store: new FileStore({
-        path: "./session-store"
-    }),
+   // store: new FileStore({
+   //     path: "./session-store"
+   // }),
+   store: new MongoStore({mongooseConnection: db}),
     secret:'secret',
     saveUninitialized: true,
     resave: true,

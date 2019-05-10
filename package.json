@@ -18,10 +18,13 @@
   },
   "dependencies": {
     "body-parser": "^1.18.3",
+    "connect-mongo": "^2.0.3",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "express-validator": "*",
     "json-query": "^2.2.2",
+    "mongodb": "^3.2.4",
+    "mongoose": "^5.5.7",
     "oracledb": "^3.1.2",
     "passport": "*",
     "passport-http": "*",
