@@ -1,0 +1,3565 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 11.2 (Ubuntu 11.2-1.pgdg16.04+1)
+-- Dumped by pg_dump version 11.2
+
+-- Started on 2019-05-14 17:06:32
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 199 (class 1259 OID 14763555)
+-- Name: courses; Type: TABLE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE TABLE public.courses (
+    id integer NOT NULL,
+    course_name text NOT NULL,
+    country text NOT NULL,
+    tee text NOT NULL
+);
+
+
+ALTER TABLE public.courses OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 198 (class 1259 OID 14763553)
+-- Name: courses_id_seq; Type: SEQUENCE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE SEQUENCE public.courses_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.courses_id_seq OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 3980 (class 0 OID 0)
+-- Dependencies: 198
+-- Name: courses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER SEQUENCE public.courses_id_seq OWNED BY public.courses.id;
+
+
+--
+-- TOC entry 210 (class 1259 OID 17066227)
+-- Name: hole_scores; Type: TABLE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE TABLE public.hole_scores (
+    scorecard_id integer NOT NULL,
+    hole_id integer NOT NULL,
+    strokes integer,
+    points integer
+);
+
+
+ALTER TABLE public.hole_scores OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 200 (class 1259 OID 14763953)
+-- Name: holes; Type: TABLE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE TABLE public.holes (
+    hole integer NOT NULL,
+    par integer NOT NULL,
+    handicap integer NOT NULL,
+    course_id integer NOT NULL,
+    id integer NOT NULL
+);
+
+
+ALTER TABLE public.holes OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 201 (class 1259 OID 15393124)
+-- Name: holes_id_seq; Type: SEQUENCE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE SEQUENCE public.holes_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.holes_id_seq OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 3981 (class 0 OID 0)
+-- Dependencies: 201
+-- Name: holes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER SEQUENCE public.holes_id_seq OWNED BY public.holes.id;
+
+
+--
+-- TOC entry 209 (class 1259 OID 17066069)
+-- Name: scorecards; Type: TABLE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE TABLE public.scorecards (
+    id integer NOT NULL,
+    player_id integer NOT NULL,
+    round_date date NOT NULL,
+    course_id integer NOT NULL,
+    handicap integer NOT NULL,
+    status text NOT NULL,
+    tour_id integer NOT NULL,
+    tour_round integer NOT NULL
+);
+
+
+ALTER TABLE public.scorecards OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 208 (class 1259 OID 17066067)
+-- Name: scorecards_id_seq; Type: SEQUENCE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE SEQUENCE public.scorecards_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.scorecards_id_seq OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 3982 (class 0 OID 0)
+-- Dependencies: 208
+-- Name: scorecards_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER SEQUENCE public.scorecards_id_seq OWNED BY public.scorecards.id;
+
+
+--
+-- TOC entry 205 (class 1259 OID 17065921)
+-- Name: tour_courses; Type: TABLE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE TABLE public.tour_courses (
+    tour_id integer NOT NULL,
+    course_id integer NOT NULL
+);
+
+
+ALTER TABLE public.tour_courses OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 204 (class 1259 OID 17065863)
+-- Name: tour_players; Type: TABLE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE TABLE public.tour_players (
+    tour_id integer NOT NULL,
+    player_id integer NOT NULL
+);
+
+
+ALTER TABLE public.tour_players OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 207 (class 1259 OID 17066017)
+-- Name: tour_rounds; Type: TABLE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE TABLE public.tour_rounds (
+    id integer NOT NULL,
+    tour_id integer NOT NULL,
+    round_number integer NOT NULL
+);
+
+
+ALTER TABLE public.tour_rounds OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 206 (class 1259 OID 17066015)
+-- Name: tour_rounds_id_seq; Type: SEQUENCE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE SEQUENCE public.tour_rounds_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tour_rounds_id_seq OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 3983 (class 0 OID 0)
+-- Dependencies: 206
+-- Name: tour_rounds_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER SEQUENCE public.tour_rounds_id_seq OWNED BY public.tour_rounds.id;
+
+
+--
+-- TOC entry 203 (class 1259 OID 17065848)
+-- Name: tours; Type: TABLE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE TABLE public.tours (
+    id integer NOT NULL,
+    tour_name text NOT NULL,
+    tour_status text NOT NULL,
+    rounds integer
+);
+
+
+ALTER TABLE public.tours OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 202 (class 1259 OID 17065846)
+-- Name: tours_id_seq; Type: SEQUENCE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE SEQUENCE public.tours_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tours_id_seq OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 3984 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: tours_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER SEQUENCE public.tours_id_seq OWNED BY public.tours.id;
+
+
+--
+-- TOC entry 197 (class 1259 OID 14763367)
+-- Name: users; Type: TABLE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    email text NOT NULL,
+    full_name text NOT NULL,
+    handicap double precision NOT NULL,
+    password text NOT NULL,
+    is_admin boolean NOT NULL
+);
+
+
+ALTER TABLE public.users OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 196 (class 1259 OID 14763365)
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE SEQUENCE public.users_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.users_id_seq OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 3985 (class 0 OID 0)
+-- Dependencies: 196
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- TOC entry 216 (class 1259 OID 20996979)
+-- Name: v_birdies; Type: VIEW; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE VIEW public.v_birdies AS
+ SELECT s.player_id,
+    s.tour_id,
+    count(h.id) AS count
+   FROM ((public.scorecards s
+     JOIN public.hole_scores hs ON ((hs.scorecard_id = s.id)))
+     JOIN public.holes h ON ((h.id = hs.hole_id)))
+  WHERE ((s.status = 'Submitted'::text) AND ((hs.strokes - h.par) = '-1'::integer))
+  GROUP BY s.tour_id, s.player_id
+  ORDER BY s.player_id;
+
+
+ALTER TABLE public.v_birdies OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 217 (class 1259 OID 20996986)
+-- Name: v_eagles; Type: VIEW; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE VIEW public.v_eagles AS
+ SELECT s.player_id,
+    s.tour_id,
+    count(h.id) AS count
+   FROM ((public.scorecards s
+     JOIN public.hole_scores hs ON ((hs.scorecard_id = s.id)))
+     JOIN public.holes h ON ((h.id = hs.hole_id)))
+  WHERE ((s.status = 'Submitted'::text) AND ((hs.strokes - h.par) = '-2'::integer))
+  GROUP BY s.tour_id, s.player_id
+  ORDER BY s.player_id;
+
+
+ALTER TABLE public.v_eagles OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 215 (class 1259 OID 20996971)
+-- Name: v_pars; Type: VIEW; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE VIEW public.v_pars AS
+ SELECT s.player_id,
+    s.tour_id,
+    count(h.id) AS count
+   FROM ((public.scorecards s
+     JOIN public.hole_scores hs ON ((hs.scorecard_id = s.id)))
+     JOIN public.holes h ON ((h.id = hs.hole_id)))
+  WHERE ((s.status = 'Submitted'::text) AND ((h.par - hs.strokes) = 0))
+  GROUP BY s.tour_id, s.player_id
+  ORDER BY s.player_id;
+
+
+ALTER TABLE public.v_pars OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 218 (class 1259 OID 21002262)
+-- Name: v_countpars; Type: VIEW; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE VIEW public.v_countpars WITH (security_barrier='false') AS
+ SELECT u.tour_id,
+    x.full_name,
+    u.player_id,
+    pp.count AS pars,
+    b.count AS birdies,
+    e.count AS eagles
+   FROM ((((public.tour_players u
+     JOIN public.users x ON ((x.id = u.player_id)))
+     LEFT JOIN public.v_birdies b ON (((u.player_id = b.player_id) AND (u.tour_id = b.tour_id))))
+     LEFT JOIN public.v_pars pp ON (((u.player_id = pp.player_id) AND (pp.tour_id = u.tour_id))))
+     LEFT JOIN public.v_eagles e ON (((u.player_id = e.player_id) AND (e.tour_id = u.tour_id))));
+
+
+ALTER TABLE public.v_countpars OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 213 (class 1259 OID 18417150)
+-- Name: v_eclectic; Type: VIEW; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE VIEW public.v_eclectic AS
+ SELECT s.tour_id,
+    s.player_id,
+    u.full_name,
+    h.hole,
+    min((hs.strokes - h.par)) AS eclectic
+   FROM (((public.hole_scores hs
+     JOIN public.holes h ON ((h.id = hs.hole_id)))
+     JOIN public.scorecards s ON ((s.id = hs.scorecard_id)))
+     JOIN public.users u ON ((s.player_id = u.id)))
+  WHERE (s.status = 'Submitted'::text)
+  GROUP BY s.player_id, h.hole, u.full_name, s.tour_id;
+
+
+ALTER TABLE public.v_eclectic OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 219 (class 1259 OID 23111748)
+-- Name: v_eclectic_trend_per_hole; Type: VIEW; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE VIEW public.v_eclectic_trend_per_hole AS
+ WITH x AS (
+         SELECT s_1.player_id,
+            u_1.full_name,
+            s_1.tour_id,
+            s_1.tour_round,
+            h_1.hole,
+            hs_1.strokes,
+            h_1.par
+           FROM (((public.hole_scores hs_1
+             JOIN public.holes h_1 ON ((h_1.id = hs_1.hole_id)))
+             JOIN public.scorecards s_1 ON ((s_1.id = hs_1.scorecard_id)))
+             JOIN public.users u_1 ON ((s_1.player_id = u_1.id)))
+          WHERE (s_1.status = 'Submitted'::text)
+        )
+ SELECT s.player_id,
+    u.full_name,
+    s.tour_id,
+    s.tour_round,
+    h.hole,
+    ( SELECT min((x.strokes - x.par)) AS eclectic
+           FROM x
+          WHERE ((x.player_id = s.player_id) AND (x.tour_id = s.tour_id) AND (x.hole = h.hole) AND (x.tour_round <= s.tour_round))) AS eclectic
+   FROM (((public.hole_scores hs
+     JOIN public.holes h ON ((h.id = hs.hole_id)))
+     JOIN public.scorecards s ON ((s.id = hs.scorecard_id)))
+     JOIN public.users u ON ((s.player_id = u.id)))
+  WHERE (s.status = 'Submitted'::text)
+  GROUP BY s.player_id, h.hole, u.full_name, s.tour_id, s.tour_round
+  ORDER BY u.full_name, s.tour_id, h.hole, s.tour_round;
+
+
+ALTER TABLE public.v_eclectic_trend_per_hole OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 220 (class 1259 OID 23112888)
+-- Name: v_eclectic_trend_per_round; Type: VIEW; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE VIEW public.v_eclectic_trend_per_round AS
+ SELECT v_eclectic_trend_per_hole.player_id,
+    v_eclectic_trend_per_hole.full_name,
+    v_eclectic_trend_per_hole.tour_id,
+    v_eclectic_trend_per_hole.tour_round,
+    sum(v_eclectic_trend_per_hole.eclectic) AS score
+   FROM public.v_eclectic_trend_per_hole
+  GROUP BY v_eclectic_trend_per_hole.player_id, v_eclectic_trend_per_hole.full_name, v_eclectic_trend_per_hole.tour_id, v_eclectic_trend_per_hole.tour_round
+  ORDER BY v_eclectic_trend_per_hole.tour_id, v_eclectic_trend_per_hole.full_name, v_eclectic_trend_per_hole.tour_round;
+
+
+ALTER TABLE public.v_eclectic_trend_per_round OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 221 (class 1259 OID 23361934)
+-- Name: v_scorecards_round; Type: VIEW; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE VIEW public.v_scorecards_round AS
+SELECT
+    NULL::integer AS id,
+    NULL::text AS full_name,
+    NULL::text AS course_name,
+    NULL::integer AS course_id,
+    NULL::text AS tee,
+    NULL::integer AS handicap,
+    NULL::integer AS tour_id,
+    NULL::integer AS tour_round,
+    NULL::date AS round_date,
+    NULL::integer AS h1,
+    NULL::integer AS h2,
+    NULL::integer AS h3,
+    NULL::integer AS h4,
+    NULL::integer AS h5,
+    NULL::integer AS h6,
+    NULL::integer AS h7,
+    NULL::integer AS h8,
+    NULL::integer AS h9,
+    NULL::integer AS h10,
+    NULL::integer AS h11,
+    NULL::integer AS h12,
+    NULL::integer AS h13,
+    NULL::integer AS h14,
+    NULL::integer AS h15,
+    NULL::integer AS h16,
+    NULL::integer AS h17,
+    NULL::integer AS h18,
+    NULL::bigint AS strokes,
+    NULL::bigint AS points;
+
+
+ALTER TABLE public.v_scorecards_round OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 211 (class 1259 OID 17842367)
+-- Name: v_scorecards_scores; Type: VIEW; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE VIEW public.v_scorecards_scores WITH (security_barrier='false') AS
+ SELECT s.id,
+    s.round_date,
+    s.player_id,
+    s.course_id,
+    s.handicap,
+    s.status,
+    s.tour_id,
+    s.tour_round,
+    h.hole,
+    hs.strokes,
+    hs.points
+   FROM ((public.scorecards s
+     JOIN public.hole_scores hs ON ((hs.scorecard_id = s.id)))
+     JOIN public.holes h ON ((hs.hole_id = h.id)))
+  ORDER BY h.hole;
+
+
+ALTER TABLE public.v_scorecards_scores OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 214 (class 1259 OID 18651268)
+-- Name: v_scorecards_scores2; Type: VIEW; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE VIEW public.v_scorecards_scores2 AS
+ SELECT s.id,
+    s.round_date,
+    s.player_id,
+    s.course_id,
+    s.handicap,
+    s.status,
+    s.tour_id,
+    s.tour_round,
+    h.hole,
+    hs.strokes,
+    hs.points,
+    h.par
+   FROM ((public.scorecards s
+     JOIN public.hole_scores hs ON ((hs.scorecard_id = s.id)))
+     JOIN public.holes h ON ((hs.hole_id = h.id)))
+  ORDER BY h.hole;
+
+
+ALTER TABLE public.v_scorecards_scores2 OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 212 (class 1259 OID 18121402)
+-- Name: v_scorecards_sum; Type: VIEW; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE VIEW public.v_scorecards_sum AS
+SELECT
+    NULL::integer AS player_id,
+    NULL::integer AS tour_id,
+    NULL::integer AS tour_round,
+    NULL::bigint AS strokes,
+    NULL::bigint AS points;
+
+
+ALTER TABLE public.v_scorecards_sum OWNER TO wdjicccgirusxg;
+
+--
+-- TOC entry 3792 (class 2604 OID 14763558)
+-- Name: courses id; Type: DEFAULT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.courses ALTER COLUMN id SET DEFAULT nextval('public.courses_id_seq'::regclass);
+
+
+--
+-- TOC entry 3793 (class 2604 OID 15393126)
+-- Name: holes id; Type: DEFAULT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.holes ALTER COLUMN id SET DEFAULT nextval('public.holes_id_seq'::regclass);
+
+
+--
+-- TOC entry 3796 (class 2604 OID 17066072)
+-- Name: scorecards id; Type: DEFAULT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.scorecards ALTER COLUMN id SET DEFAULT nextval('public.scorecards_id_seq'::regclass);
+
+
+--
+-- TOC entry 3795 (class 2604 OID 17066020)
+-- Name: tour_rounds id; Type: DEFAULT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.tour_rounds ALTER COLUMN id SET DEFAULT nextval('public.tour_rounds_id_seq'::regclass);
+
+
+--
+-- TOC entry 3794 (class 2604 OID 17065851)
+-- Name: tours id; Type: DEFAULT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.tours ALTER COLUMN id SET DEFAULT nextval('public.tours_id_seq'::regclass);
+
+
+--
+-- TOC entry 3791 (class 2604 OID 14763370)
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- TOC entry 3961 (class 0 OID 14763555)
+-- Dependencies: 199
+-- Data for Name: courses; Type: TABLE DATA; Schema: public; Owner: wdjicccgirusxg
+--
+
+COPY public.courses (id, course_name, country, tee) FROM stdin;
+1	Worslay	UK	Yellow
+2	Gloria New Course	Turkey	Yellow
+3	Gloria New Course	Turkey	Red
+4	Gloria Old Course	Turkey	Yellow
+5	Gloria Old Course	Turkey	Red
+6	Gloria Verde	Turkey	Yellow
+7	Gloria Verde	Turkey	Red
+8	Gloria V + Of9	Turkey	Yellow
+9	Gloria V + Os9	Turkey	Yellow
+10	Gloria V+Nf9	Turkey	Yellow
+11	Gloria V+Ns9	Turkey	Yellow
+\.
+
+
+--
+-- TOC entry 3972 (class 0 OID 17066227)
+-- Dependencies: 210
+-- Data for Name: hole_scores; Type: TABLE DATA; Schema: public; Owner: wdjicccgirusxg
+--
+
+COPY public.hole_scores (scorecard_id, hole_id, strokes, points) FROM stdin;
+31	55	5	3
+31	56	3	3
+31	57	4	3
+31	58	4	3
+31	59	4	4
+31	60	4	3
+31	61	4	1
+31	62	4	3
+31	63	5	3
+31	64	5	0
+31	65	5	2
+31	66	4	4
+31	67	4	3
+31	68	4	2
+31	69	4	3
+31	70	4	3
+31	71	4	4
+31	72	4	2
+113	1	5	2
+113	2	4	3
+113	3	5	2
+113	4	5	0
+113	5	6	2
+113	6	7	1
+113	7	3	3
+113	8	4	3
+113	9	4	2
+113	10	5	2
+113	11	3	3
+113	12	5	1
+113	13	5	3
+113	14	4	1
+113	15	5	2
+113	16	8	0
+113	17	6	0
+113	18	5	3
+115	1	6	1
+115	2	5	1
+115	3	4	3
+115	4	3	2
+115	5	5	3
+115	6	7	1
+115	7	6	0
+115	8	5	2
+115	9	4	2
+115	10	5	2
+42	55	8	1
+42	56	5	2
+42	57	7	1
+42	58	6	2
+42	59	7	2
+42	60	6	2
+42	61	5	1
+42	62	6	2
+42	63	8	1
+42	64	4	2
+42	65	6	2
+42	66	6	3
+42	67	7	1
+42	68	5	2
+42	69	8	0
+42	70	8	0
+42	71	6	3
+42	72	3	4
+40	19	6	1
+40	20	7	1
+40	21	5	1
+40	22	6	2
+40	23	6	1
+40	24	3	2
+40	25	4	2
+40	26	5	2
+40	27	8	0
+40	28	6	1
+40	29	6	1
+40	30	5	1
+40	31	6	1
+40	32	8	0
+40	33	5	0
+40	34	6	2
+40	35	4	1
+40	36	6	2
+33	19	8	0
+33	20	7	2
+33	21	3	4
+33	22	9	0
+33	23	5	3
+33	24	5	1
+33	25	5	2
+33	26	9	0
+33	27	8	1
+33	28	10	0
+33	29	7	1
+33	30	6	1
+33	31	8	0
+33	32	7	1
+33	33	4	2
+33	34	7	2
+33	35	4	2
+33	36	8	1
+45	55	8	1
+45	56	6	0
+45	57	8	0
+45	58	5	3
+45	59	8	1
+45	60	5	3
+45	61	7	0
+45	62	7	1
+45	63	7	2
+45	64	3	3
+45	65	5	3
+45	66	8	1
+45	67	6	2
+45	68	5	2
+45	69	6	2
+45	70	4	3
+45	71	7	2
+45	72	3	3
+47	55	8	1
+47	56	6	0
+47	57	7	1
+47	58	8	0
+47	59	8	1
+47	60	5	3
+47	61	5	1
+115	11	4	2
+115	12	5	1
+115	13	8	0
+115	14	4	1
+115	15	5	2
+115	16	6	1
+47	62	6	2
+47	63	7	2
+47	64	4	2
+47	65	7	1
+47	66	6	3
+47	67	6	2
+73	163	5	3
+73	164	5	3
+73	165	4	3
+73	166	8	0
+73	167	9	1
+28	55	6	2
+28	56	5	1
+28	57	4	3
+28	58	3	4
+28	59	5	3
+28	60	4	3
+28	61	3	2
+28	62	5	2
+28	63	5	3
+28	64	6	0
+28	65	3	4
+28	66	5	3
+28	67	3	4
+28	68	6	0
+28	69	6	1
+116	1	7	0
+116	2	5	2
+116	3	5	2
+116	4	5	0
+116	5	4	4
+29	91	4	3
+29	92	4	3
+29	93	4	2
+29	94	5	2
+29	95	4	4
+29	96	3	4
+29	97	4	2
+29	98	5	2
+29	99	6	0
+29	100	5	2
+29	101	4	3
+29	102	3	3
+29	103	4	3
+29	104	4	4
+29	105	4	3
+29	106	5	1
+29	107	4	3
+29	108	4	2
+32	91	4	3
+32	92	4	3
+32	93	4	2
+32	94	4	3
+32	95	4	4
+32	96	4	3
+32	97	4	2
+32	98	4	3
+32	99	4	2
+32	100	4	3
+32	101	4	3
+32	102	4	2
+32	103	4	3
+32	104	4	4
+32	105	4	3
+32	106	3	3
+32	107	3	4
+32	108	3	3
+68	163	6	1
+68	164	5	3
+68	165	5	2
+68	166	7	0
+68	167	5	4
+68	168	5	3
+68	169	4	2
+68	170	7	1
+68	171	7	0
+68	172	3	3
+68	173	6	1
+68	174	7	2
+68	175	6	2
+68	176	5	2
+68	177	6	2
+68	178	6	1
+68	179	7	2
+68	180	5	1
+73	168	8	0
+73	169	4	3
+73	170	8	0
+73	171	6	2
+73	172	7	0
+73	173	6	2
+73	174	9	0
+73	175	8	0
+73	176	7	0
+73	177	8	1
+73	178	4	4
+73	179	6	3
+73	180	5	2
+76	55	6	2
+76	56	4	2
+34	19	8	0
+34	20	8	1
+34	21	5	2
+34	22	9	0
+34	23	7	1
+34	24	5	1
+34	25	6	1
+34	26	8	0
+34	27	9	0
+34	28	7	0
+34	29	6	1
+34	30	6	1
+34	31	6	2
+34	32	6	2
+34	33	3	3
+23	55	5	3
+23	56	4	1
+23	57	4	3
+23	58	6	0
+23	59	6	2
+23	60	5	2
+23	61	4	1
+23	62	4	3
+23	63	6	2
+23	64	3	2
+23	65	5	2
+23	66	6	2
+23	67	4	3
+23	68	3	3
+23	69	5	2
+23	70	5	1
+23	71	6	2
+23	72	3	2
+24	55	7	1
+24	56	5	0
+24	57	6	1
+24	58	5	1
+24	59	5	3
+24	60	6	1
+24	61	3	2
+24	62	3	4
+24	63	7	1
+24	64	4	1
+24	65	4	3
+24	66	5	3
+24	67	6	1
+24	68	5	1
+24	69	5	2
+24	70	5	1
+24	71	4	4
+24	72	5	0
+26	55	6	2
+26	56	4	1
+26	57	5	2
+26	58	5	1
+26	59	6	2
+26	60	5	2
+26	61	4	1
+26	62	5	2
+34	34	9	0
+34	35	5	1
+34	36	5	4
+22	60	5	2
+22	61	5	0
+22	62	5	2
+22	63	6	2
+22	64	4	1
+22	65	4	3
+22	66	7	1
+22	67	6	1
+22	68	3	3
+22	69	5	2
+25	91	3	4
+25	92	5	2
+22	70	5	2
+25	93	5	1
+25	94	4	3
+25	95	6	2
+25	96	5	2
+25	97	5	0
+25	98	4	3
+25	99	4	2
+25	100	5	2
+25	101	6	1
+25	102	4	2
+25	103	6	1
+25	104	6	2
+25	105	5	2
+25	106	5	0
+25	107	5	2
+25	108	5	1
+26	63	6	2
+26	64	4	1
+26	65	5	2
+26	66	6	2
+26	67	5	2
+26	68	4	2
+26	69	5	2
+26	70	5	1
+26	71	6	2
+26	72	4	1
+27	91	4	3
+27	92	5	2
+27	93	4	2
+27	94	5	2
+27	95	4	4
+27	96	5	2
+27	97	4	2
+27	98	5	2
+27	99	4	2
+27	100	6	1
+27	101	5	2
+27	102	5	1
+27	103	5	2
+27	104	5	3
+27	105	6	1
+27	106	4	2
+27	107	4	3
+27	108	6	0
+30	19	4	3
+30	20	3	5
+30	21	4	2
+30	22	5	3
+30	23	5	2
+30	24	4	1
+30	25	5	2
+30	26	4	3
+30	27	3	5
+30	28	4	3
+30	29	5	2
+30	30	6	0
+30	31	5	2
+30	32	4	3
+30	33	5	0
+30	34	4	4
+30	35	4	2
+30	36	5	3
+35	37	8	0
+35	38	6	3
+35	39	5	1
+35	40	9	0
+35	41	7	0
+35	42	4	2
+35	43	5	2
+35	44	5	3
+35	45	6	3
+35	46	5	2
+35	47	10	0
+35	48	4	2
+35	49	6	2
+35	50	7	1
+35	51	6	0
+35	52	6	3
+35	53	4	2
+35	54	6	3
+69	163	7	2
+69	164	7	2
+69	165	7	1
+41	73	9	0
+41	74	3	3
+41	75	9	0
+41	76	7	0
+41	77	6	3
+41	78	7	1
+41	79	6	0
+41	80	5	3
+41	81	6	3
+41	82	3	3
+41	83	6	1
+41	84	7	2
+41	85	8	0
+41	86	2	5
+41	87	6	2
+41	88	5	2
+41	89	7	2
+41	90	3	3
+38	19	7	0
+38	20	9	0
+38	21	4	3
+38	22	8	1
+38	23	6	2
+38	24	5	1
+38	25	4	3
+38	26	4	4
+38	27	9	0
+38	28	6	1
+38	29	7	0
+38	30	5	2
+38	31	8	0
+38	32	8	0
+38	33	5	1
+38	34	9	0
+38	35	2	4
+38	36	8	1
+69	166	7	1
+69	167	10	0
+69	168	7	2
+69	169	7	0
+69	170	7	2
+69	171	4	4
+69	172	5	2
+69	173	6	2
+48	55	7	1
+48	56	6	0
+48	57	6	1
+48	58	4	3
+48	59	6	2
+48	60	4	3
+48	61	5	0
+48	62	7	0
+48	63	8	0
+48	64	4	1
+48	65	4	3
+48	66	6	2
+48	67	7	0
+48	68	4	2
+48	69	7	0
+48	70	6	1
+48	71	4	4
+48	72	4	1
+69	174	10	0
+69	175	9	0
+69	176	4	4
+69	177	9	0
+69	178	8	0
+69	179	9	1
+69	180	4	3
+74	163	7	0
+74	164	6	1
+74	165	5	1
+74	166	5	2
+74	167	5	3
+74	168	7	0
+74	169	4	1
+74	170	5	2
+74	171	4	2
+74	172	4	1
+74	173	5	2
+47	68	6	1
+47	69	8	0
+47	70	8	0
+47	71	9	0
+47	72	5	1
+74	174	5	3
+74	175	6	1
+74	176	4	2
+74	177	7	0
+74	178	6	0
+58	37	5	2
+58	38	6	3
+58	39	6	0
+58	40	9	0
+58	41	6	1
+58	47	6	1
+58	48	5	1
+58	49	4	4
+58	50	6	2
+58	51	5	1
+58	52	7	2
+58	53	4	2
+74	179	8	0
+74	180	6	0
+76	57	6	1
+76	58	5	2
+76	59	7	1
+76	60	7	0
+76	61	5	0
+76	62	6	1
+76	63	7	1
+76	64	5	0
+76	65	5	2
+76	66	7	1
+76	67	6	1
+76	68	5	1
+76	69	6	1
+76	70	4	3
+76	71	8	0
+76	72	3	2
+79	66	7	2
+79	67	7	1
+70	163	7	1
+70	164	7	2
+70	165	6	1
+70	166	7	1
+70	167	9	1
+70	168	6	2
+70	169	4	3
+70	170	7	1
+70	171	5	3
+70	172	5	2
+58	42	5	1
+58	43	5	2
+58	44	8	0
+58	45	9	0
+58	46	7	0
+59	19	7	1
+59	20	8	1
+59	21	6	1
+59	22	10	0
+59	23	5	3
+59	24	6	0
+59	25	8	0
+59	26	4	4
+59	27	9	0
+59	28	7	1
+59	29	6	2
+51	19	6	2
+51	20	8	1
+51	21	2	5
+51	22	7	2
+51	23	4	4
+51	24	5	1
+51	25	8	0
+51	26	5	3
+51	27	6	3
+51	28	7	1
+51	29	5	3
+51	30	6	1
+51	31	6	2
+51	32	6	2
+51	33	4	2
+51	34	8	1
+51	35	6	0
+51	36	8	1
+52	19	6	1
+52	20	7	1
+52	21	4	2
+52	22	8	0
+52	23	5	2
+52	24	4	1
+52	25	4	2
+52	26	5	2
+52	27	8	0
+52	28	5	2
+52	29	6	1
+52	30	5	1
+52	31	5	2
+52	32	5	2
+52	33	5	0
+52	34	6	2
+52	35	5	0
+52	36	6	2
+59	30	5	2
+59	31	6	2
+59	32	6	2
+59	33	4	2
+59	34	9	0
+59	35	7	0
+59	36	6	3
+70	173	9	0
+70	174	8	1
+70	175	6	2
+70	176	6	1
+70	177	7	2
+70	178	9	0
+70	179	7	2
+70	180	5	2
+75	163	7	1
+75	164	6	2
+75	165	8	0
+75	166	6	2
+75	167	7	2
+75	168	6	2
+75	169	5	1
+75	170	6	2
+75	171	5	2
+75	172	5	1
+75	173	5	3
+75	174	8	1
+75	175	5	3
+75	176	5	2
+75	177	5	3
+75	178	5	2
+64	19	7	0
+64	20	6	2
+64	21	5	1
+64	22	7	1
+64	23	5	2
+64	24	4	1
+64	25	5	1
+64	26	5	2
+64	27	5	3
+64	28	7	0
+64	29	5	2
+64	30	4	2
+64	31	6	1
+64	32	7	0
+64	33	4	1
+64	34	8	0
+64	35	5	0
+64	36	6	2
+65	19	5	2
+65	20	9	0
+65	21	4	3
+65	22	8	1
+65	23	4	4
+50	37	6	1
+50	38	7	2
+50	39	3	3
+50	40	6	3
+50	41	7	0
+50	42	4	2
+50	43	5	2
+50	44	4	4
+50	45	7	2
+50	46	6	1
+50	47	5	2
+50	48	5	1
+50	49	6	2
+50	51	4	2
+50	52	7	2
+50	53	3	3
+50	54	6	3
+50	50	4	4
+65	24	4	2
+65	25	7	0
+65	26	8	0
+65	27	8	1
+65	28	8	0
+65	29	6	1
+65	30	5	2
+65	31	8	0
+75	179	6	3
+75	180	5	1
+77	73	6	3
+77	74	2	4
+77	75	6	2
+77	76	5	2
+77	77	8	1
+77	78	5	2
+77	79	7	0
+77	80	5	3
+77	81	7	2
+77	82	6	0
+77	83	5	2
+77	84	6	3
+77	85	5	3
+77	86	3	4
+77	87	6	2
+77	88	7	0
+77	89	10	0
+77	90	3	3
+79	68	6	1
+116	6	7	1
+116	7	3	3
+53	19	6	1
+53	20	8	1
+53	21	3	4
+53	22	8	1
+53	23	5	3
+53	24	3	3
+53	25	6	1
+53	26	6	2
+53	27	7	2
+53	28	6	1
+53	29	5	2
+53	30	3	4
+53	31	8	0
+53	32	6	2
+53	33	5	1
+53	34	8	1
+53	35	5	1
+53	36	8	1
+71	145	6	1
+55	19	8	0
+55	20	9	0
+55	21	5	2
+55	22	8	1
+55	23	6	2
+55	24	4	2
+55	25	6	1
+55	26	5	3
+55	27	9	0
+55	28	6	1
+55	29	6	1
+55	30	4	3
+55	31	7	1
+55	32	6	2
+55	33	4	2
+55	34	8	1
+55	35	3	3
+55	36	9	0
+71	146	6	2
+71	147	5	2
+71	148	4	3
+71	149	7	2
+71	150	7	1
+71	151	4	2
+71	152	8	0
+71	153	4	3
+71	154	8	1
+71	155	5	1
+71	156	6	2
+71	157	7	0
+71	158	6	3
+71	159	5	2
+71	160	4	2
+71	161	7	1
+71	162	8	1
+72	163	6	1
+72	164	6	2
+72	165	3	4
+72	166	5	2
+72	167	7	2
+72	168	5	2
+72	169	4	2
+72	170	5	3
+72	171	3	4
+72	172	4	2
+72	173	4	3
+72	174	6	3
+72	175	5	2
+72	176	4	2
+72	177	8	0
+72	178	5	2
+72	179	6	3
+72	180	5	1
+78	55	6	3
+22	55	7	1
+22	56	5	1
+22	57	5	2
+22	58	2	5
+22	59	4	4
+22	71	5	3
+22	72	5	1
+36	37	8	1
+36	38	6	4
+36	39	6	2
+36	40	7	3
+36	41	7	2
+36	42	7	0
+36	43	7	1
+36	44	8	1
+36	45	9	1
+36	46	7	2
+36	47	8	1
+36	48	9	0
+36	49	7	2
+36	50	9	0
+36	51	6	1
+36	52	5	5
+36	53	5	2
+36	54	8	2
+43	73	11	0
+43	74	4	3
+43	75	8	1
+43	76	9	0
+43	77	10	0
+43	78	7	2
+43	79	3	4
+43	80	7	2
+43	81	8	2
+43	82	7	0
+43	83	6	3
+43	84	10	0
+43	85	6	3
+43	86	3	5
+43	87	7	2
+43	88	7	2
+43	89	10	0
+43	90	8	0
+54	37	8	1
+54	38	9	1
+54	39	7	1
+54	40	8	2
+54	41	7	2
+54	42	7	0
+54	43	7	1
+54	44	6	3
+54	45	7	3
+54	46	8	1
+54	47	9	0
+54	48	8	0
+54	49	8	1
+54	50	8	1
+54	51	5	2
+54	52	7	3
+54	53	10	0
+54	54	11	0
+58	54	5	3
+60	19	8	0
+60	20	9	0
+60	21	4	3
+60	22	9	0
+60	23	6	2
+60	24	3	3
+60	25	5	2
+60	26	6	2
+60	27	7	2
+60	28	8	0
+60	29	8	0
+60	30	5	2
+60	31	8	0
+60	32	8	0
+60	33	5	1
+60	34	6	3
+60	35	5	1
+60	36	5	4
+78	56	6	0
+78	57	6	2
+78	58	5	3
+78	59	6	3
+78	60	6	2
+78	61	4	2
+78	62	5	3
+78	63	6	3
+78	64	4	2
+78	65	7	1
+78	66	7	2
+78	67	8	0
+78	68	2	5
+78	69	8	0
+78	70	6	1
+78	71	9	0
+78	72	4	2
+79	55	7	2
+79	56	7	0
+79	57	7	1
+79	58	7	1
+79	59	9	0
+79	60	6	2
+79	61	3	3
+79	62	7	1
+79	63	9	0
+79	64	3	3
+79	65	6	2
+65	32	5	3
+65	33	4	2
+65	34	6	3
+65	35	4	2
+65	36	6	3
+63	37	7	2
+63	38	9	1
+63	39	10	0
+63	40	10	0
+63	41	7	2
+63	42	7	0
+63	43	7	1
+63	44	7	2
+63	45	8	2
+63	46	8	1
+63	47	7	2
+63	48	7	1
+63	49	9	0
+63	50	8	1
+63	51	7	0
+63	52	10	0
+63	53	5	2
+63	54	8	2
+37	19	8	0
+37	20	8	2
+37	21	4	3
+37	22	7	3
+37	23	7	1
+37	24	4	3
+37	25	7	1
+37	26	7	1
+37	27	9	1
+37	28	9	0
+37	29	10	0
+37	30	10	0
+37	31	7	2
+37	32	9	0
+37	33	3	4
+37	34	9	1
+37	35	5	2
+37	36	8	1
+46	55	10	0
+46	56	5	2
+46	57	9	0
+46	58	7	1
+46	59	8	2
+46	60	7	1
+46	61	5	2
+46	62	7	2
+46	63	10	0
+46	64	4	3
+46	65	8	0
+46	66	7	3
+46	67	5	3
+46	68	6	1
+46	69	9	0
+46	70	5	3
+46	71	10	0
+46	72	5	2
+56	37	6	2
+56	38	10	0
+56	39	7	0
+56	40	8	2
+56	41	7	1
+56	42	5	2
+56	43	5	3
+56	44	6	2
+56	45	7	3
+56	46	7	1
+56	47	8	0
+56	48	5	2
+56	49	7	2
+56	50	7	2
+56	51	6	1
+56	52	8	2
+56	53	3	4
+56	54	8	1
+61	37	7	1
+61	38	7	3
+61	39	7	0
+61	40	8	2
+61	41	6	2
+61	42	4	3
+61	43	4	4
+61	44	6	2
+61	45	9	1
+61	46	8	0
+61	47	7	1
+61	48	4	3
+61	49	7	2
+61	50	7	2
+61	51	5	2
+61	52	8	2
+61	53	4	3
+61	54	5	4
+39	37	7	1
+39	38	10	0
+39	39	10	0
+39	40	10	0
+39	41	7	1
+39	42	5	2
+39	43	6	2
+39	44	6	3
+39	45	9	1
+39	46	7	1
+39	47	8	0
+39	48	5	2
+39	49	5	4
+39	50	8	1
+39	51	4	3
+39	52	9	1
+39	53	10	0
+39	54	7	2
+49	73	9	0
+49	74	6	1
+49	75	8	1
+49	76	8	0
+49	77	10	0
+49	78	8	0
+49	79	6	1
+49	80	9	0
+49	81	6	4
+49	82	5	2
+49	83	8	0
+49	84	10	0
+49	85	8	0
+49	86	6	1
+49	87	7	2
+49	88	4	4
+49	89	9	1
+49	90	6	1
+57	37	7	1
+57	38	6	4
+57	39	8	0
+57	40	9	1
+57	41	7	1
+57	42	4	3
+57	43	8	0
+57	44	7	2
+57	45	10	0
+57	46	11	0
+57	47	6	2
+57	48	5	2
+57	49	6	3
+57	50	5	4
+57	51	7	0
+57	52	10	0
+57	53	3	4
+57	54	8	1
+62	49	8	1
+62	50	7	2
+62	51	6	1
+62	52	8	2
+62	53	6	1
+62	54	7	2
+62	37	10	0
+62	38	7	3
+62	39	6	1
+62	40	10	0
+62	41	5	3
+62	42	3	4
+62	43	4	4
+62	44	9	0
+62	45	8	2
+62	46	7	1
+62	47	9	0
+62	48	6	1
+116	8	7	0
+116	9	3	3
+116	10	5	2
+116	11	4	2
+116	12	5	1
+116	13	7	1
+116	14	5	0
+116	15	5	2
+116	16	6	1
+116	17	5	1
+116	18	6	2
+119	1	7	1
+119	2	8	0
+119	3	8	0
+119	4	4	2
+119	5	7	2
+119	6	8	0
+119	7	7	0
+79	69	6	2
+79	70	6	1
+79	71	9	0
+79	72	2	4
+80	73	9	1
+80	74	6	1
+80	75	9	0
+80	76	8	1
+80	77	7	3
+80	78	7	2
+80	79	4	3
+80	80	7	2
+80	81	10	0
+80	82	4	3
+80	83	8	1
+80	84	9	1
+80	85	7	2
+80	86	3	5
+80	87	7	2
+80	88	4	5
+80	89	10	0
+80	90	5	2
+81	55	9	0
+81	56	5	2
+81	57	5	3
+81	58	6	2
+81	59	7	2
+81	60	5	3
+81	61	6	0
+81	62	6	2
+81	63	8	1
+81	64	3	3
+81	65	7	1
+81	66	7	2
+81	67	8	0
+81	68	4	3
+81	69	7	1
+81	70	7	1
+81	71	7	2
+81	72	3	4
+82	73	9	0
+82	74	5	2
+82	75	8	1
+82	76	6	2
+82	77	9	1
+82	78	8	0
+82	79	6	1
+82	80	9	0
+82	81	6	4
+82	82	4	3
+82	83	8	0
+82	84	7	3
+82	85	8	0
+82	86	6	1
+82	87	7	2
+82	88	6	2
+82	89	8	2
+82	90	5	2
+83	55	8	1
+83	56	5	2
+83	57	9	0
+83	58	7	1
+83	59	9	1
+83	60	6	2
+83	61	4	3
+83	62	7	2
+83	63	9	0
+83	64	4	3
+83	65	9	0
+83	66	7	3
+83	67	8	0
+83	68	4	3
+83	69	10	0
+83	70	7	1
+83	71	7	3
+83	72	6	1
+84	19	4	4
+84	20	9	0
+84	21	7	0
+84	22	7	2
+84	23	5	3
+84	24	4	2
+84	25	5	2
+84	26	5	3
+84	27	6	3
+84	28	8	0
+84	29	6	2
+84	30	4	3
+84	31	6	2
+84	32	5	3
+84	33	6	0
+84	34	9	0
+84	35	4	2
+84	36	6	3
+85	19	7	0
+85	20	9	0
+85	21	4	3
+85	22	8	1
+85	23	5	3
+85	24	5	1
+85	25	7	0
+85	26	4	4
+85	27	6	3
+85	28	7	0
+85	29	5	2
+85	30	6	1
+85	31	8	0
+85	32	8	0
+85	33	5	1
+85	34	8	1
+85	35	3	3
+85	36	7	2
+86	37	6	1
+86	38	7	2
+86	39	6	0
+86	40	7	2
+86	41	7	0
+86	42	3	3
+86	43	4	3
+86	44	7	1
+86	45	8	1
+86	46	6	1
+86	47	6	1
+86	48	6	0
+86	49	4	4
+86	50	6	2
+86	51	5	1
+86	52	5	4
+86	53	5	1
+86	54	6	3
+87	181	7	2
+87	182	9	0
+87	183	5	3
+87	184	6	3
+87	185	9	1
+87	186	9	0
+87	187	6	1
+87	188	6	3
+87	189	5	3
+87	190	8	1
+87	191	10	0
+87	192	5	3
+87	193	10	0
+87	194	6	3
+87	195	5	2
+87	196	7	1
+87	197	6	3
+87	198	10	0
+117	1	8	0
+117	2	8	0
+117	3	8	0
+117	4	4	2
+117	5	7	2
+117	6	6	2
+117	7	5	2
+117	8	8	0
+117	9	4	2
+117	10	7	1
+117	11	5	2
+117	12	6	1
+117	13	9	0
+117	14	5	1
+117	15	6	2
+117	16	6	2
+117	17	5	2
+89	181	6	1
+89	182	5	3
+89	183	7	0
+89	184	5	2
+89	185	8	1
+89	186	6	1
+89	187	3	3
+89	188	7	1
+89	189	7	0
+89	190	6	1
+89	191	7	2
+89	192	5	2
+89	193	8	1
+89	194	5	2
+89	195	5	1
+89	196	6	1
+89	197	7	1
+89	198	7	2
+91	19	6	2
+91	20	7	2
+91	21	3	4
+91	22	8	1
+91	23	4	4
+91	24	3	3
+91	25	5	2
+91	26	7	1
+91	27	8	1
+91	28	7	1
+91	29	6	2
+91	30	5	2
+91	31	7	1
+91	32	6	2
+91	33	5	1
+91	34	7	2
+91	35	7	0
+91	36	8	1
+90	37	5	2
+90	38	6	3
+90	39	4	2
+90	40	6	3
+90	41	6	1
+90	42	4	2
+90	43	8	0
+90	44	6	2
+90	45	8	1
+90	46	6	1
+90	47	6	1
+90	48	5	1
+90	49	7	1
+90	50	7	1
+90	51	4	2
+90	52	9	0
+90	53	3	3
+90	54	8	1
+92	19	5	2
+92	20	9	0
+92	21	4	3
+92	22	8	1
+92	23	6	2
+92	24	3	3
+92	25	7	0
+92	26	6	2
+92	27	7	2
+92	28	7	0
+92	29	5	2
+92	30	5	2
+92	31	7	1
+92	32	5	3
+92	33	5	1
+92	34	7	2
+92	35	5	1
+92	36	5	4
+93	19	7	0
+93	20	8	0
+93	21	3	3
+93	22	8	0
+93	23	5	2
+93	24	4	1
+93	25	4	3
+93	26	4	3
+93	27	6	2
+93	28	5	2
+93	29	4	3
+93	30	5	1
+93	31	7	0
+93	32	6	1
+93	33	6	0
+93	34	8	0
+93	35	4	1
+93	36	7	1
+94	37	9	0
+94	38	8	2
+94	39	5	3
+94	40	10	0
+94	41	7	2
+94	42	4	3
+94	43	8	0
+94	44	6	3
+94	45	10	0
+94	46	7	2
+94	47	6	3
+94	48	7	1
+94	49	6	3
+94	50	7	2
+94	51	6	1
+94	52	7	3
+94	53	7	0
+94	54	8	2
+95	19	6	1
+95	20	9	0
+95	21	4	3
+95	22	8	1
+95	23	5	3
+95	24	4	2
+95	25	6	1
+95	26	5	3
+95	27	7	2
+95	28	6	1
+95	29	5	2
+95	30	5	2
+95	31	8	0
+95	32	8	0
+95	33	6	0
+95	34	9	0
+95	35	6	0
+95	36	7	2
+88	181	7	1
+88	182	7	1
+88	183	3	4
+88	184	7	1
+88	185	10	0
+88	186	7	1
+88	187	4	3
+88	188	8	0
+88	189	5	3
+88	190	7	1
+88	191	7	2
+88	192	7	0
+88	193	11	0
+88	194	5	3
+88	195	5	2
+88	196	7	1
+88	197	6	2
+88	198	9	1
+96	37	9	0
+96	38	9	1
+96	39	5	2
+96	40	11	0
+96	41	7	1
+96	42	4	3
+96	43	7	1
+96	44	6	2
+96	45	7	3
+96	46	6	2
+96	47	10	0
+96	48	7	0
+96	49	9	0
+96	50	8	1
+96	51	6	1
+96	52	8	2
+96	53	6	1
+96	54	7	2
+117	18	9	0
+119	8	8	0
+119	9	5	1
+119	10	6	2
+119	11	7	0
+119	12	6	1
+119	13	7	2
+119	14	6	0
+119	15	8	0
+119	16	7	1
+119	17	5	2
+119	18	6	3
+120	1	7	1
+120	2	6	1
+120	3	5	3
+120	4	6	0
+120	5	8	1
+120	6	9	0
+120	7	5	2
+120	8	9	0
+121	1	7	0
+121	2	5	2
+121	3	5	2
+121	4	5	0
+121	5	8	0
+121	6	7	1
+121	7	4	2
+121	8	7	0
+121	9	3	3
+121	10	5	2
+121	11	3	3
+121	12	4	2
+121	13	6	2
+121	14	4	1
+121	15	7	0
+121	16	7	0
+121	17	6	0
+121	18	8	0
+123	1	6	2
+123	2	6	1
+123	3	6	2
+123	4	4	2
+123	5	8	1
+123	6	8	0
+123	7	4	3
+123	8	8	0
+123	9	4	2
+123	10	5	3
+123	11	4	3
+123	12	7	0
+123	13	9	0
+123	14	4	2
+123	15	7	1
+123	16	8	0
+123	17	8	0
+123	18	9	0
+118	1	8	0
+118	2	7	0
+118	3	8	0
+118	4	5	1
+118	5	6	2
+118	6	8	0
+118	7	4	2
+118	8	8	0
+118	9	3	3
+118	10	7	0
+118	11	4	2
+118	12	6	1
+118	13	7	2
+118	14	4	2
+118	15	8	0
+118	16	7	0
+118	17	6	1
+118	18	7	1
+124	1	4	3
+124	2	6	1
+124	3	6	1
+124	4	3	2
+124	5	6	2
+124	6	5	3
+124	7	3	3
+124	8	6	1
+124	9	4	2
+124	10	7	0
+124	11	5	1
+124	12	4	2
+124	13	4	4
+124	14	4	1
+124	15	4	3
+124	16	7	0
+124	17	6	0
+124	18	5	3
+115	17	4	2
+115	18	7	1
+125	1	5	3
+125	2	5	2
+125	3	7	1
+125	4	5	1
+125	5	8	0
+125	6	7	1
+125	7	4	2
+125	8	8	0
+125	9	4	2
+125	10	6	1
+125	11	4	2
+125	12	4	3
+125	13	9	0
+125	14	5	1
+125	15	8	0
+125	16	7	0
+125	17	6	1
+125	18	7	1
+120	9	5	2
+120	10	6	2
+120	11	5	2
+120	12	5	2
+120	13	9	0
+120	14	4	2
+120	15	7	1
+120	16	6	2
+120	17	7	0
+120	18	6	3
+122	1	8	0
+122	2	5	2
+122	3	6	2
+122	4	4	2
+122	5	7	2
+122	6	7	1
+122	7	3	4
+122	8	8	0
+122	9	3	3
+122	10	4	4
+122	11	4	3
+122	12	7	0
+122	13	7	2
+122	14	4	2
+122	15	8	0
+122	16	6	2
+122	17	7	0
+122	18	6	3
+127	1	6	1
+127	2	5	1
+127	3	5	2
+127	4	4	1
+127	5	6	2
+127	6	6	2
+127	7	3	3
+127	8	5	2
+127	9	4	2
+127	10	5	2
+127	11	4	2
+127	12	4	2
+127	13	7	1
+127	14	4	1
+127	15	5	2
+127	16	5	2
+127	17	4	2
+127	18	6	2
+128	1	8	0
+128	2	5	2
+128	3	7	1
+128	4	4	2
+128	5	9	0
+128	6	7	1
+128	7	6	1
+112	37	5	2
+112	38	6	2
+112	39	3	3
+112	40	4	4
+112	41	\N	\N
+112	42	\N	\N
+112	43	\N	\N
+112	44	\N	\N
+112	45	\N	\N
+112	46	\N	\N
+112	47	\N	\N
+112	48	\N	\N
+112	49	\N	\N
+112	50	\N	\N
+112	51	\N	\N
+112	52	\N	\N
+112	53	\N	\N
+112	54	\N	\N
+111	19	4	2
+111	20	4	4
+111	21	5	0
+111	22	5	3
+111	23	6	0
+111	24	4	1
+111	25	4	2
+111	26	5	2
+111	27	6	2
+111	28	6	0
+111	29	3	3
+111	30	\N	\N
+111	31	\N	\N
+111	32	\N	\N
+111	33	\N	\N
+111	34	\N	\N
+111	35	\N	\N
+111	36	\N	\N
+128	8	10	0
+128	9	5	2
+128	10	5	3
+128	11	4	3
+128	12	5	2
+128	13	7	2
+128	14	4	2
+128	15	4	4
+128	16	6	2
+128	17	5	2
+128	18	10	0
+130	1	7	0
+130	2	5	2
+130	3	5	2
+130	4	3	2
+130	5	5	3
+130	6	5	3
+130	7	4	2
+130	8	7	0
+130	9	4	2
+130	10	6	1
+130	11	4	2
+130	12	4	2
+130	13	6	2
+130	14	3	2
+130	15	5	2
+130	16	6	1
+130	17	6	0
+130	18	7	1
+131	1	7	1
+131	2	7	0
+131	3	6	2
+131	4	3	3
+131	5	9	0
+131	6	8	0
+131	7	3	4
+131	8	6	2
+131	9	4	2
+131	10	5	3
+131	11	4	3
+131	12	6	1
+131	13	7	2
+131	14	6	0
+131	15	6	2
+131	16	6	2
+131	17	5	2
+131	18	8	1
+133	1	10	0
+133	2	8	0
+133	3	5	3
+133	4	5	1
+133	5	7	2
+133	6	7	1
+133	7	6	1
+133	8	9	0
+133	9	3	4
+133	10	5	3
+133	11	3	4
+133	12	8	0
+133	13	9	0
+133	14	5	1
+133	15	6	2
+133	16	9	0
+133	17	7	0
+133	18	9	0
+134	1	6	1
+134	2	7	0
+134	3	8	0
+134	4	3	2
+134	5	6	2
+134	6	8	0
+134	7	3	3
+134	8	5	2
+134	9	4	2
+134	10	4	3
+134	11	4	2
+134	12	6	0
+134	13	7	1
+134	14	4	1
+134	15	4	3
+134	16	7	0
+134	17	5	1
+134	18	8	0
+135	1	7	0
+135	2	5	2
+135	3	6	1
+135	4	4	1
+135	5	6	2
+135	6	6	2
+135	7	4	2
+135	8	5	2
+135	9	3	3
+135	10	5	2
+135	11	4	2
+135	12	4	2
+135	13	6	2
+135	14	3	2
+135	15	6	1
+135	16	6	1
+135	17	4	2
+135	18	5	3
+136	1	6	2
+136	2	5	2
+136	3	5	3
+136	4	6	0
+136	5	6	2
+136	6	7	1
+136	7	5	1
+136	8	8	0
+136	9	4	2
+136	10	7	0
+136	11	4	2
+136	12	4	3
+136	13	7	2
+136	14	4	2
+136	15	6	2
+136	16	8	0
+136	17	6	1
+136	18	7	1
+137	1	6	2
+137	2	6	1
+137	3	7	1
+137	4	4	2
+137	5	7	2
+137	6	8	0
+137	7	3	4
+137	8	6	2
+137	9	5	1
+137	10	5	3
+137	11	4	3
+137	12	5	2
+137	13	6	3
+137	14	5	1
+137	15	6	2
+137	16	8	0
+137	17	6	1
+137	18	8	1
+138	1	6	1
+138	2	6	1
+138	3	7	0
+138	4	4	1
+138	5	6	2
+138	6	6	2
+138	7	5	1
+138	8	7	0
+138	9	4	2
+138	10	7	0
+138	11	4	2
+138	12	5	2
+138	13	6	2
+138	14	4	2
+138	15	6	1
+138	16	5	2
+138	17	5	1
+138	18	6	2
+139	1	5	2
+139	2	5	2
+139	3	6	1
+139	4	3	2
+139	5	6	2
+139	6	6	2
+139	7	2	4
+139	8	7	0
+139	9	5	1
+139	10	4	3
+139	11	4	2
+139	12	4	3
+139	18	6	2
+114	1	6	1
+114	2	4	3
+114	3	7	0
+114	4	3	2
+114	5	7	1
+114	6	6	2
+114	7	5	1
+114	8	7	0
+114	9	3	3
+114	10	5	2
+114	11	4	2
+114	12	4	3
+114	13	7	1
+114	14	4	2
+114	15	5	2
+114	16	6	1
+114	17	5	1
+114	18	8	0
+139	13	8	0
+139	14	6	0
+139	15	5	2
+139	16	6	1
+139	17	5	1
+140	1	5	2
+140	2	5	1
+140	3	4	3
+140	4	4	1
+140	5	5	3
+140	6	5	3
+140	7	5	1
+140	8	6	1
+140	9	5	1
+140	10	4	3
+140	11	4	2
+140	12	4	2
+140	13	5	3
+140	14	4	1
+140	15	5	2
+140	16	5	2
+140	17	5	1
+140	18	8	0
+141	1	4	3
+141	2	6	1
+141	3	5	2
+141	4	4	1
+141	5	5	3
+141	6	7	1
+141	7	3	3
+141	8	7	0
+141	9	3	3
+141	10	6	1
+141	11	3	3
+141	12	3	3
+141	13	7	1
+141	14	3	2
+141	15	5	2
+141	16	5	2
+141	17	4	2
+141	18	8	0
+142	1	8	0
+142	2	7	0
+142	3	8	0
+142	4	3	3
+142	5	6	3
+142	6	6	2
+142	7	5	2
+142	8	7	1
+142	9	4	2
+142	10	6	2
+142	11	5	2
+142	12	6	1
+142	13	8	1
+142	14	4	2
+142	15	6	2
+142	16	6	2
+142	17	6	1
+142	18	5	4
+143	1	5	3
+143	2	6	1
+143	3	5	3
+143	4	3	3
+143	5	8	1
+143	6	4	4
+143	7	3	4
+143	8	8	0
+143	9	3	3
+143	10	7	1
+143	11	5	2
+143	12	5	2
+143	13	7	2
+143	14	6	0
+143	15	5	3
+143	16	7	1
+143	17	6	1
+143	18	6	3
+144	1	7	0
+144	2	7	0
+144	3	7	0
+144	4	6	0
+144	5	8	0
+144	6	7	1
+144	7	6	0
+144	8	7	0
+144	9	4	2
+144	10	6	1
+144	11	5	1
+144	12	5	1
+144	13	8	0
+144	14	4	1
+144	15	6	1
+144	16	5	2
+144	17	6	0
+144	18	6	2
+145	1	6	2
+145	2	6	1
+145	3	7	1
+145	4	6	0
+145	5	7	1
+145	6	7	1
+145	7	4	2
+145	8	8	0
+145	9	4	2
+145	10	7	0
+145	11	4	2
+145	12	6	1
+145	13	6	3
+145	14	4	2
+145	15	6	2
+145	16	7	0
+145	17	6	1
+145	18	7	1
+146	1	7	1
+146	2	9	0
+146	3	5	3
+146	4	5	1
+146	5	6	3
+146	6	7	1
+146	7	4	3
+146	8	7	1
+146	9	4	3
+146	10	6	2
+146	11	4	3
+146	12	5	2
+146	13	7	2
+146	14	4	2
+146	15	7	1
+146	16	6	2
+146	17	5	2
+146	18	6	3
+147	1	5	2
+147	2	6	1
+147	3	5	2
+147	4	4	1
+147	5	7	1
+147	6	7	1
+147	7	3	3
+147	8	7	0
+147	9	5	1
+147	10	4	3
+147	11	4	2
+147	12	5	2
+147	13	7	1
+147	14	3	3
+147	15	5	2
+147	16	5	2
+147	17	4	2
+147	18	8	0
+148	1	7	1
+148	2	6	1
+148	3	8	0
+148	4	4	2
+148	5	8	0
+148	6	6	2
+148	7	6	0
+148	8	7	1
+148	9	5	1
+148	10	7	0
+148	11	5	1
+148	12	6	1
+148	13	8	1
+148	14	5	1
+148	15	6	2
+148	16	6	1
+148	17	5	2
+148	18	7	1
+149	1	7	1
+149	2	7	0
+149	3	6	2
+149	4	5	1
+149	5	7	2
+149	6	7	1
+149	7	3	4
+149	8	6	2
+149	9	5	2
+149	10	6	2
+149	11	5	2
+149	12	6	1
+149	13	8	1
+149	14	5	1
+149	15	6	2
+149	16	7	1
+149	17	4	3
+149	18	7	2
+150	1	8	0
+150	2	5	2
+150	3	6	2
+150	4	4	2
+150	5	7	2
+150	6	7	1
+150	7	7	0
+150	8	7	1
+150	9	4	2
+150	10	6	2
+150	11	6	1
+150	12	5	2
+150	13	9	0
+150	14	4	2
+150	15	8	0
+150	16	7	1
+150	17	6	1
+150	18	7	2
+151	1	8	0
+151	2	8	0
+151	3	8	0
+151	4	5	1
+151	5	8	1
+151	6	8	0
+151	7	4	3
+151	8	8	0
+151	9	4	2
+151	10	6	2
+151	11	5	2
+151	12	5	2
+151	13	7	2
+151	14	6	0
+151	15	5	3
+151	16	8	0
+151	17	6	1
+151	18	7	2
+152	1	5	2
+152	2	5	2
+152	3	7	0
+152	4	6	0
+152	5	7	1
+152	6	5	3
+152	7	5	1
+152	8	5	2
+152	9	5	1
+152	10	6	1
+152	11	4	2
+152	12	4	2
+152	13	5	3
+152	14	3	2
+152	15	7	0
+152	16	6	1
+152	17	5	1
+152	18	7	1
+153	1	5	2
+153	2	6	1
+153	3	5	2
+153	4	5	0
+153	5	7	1
+153	6	6	2
+153	7	6	0
+153	8	6	1
+153	9	4	2
+153	10	4	3
+153	11	3	3
+153	12	5	2
+153	13	7	1
+153	14	4	2
+153	15	5	2
+153	16	5	2
+153	17	5	1
+153	18	5	3
+154	1	5	2
+154	2	6	0
+154	3	5	2
+154	4	3	2
+154	5	6	2
+154	6	5	3
+154	7	3	3
+154	8	4	3
+154	9	4	2
+154	10	6	1
+154	11	4	2
+154	12	6	0
+154	13	7	1
+154	14	4	1
+154	15	6	1
+154	16	5	2
+154	17	5	1
+154	18	5	3
+155	1	5	2
+155	2	5	2
+155	3	5	2
+155	4	5	0
+155	5	7	1
+155	6	6	2
+155	7	4	2
+155	8	6	1
+155	9	4	2
+155	10	5	2
+155	11	4	2
+155	12	5	1
+155	13	7	1
+155	14	4	1
+155	15	6	1
+155	16	6	1
+155	17	4	2
+155	18	6	2
+28	70	5	2
+28	71	4	4
+28	72	6	0
+\.
+
+
+--
+-- TOC entry 3962 (class 0 OID 14763953)
+-- Dependencies: 200
+-- Data for Name: holes; Type: TABLE DATA; Schema: public; Owner: wdjicccgirusxg
+--
+
+COPY public.holes (hole, par, handicap, course_id, id) FROM stdin;
+1	4	4	1	1
+2	4	14	1	2
+3	4	1	1	3
+4	3	17	1	4
+5	5	9	1	5
+6	5	13	1	6
+7	3	8	1	7
+8	4	3	1	8
+9	3	12	1	9
+10	4	6	1	10
+11	3	11	1	11
+12	4	15	1	12
+13	5	2	1	13
+14	3	16	1	14
+15	4	5	1	15
+16	4	7	1	16
+17	4	18	1	17
+18	5	10	1	18
+1	4	13	2	19
+2	5	5	2	20
+3	3	9	2	21
+4	5	1	2	22
+5	4	11	2	23
+6	3	17	2	24
+7	4	15	2	25
+8	4	7	2	26
+9	5	3	2	27
+10	4	12	2	28
+11	4	4	2	29
+12	3	10	2	30
+13	4	4	2	31
+14	4	2	2	32
+15	3	18	2	33
+16	5	6	2	34
+17	3	16	2	35
+18	5	8	2	36
+1	4	13	3	37
+2	5	5	3	38
+3	3	9	3	39
+4	5	1	3	40
+5	4	11	3	41
+6	3	17	3	42
+7	4	15	3	43
+8	4	7	3	44
+9	5	3	3	45
+10	4	12	3	46
+11	4	14	3	47
+12	3	10	3	48
+13	4	4	3	49
+14	4	2	3	50
+15	3	18	3	51
+16	5	6	3	52
+17	3	16	3	53
+18	5	8	3	54
+1	5	9	4	55
+2	3	15	4	56
+3	4	3	4	57
+4	4	13	4	58
+5	5	5	4	59
+6	4	11	4	60
+7	3	17	4	61
+8	4	1	4	62
+9	5	7	4	63
+10	3	18	4	64
+11	4	12	4	65
+12	5	6	4	66
+13	4	8	4	67
+14	3	10	4	68
+15	4	2	4	69
+16	4	14	4	70
+17	5	4	4	71
+18	3	16	4	72
+1	5	9	5	73
+2	3	15	5	74
+3	4	3	5	75
+4	4	13	5	76
+5	5	5	5	77
+6	4	11	5	78
+7	3	17	5	79
+8	4	1	5	80
+9	5	7	5	81
+10	3	18	5	82
+11	4	12	5	83
+12	5	6	5	84
+13	4	8	5	85
+14	3	10	5	86
+15	4	2	5	87
+16	4	14	5	88
+17	5	4	5	89
+18	3	16	5	90
+1	4	11	6	91
+2	4	3	6	92
+3	3	7	6	93
+4	4	13	6	94
+5	5	1	6	95
+6	4	9	6	96
+7	3	15	6	97
+8	4	5	6	98
+9	4	17	6	99
+10	4	12	6	100
+11	4	4	6	101
+12	3	8	6	102
+13	4	14	6	103
+14	5	2	6	104
+15	4	10	6	105
+16	3	16	6	106
+17	4	6	6	107
+18	4	18	6	108
+1	4	11	7	109
+2	4	3	7	110
+3	3	7	7	111
+4	4	13	7	112
+5	5	1	7	113
+6	4	9	7	114
+7	3	15	7	115
+8	4	5	7	116
+9	4	17	7	117
+10	4	12	7	118
+11	4	4	7	119
+12	3	8	7	120
+13	4	14	7	121
+14	5	2	7	122
+15	4	10	7	123
+16	3	16	7	124
+17	4	6	7	125
+18	4	18	7	126
+1	4	13	2	127
+2	5	5	2	128
+3	3	9	2	129
+4	5	1	2	130
+5	4	11	2	131
+6	3	17	2	132
+7	4	15	2	133
+8	4	7	2	134
+9	5	3	2	135
+10	4	12	2	136
+11	4	14	2	137
+12	3	10	2	138
+13	4	4	2	139
+14	4	2	2	140
+15	3	18	2	141
+16	5	6	2	142
+17	3	16	2	143
+18	5	8	2	144
+1	4	12	8	145
+2	4	4	8	146
+3	3	8	8	147
+4	4	14	8	148
+5	5	2	8	149
+6	4	10	8	150
+7	3	16	8	151
+8	4	6	8	152
+9	4	18	8	153
+10	5	9	8	154
+11	3	15	8	155
+12	4	3	8	156
+13	4	13	8	157
+14	5	5	8	158
+15	4	11	8	159
+16	3	17	8	160
+17	4	1	8	161
+18	5	7	8	162
+1	4	11	9	163
+2	4	3	9	164
+3	3	7	9	165
+4	4	13	9	166
+5	5	1	9	167
+6	4	9	9	168
+7	3	15	9	169
+8	4	5	9	170
+9	4	17	9	171
+10	3	18	9	172
+11	4	12	9	173
+12	5	6	9	174
+13	4	8	9	175
+14	3	10	9	176
+15	4	2	9	177
+16	4	14	9	178
+17	5	4	9	179
+18	3	16	9	180
+1	4	12	10	181
+2	4	4	10	182
+3	3	8	10	183
+4	4	14	10	184
+5	5	2	10	185
+6	4	10	10	186
+7	3	16	10	187
+8	4	6	10	188
+9	4	18	10	189
+10	4	13	10	190
+11	5	5	10	191
+12	3	9	10	192
+13	5	1	10	193
+14	4	11	10	194
+15	3	17	10	195
+16	4	15	10	196
+17	4	7	10	197
+18	5	3	10	198
+1	4	11	11	199
+2	4	3	11	200
+3	3	7	11	201
+4	4	13	11	202
+5	5	1	11	203
+6	4	9	11	204
+7	3	15	11	205
+8	4	5	11	206
+9	4	17	11	207
+10	4	12	11	208
+11	4	14	11	209
+12	3	10	11	210
+13	4	4	11	211
+14	4	2	11	212
+15	3	18	11	213
+16	5	6	11	214
+17	3	16	11	215
+18	5	8	11	216
+\.
+
+
+--
+-- TOC entry 3971 (class 0 OID 17066069)
+-- Dependencies: 209
+-- Data for Name: scorecards; Type: TABLE DATA; Schema: public; Owner: wdjicccgirusxg
+--
+
+COPY public.scorecards (id, player_id, round_date, course_id, handicap, status, tour_id, tour_round) FROM stdin;
+112	38	2019-04-26	3	14	Saved	5	9
+29	49	2019-04-11	6	16	Submitted	12	1
+30	49	2019-04-11	2	16	Saved	12	2
+31	49	2019-04-11	4	16	Submitted	12	3
+32	49	2019-04-11	6	16	Submitted	12	4
+35	45	2019-04-14	3	26	Submitted	5	1
+83	42	2019-04-19	4	42	Submitted	5	6
+84	44	2019-04-20	2	32	Submitted	5	7
+85	43	2019-04-20	2	29	Submitted	5	7
+51	44	2019-04-16	2	32	Submitted	5	3
+52	38	2019-04-16	2	14	Submitted	5	3
+50	45	2019-04-16	3	26	Submitted	5	3
+86	45	2019-04-20	3	26	Submitted	5	7
+53	46	2019-04-16	2	29	Submitted	5	3
+87	47	2019-04-20	10	50	Submitted	5	7
+55	43	2019-04-16	2	29	Submitted	5	3
+68	43	2019-04-18	9	28	Submitted	5	5
+40	38	2019-04-14	2	14	Submitted	5	1
+22	38	2019-04-14	4	16	Submitted	12	1
+36	47	2019-04-14	3	50	Submitted	5	1
+89	46	2019-04-20	10	27	Submitted	5	7
+43	47	2019-04-15	5	50	Submitted	5	2
+111	38	2019-04-25	2	7	Saved	5	10
+54	47	2019-04-16	3	50	Submitted	5	3
+69	47	2019-04-18	9	47	Submitted	5	5
+70	42	2019-04-18	9	39	Submitted	5	5
+71	46	2019-04-18	8	28	Submitted	5	5
+58	45	2019-04-17	3	25	Submitted	5	4
+33	44	2019-04-14	2	32	Submitted	5	1
+59	44	2019-04-17	2	32	Submitted	5	4
+23	48	2019-04-08	4	12	Submitted	12	1
+24	50	2019-04-08	4	12	Submitted	12	1
+91	44	2019-04-21	2	32	Submitted	5	8
+60	43	2019-04-17	2	31	Submitted	5	4
+25	38	2019-04-08	6	14	Submitted	12	2
+26	50	2019-04-08	4	12	Submitted	12	2
+27	38	2019-04-27	6	16	Submitted	12	3
+64	38	2019-04-17	2	14	Submitted	5	4
+65	46	2019-04-17	2	29	Submitted	5	4
+34	43	2019-04-14	2	29	Submitted	5	1
+90	45	2019-04-21	3	26	Submitted	5	8
+38	46	2019-04-14	2	29	Submitted	5	1
+63	47	2019-04-17	3	50	Submitted	5	4
+92	46	2019-04-21	2	29	Submitted	5	8
+93	38	2019-04-21	2	15	Submitted	5	8
+41	45	2019-04-15	5	29	Submitted	5	2
+42	44	2019-04-15	4	34	Submitted	5	2
+44	43	2019-04-15	4	27	Submitted	5	2
+45	46	2019-04-15	4	31	Submitted	5	2
+94	47	2019-04-21	3	50	Submitted	5	8
+37	42	2019-04-14	2	42	Submitted	5	1
+47	43	2019-04-15	4	31	Submitted	5	2
+95	43	2019-04-21	2	29	Submitted	5	8
+48	38	2019-04-15	4	15	Submitted	5	2
+46	42	2019-04-15	4	42	Submitted	5	2
+88	42	2019-04-20	10	39	Submitted	5	7
+56	42	2019-04-16	3	42	Submitted	5	3
+96	42	2019-04-21	3	42	Submitted	5	8
+61	42	2019-04-17	3	42	Submitted	5	4
+39	41	2019-04-14	3	43	Submitted	5	1
+49	41	2019-04-15	5	43	Submitted	5	2
+57	41	2019-04-16	3	43	Submitted	5	3
+62	41	2019-04-17	3	43	Submitted	5	4
+73	41	2019-04-18	9	38	Submitted	5	5
+74	38	2019-04-18	9	13	Submitted	5	5
+75	44	2019-04-19	9	31	Submitted	5	5
+72	45	2019-04-18	9	25	Submitted	5	5
+76	38	2019-04-19	4	15	Submitted	5	6
+78	43	2019-04-19	4	31	Submitted	5	6
+79	46	2019-04-19	4	31	Submitted	5	6
+80	47	2019-04-19	5	50	Submitted	5	6
+81	44	2019-04-19	4	34	Submitted	5	6
+77	45	2019-04-19	5	28	Submitted	5	6
+82	41	2019-04-19	5	43	Submitted	5	6
+119	46	2019-05-01	1	29	Submitted	6	1
+115	50	2019-05-01	1	13	Submitted	6	1
+128	51	2019-05-02	1	30	Submitted	6	2
+129	49	2019-05-02	1	16	Saved	6	2
+114	49	2019-05-01	1	16	Submitted	6	1
+121	38	2019-05-02	1	14	Submitted	6	2
+122	43	2019-05-02	1	29	Submitted	6	2
+123	46	2019-05-02	1	29	Submitted	6	2
+124	48	2019-05-02	1	14	Submitted	6	2
+117	43	2019-05-01	1	29	Submitted	6	1
+118	52	2019-05-01	1	23	Submitted	6	1
+125	52	2019-05-02	1	22	Submitted	6	2
+113	48	2019-05-01	1	14	Submitted	6	1
+126	49	2019-05-02	1	16	Saved	6	2
+127	50	2019-05-02	1	13	Submitted	6	2
+130	38	2019-05-02	1	14	Submitted	6	3
+131	46	2019-05-02	1	29	Submitted	6	3
+132	50	2019-05-02	1	13	Saved	6	3
+133	51	2019-05-02	1	30	Submitted	6	3
+134	50	2019-05-02	1	13	Submitted	6	3
+120	51	2019-05-01	1	30	Submitted	6	1
+135	48	2019-05-02	1	14	Submitted	6	3
+136	52	2019-05-02	1	23	Submitted	6	3
+137	43	2019-05-02	1	29	Submitted	6	3
+140	50	2019-05-03	1	13	Submitted	6	4
+138	49	2019-05-02	1	16	Submitted	6	2
+139	49	2019-05-02	1	16	Submitted	6	3
+116	38	2019-05-01	1	14	Submitted	6	1
+142	43	2019-05-03	1	29	Submitted	6	4
+141	48	2019-05-03	1	14	Submitted	6	4
+143	46	2019-05-03	1	29	Submitted	6	4
+144	38	2019-05-03	1	14	Submitted	6	4
+145	52	2019-05-03	1	23	Submitted	6	4
+146	51	2019-05-03	1	30	Submitted	6	4
+147	49	2019-05-03	1	16	Submitted	6	4
+148	52	2019-05-04	1	23	Submitted	6	5
+149	51	2019-05-04	1	30	Submitted	6	5
+150	43	2019-05-04	1	29	Submitted	6	5
+151	46	2019-05-04	1	29	Submitted	6	5
+152	38	2019-05-04	1	14	Submitted	6	5
+154	50	2019-05-04	1	13	Submitted	6	5
+153	49	2019-05-04	1	16	Submitted	6	5
+155	48	2019-05-04	1	14	Submitted	6	5
+28	38	2019-04-13	4	16	Saved	12	4
+\.
+
+
+--
+-- TOC entry 3967 (class 0 OID 17065921)
+-- Dependencies: 205
+-- Data for Name: tour_courses; Type: TABLE DATA; Schema: public; Owner: wdjicccgirusxg
+--
+
+COPY public.tour_courses (tour_id, course_id) FROM stdin;
+5	2
+5	3
+5	4
+5	7
+5	5
+5	6
+6	1
+7	2
+7	4
+10	3
+10	6
+11	1
+11	4
+12	2
+12	4
+12	6
+5	8
+5	9
+5	10
+13	1
+\.
+
+
+--
+-- TOC entry 3966 (class 0 OID 17065863)
+-- Dependencies: 204
+-- Data for Name: tour_players; Type: TABLE DATA; Schema: public; Owner: wdjicccgirusxg
+--
+
+COPY public.tour_players (tour_id, player_id) FROM stdin;
+5	38
+5	41
+5	42
+5	43
+5	44
+5	46
+5	45
+5	47
+6	43
+6	38
+12	48
+12	50
+12	49
+12	38
+13	50
+13	48
+6	51
+6	52
+6	49
+6	48
+6	50
+6	46
+\.
+
+
+--
+-- TOC entry 3969 (class 0 OID 17066017)
+-- Dependencies: 207
+-- Data for Name: tour_rounds; Type: TABLE DATA; Schema: public; Owner: wdjicccgirusxg
+--
+
+COPY public.tour_rounds (id, tour_id, round_number) FROM stdin;
+1	5	1
+2	5	2
+3	6	1
+4	7	1
+5	5	3
+6	5	4
+\.
+
+
+--
+-- TOC entry 3965 (class 0 OID 17065848)
+-- Dependencies: 203
+-- Data for Name: tours; Type: TABLE DATA; Schema: public; Owner: wdjicccgirusxg
+--
+
+COPY public.tours (id, tour_name, tour_status, rounds) FROM stdin;
+7	gghghghg	Open	3
+10	Test 3	Open	5
+11	Test321	Open	3
+12	GM Tyrkland 2019	Open	4
+5	Gloria 2019	Open	10
+15	t1111	Open	5
+13	t1111	Open	5
+6	Worsley 2019	Open	5
+\.
+
+
+--
+-- TOC entry 3959 (class 0 OID 14763367)
+-- Dependencies: 197
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: wdjicccgirusxg
+--
+
+COPY public.users (id, email, full_name, handicap, password, is_admin) FROM stdin;
+49	johanneinars@gmail.com	Jóhann	16	SvarturKofi	f
+52	reynir.valbergsson@gmail.com	Reynir	23	marriot	f
+51	bjarnhedinn@gmail.com	Bjarnhéðinn	30	worsley	f
+50	gardarol@gmail.com	Garðar	13	BleikurTappi	f
+48	hhilmarsson@gmail.com	Haukur	14	GulurHundur	f
+43	arni44@gmail.com	Árni	29	sunexpress	f
+46	snorrib@gmail.com	Snorri	29	postgres	f
+38	birgir.palsson@gmail.com	Birgir	14	654321	f
+34	bp@gmail.com	Admin	5	123	t
+41	regina.asvaldsdottir@gmail.com	Regína	49	Solin9a	f
+42	striav@gmail.com	Ástríður	40	gloria	f
+44	gislio@gmail.com	Gísli	26	thelamb	f
+45	rakelottars@gmail.com	Rakel	30	serenity	f
+47	vedishun@gmail.com	Védís	46	antalya	f
+\.
+
+
+--
+-- TOC entry 3987 (class 0 OID 0)
+-- Dependencies: 198
+-- Name: courses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: wdjicccgirusxg
+--
+
+SELECT pg_catalog.setval('public.courses_id_seq', 11, true);
+
+
+--
+-- TOC entry 3988 (class 0 OID 0)
+-- Dependencies: 201
+-- Name: holes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: wdjicccgirusxg
+--
+
+SELECT pg_catalog.setval('public.holes_id_seq', 216, true);
+
+
+--
+-- TOC entry 3989 (class 0 OID 0)
+-- Dependencies: 208
+-- Name: scorecards_id_seq; Type: SEQUENCE SET; Schema: public; Owner: wdjicccgirusxg
+--
+
+SELECT pg_catalog.setval('public.scorecards_id_seq', 155, true);
+
+
+--
+-- TOC entry 3990 (class 0 OID 0)
+-- Dependencies: 206
+-- Name: tour_rounds_id_seq; Type: SEQUENCE SET; Schema: public; Owner: wdjicccgirusxg
+--
+
+SELECT pg_catalog.setval('public.tour_rounds_id_seq', 9, true);
+
+
+--
+-- TOC entry 3991 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: tours_id_seq; Type: SEQUENCE SET; Schema: public; Owner: wdjicccgirusxg
+--
+
+SELECT pg_catalog.setval('public.tours_id_seq', 15, true);
+
+
+--
+-- TOC entry 3992 (class 0 OID 0)
+-- Dependencies: 196
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: wdjicccgirusxg
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 52, true);
+
+
+--
+-- TOC entry 3800 (class 2606 OID 14763952)
+-- Name: courses pk_courses; Type: CONSTRAINT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.courses
+    ADD CONSTRAINT pk_courses PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3803 (class 2606 OID 15393133)
+-- Name: holes pk_holes; Type: CONSTRAINT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.holes
+    ADD CONSTRAINT pk_holes PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3810 (class 2606 OID 17066022)
+-- Name: tour_rounds pk_round_id; Type: CONSTRAINT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.tour_rounds
+    ADD CONSTRAINT pk_round_id PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3813 (class 2606 OID 17066077)
+-- Name: scorecards pk_scorecard_id; Type: CONSTRAINT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.scorecards
+    ADD CONSTRAINT pk_scorecard_id PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3805 (class 2606 OID 17065862)
+-- Name: tours pk_tour_id; Type: CONSTRAINT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.tours
+    ADD CONSTRAINT pk_tour_id PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3798 (class 2606 OID 14763946)
+-- Name: users pk_users; Type: CONSTRAINT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT pk_users PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3807 (class 1259 OID 17065936)
+-- Name: fki_fk_course_id; Type: INDEX; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE INDEX fki_fk_course_id ON public.tour_courses USING btree (course_id);
+
+
+--
+-- TOC entry 3811 (class 1259 OID 17066213)
+-- Name: fki_fk_course_id2; Type: INDEX; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE INDEX fki_fk_course_id2 ON public.scorecards USING btree (course_id);
+
+
+--
+-- TOC entry 3814 (class 1259 OID 17066241)
+-- Name: fki_fk_hole; Type: INDEX; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE INDEX fki_fk_hole ON public.hole_scores USING btree (hole_id);
+
+
+--
+-- TOC entry 3801 (class 1259 OID 14763962)
+-- Name: fki_fk_holes; Type: INDEX; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE INDEX fki_fk_holes ON public.holes USING btree (course_id);
+
+
+--
+-- TOC entry 3806 (class 1259 OID 17065871)
+-- Name: fki_fk_player_id; Type: INDEX; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE INDEX fki_fk_player_id ON public.tour_players USING btree (tour_id);
+
+
+--
+-- TOC entry 3815 (class 1259 OID 17066235)
+-- Name: fki_fk_scorecard; Type: INDEX; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE INDEX fki_fk_scorecard ON public.hole_scores USING btree (scorecard_id);
+
+
+--
+-- TOC entry 3808 (class 1259 OID 17065929)
+-- Name: fki_fk_tour_id; Type: INDEX; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE INDEX fki_fk_tour_id ON public.tour_courses USING btree (tour_id);
+
+
+--
+-- TOC entry 3948 (class 2618 OID 18121405)
+-- Name: v_scorecards_sum _RETURN; Type: RULE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE OR REPLACE VIEW public.v_scorecards_sum WITH (security_barrier='false') AS
+ SELECT s.player_id,
+    s.tour_id,
+    s.tour_round,
+    sum(hs.strokes) AS strokes,
+    sum(hs.points) AS points
+   FROM (public.scorecards s
+     JOIN public.hole_scores hs ON ((hs.scorecard_id = s.id)))
+  WHERE (s.status = 'Submitted'::text)
+  GROUP BY s.id
+  ORDER BY s.player_id;
+
+
+--
+-- TOC entry 3957 (class 2618 OID 23361937)
+-- Name: v_scorecards_round _RETURN; Type: RULE; Schema: public; Owner: wdjicccgirusxg
+--
+
+CREATE OR REPLACE VIEW public.v_scorecards_round AS
+ SELECT s.id,
+    u.full_name,
+    c.course_name,
+    c.id AS course_id,
+    c.tee,
+    s.handicap,
+    s.tour_id,
+    s.tour_round,
+    s.round_date,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 1))) AS h1,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 2))) AS h2,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 3))) AS h3,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 4))) AS h4,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 5))) AS h5,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 6))) AS h6,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 7))) AS h7,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 8))) AS h8,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 9))) AS h9,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 10))) AS h10,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 11))) AS h11,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 12))) AS h12,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 13))) AS h13,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 14))) AS h14,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 15))) AS h15,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 16))) AS h16,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 17))) AS h17,
+    ( SELECT x.strokes
+           FROM public.v_scorecards_scores x
+          WHERE ((x.id = s.id) AND (x.hole = 18))) AS h18,
+    sum(hs.strokes) AS strokes,
+    sum(hs.points) AS points
+   FROM (((public.scorecards s
+     JOIN public.hole_scores hs ON ((hs.scorecard_id = s.id)))
+     JOIN public.users u ON ((u.id = s.player_id)))
+     JOIN public.courses c ON ((c.id = s.course_id)))
+  GROUP BY s.id, u.full_name, c.course_name, c.id, c.tee, s.round_date
+  ORDER BY s.tour_round, u.full_name;
+
+
+--
+-- TOC entry 3820 (class 2606 OID 17065931)
+-- Name: tour_courses fk_course_id; Type: FK CONSTRAINT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.tour_courses
+    ADD CONSTRAINT fk_course_id FOREIGN KEY (course_id) REFERENCES public.courses(id);
+
+
+--
+-- TOC entry 3823 (class 2606 OID 17066208)
+-- Name: scorecards fk_course_id2; Type: FK CONSTRAINT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.scorecards
+    ADD CONSTRAINT fk_course_id2 FOREIGN KEY (course_id) REFERENCES public.courses(id);
+
+
+--
+-- TOC entry 3825 (class 2606 OID 17066236)
+-- Name: hole_scores fk_hole; Type: FK CONSTRAINT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.hole_scores
+    ADD CONSTRAINT fk_hole FOREIGN KEY (hole_id) REFERENCES public.holes(id);
+
+
+--
+-- TOC entry 3816 (class 2606 OID 14763957)
+-- Name: holes fk_holes; Type: FK CONSTRAINT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.holes
+    ADD CONSTRAINT fk_holes FOREIGN KEY (course_id) REFERENCES public.courses(id);
+
+
+--
+-- TOC entry 3818 (class 2606 OID 17065916)
+-- Name: tour_players fk_player_id; Type: FK CONSTRAINT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.tour_players
+    ADD CONSTRAINT fk_player_id FOREIGN KEY (player_id) REFERENCES public.users(id);
+
+
+--
+-- TOC entry 3822 (class 2606 OID 17066078)
+-- Name: scorecards fk_player_id; Type: FK CONSTRAINT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.scorecards
+    ADD CONSTRAINT fk_player_id FOREIGN KEY (player_id) REFERENCES public.users(id);
+
+
+--
+-- TOC entry 3824 (class 2606 OID 17066230)
+-- Name: hole_scores fk_scorecard; Type: FK CONSTRAINT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.hole_scores
+    ADD CONSTRAINT fk_scorecard FOREIGN KEY (scorecard_id) REFERENCES public.scorecards(id);
+
+
+--
+-- TOC entry 3817 (class 2606 OID 17065911)
+-- Name: tour_players fk_tour_id; Type: FK CONSTRAINT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.tour_players
+    ADD CONSTRAINT fk_tour_id FOREIGN KEY (tour_id) REFERENCES public.tours(id);
+
+
+--
+-- TOC entry 3819 (class 2606 OID 17065924)
+-- Name: tour_courses fk_tour_id; Type: FK CONSTRAINT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.tour_courses
+    ADD CONSTRAINT fk_tour_id FOREIGN KEY (tour_id) REFERENCES public.tours(id);
+
+
+--
+-- TOC entry 3821 (class 2606 OID 17066060)
+-- Name: tour_rounds fk_tour_id; Type: FK CONSTRAINT; Schema: public; Owner: wdjicccgirusxg
+--
+
+ALTER TABLE ONLY public.tour_rounds
+    ADD CONSTRAINT fk_tour_id FOREIGN KEY (tour_id) REFERENCES public.tours(id);
+
+
+--
+-- TOC entry 3978 (class 0 OID 0)
+-- Dependencies: 3
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: wdjicccgirusxg
+--
+
+REVOKE ALL ON SCHEMA public FROM postgres;
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+GRANT ALL ON SCHEMA public TO wdjicccgirusxg;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- TOC entry 3979 (class 0 OID 0)
+-- Dependencies: 684
+-- Name: LANGUAGE plpgsql; Type: ACL; Schema: -; Owner: postgres
+--
+
+GRANT ALL ON LANGUAGE plpgsql TO wdjicccgirusxg;
+
+
+--
+-- TOC entry 3986 (class 0 OID 0)
+-- Dependencies: 211
+-- Name: TABLE v_scorecards_scores; Type: ACL; Schema: public; Owner: wdjicccgirusxg
+--
+
+GRANT ALL ON TABLE public.v_scorecards_scores TO PUBLIC;
+
+
+-- Completed on 2019-05-14 17:07:02
+
+--
+-- PostgreSQL database dump complete
+--
+
