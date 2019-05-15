@@ -158,6 +158,7 @@ class CreateUser extends Component {
             }
         } else {
             console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
+           
         }
     }
 

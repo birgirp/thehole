@@ -2,20 +2,36 @@
 const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
-
+const Pool = require('pg').Pool;
 
 
 var session = require("express-session");
 //const FileStore = require("session-file-store")(session)
 var passport = require("passport");
-var mongoose = require("mongoose")
-var MongoStore = require("connect-mongo")(session)
-var mongourl = "mongodb://thehole:thehole123@ds155086.mlab.com:55086/heroku_bslwmg0n"
 
-mongoose.connect(mongourl,  { useNewUrlParser: true })
+var PostgreSqlStore = require('connect-pg-simple')(session);
+const dbconfig = require('./config/dbConfig');
 
-mongoose.Promise = global.Promise;
-const db = mongoose.connection;
+const pool = new Pool({
+    user: dbconfig.dbconnection.user,
+    host: dbconfig.dbconnection.host,
+    database: dbconfig.dbconnection.database,
+    password: dbconfig.dbconnection.password,
+    port: dbconfig.dbconnection.port,
+    ssl: true
+})
+//postgres://USERNAME:PASSWORD@HOST_NAME:PORT/DB_NAME
+
+//const conString = "postgres://" + dbconfig.dbconnection.user + ":"+ dbconfig.dbconnection.password + "@" + dbconfig.dbconnection.host + ":" + dbconfig.dbconnection.port + "/" + dbconfig.dbconnection.database
+
+//var mongoose = require("mongoose")
+//var MongoStore = require("connect-mongo")(session)
+//var mongourl = "mongodb://thehole:thehole123@ds155086.mlab.com:55086/heroku_bslwmg0n"
+
+//mongoose.connect(mongourl,  { useNewUrlParser: true })
+
+//mongoose.Promise = global.Promise;
+//const db = mongoose.connection;
 
 // Internal imports
 const routes = require("./routes/routes");
@@ -41,7 +57,15 @@ app.use(session({
    // store: new FileStore({
    //     path: "./session-store"
    // }),
-   store: new MongoStore({mongooseConnection: db}),
+  // store: new MongoStore({mongooseConnection: db}),
+  store : new PostgreSqlStore({
+    /*
+    connection string is built by following the syntax:
+    postgres://USERNAME:PASSWORD@HOST_NAME:PORT/DB_NAME
+    */
+    pool: pool
+  }),
+
     secret:'secret',
     saveUninitialized: true,
     resave: true,
