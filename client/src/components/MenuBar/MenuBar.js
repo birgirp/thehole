@@ -54,14 +54,12 @@ class MenuBar extends Component {
             to="/admin/users"
             name="adminusers"
             content="Users"
-            // active={activePage === "adminusers"}
             onClick={this.handleItemClick} />
           <Dropdown.Item
             as={Link}
             to="/admin/courses"
             name="admincourses"
             content="Courses"
-            // active={activePage === "admincourses"}
             onClick={this.handleItemClick} />
           <Dropdown.Item
             as={Link}
