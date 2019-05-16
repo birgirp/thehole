@@ -25,7 +25,7 @@ const pool = new Pool({
     database: dbconfig.dbconnection.database,
     password: dbconfig.dbconnection.password,
     port: dbconfig.dbconnection.port,
-    ssl: true
+    ssl: dbconfig.dbconnection.ssl
 })
 
 module.exports = {

@@ -90,7 +90,7 @@ class App extends Component {
       return (
         <Router>
           <div>
-            <MenuBar getIsAdmin={this.state.isAdmin}></MenuBar>
+            <MenuBar getIsAdmin={this.state.isAdmin} logout={this.logout}></MenuBar>
             <div id="mainView">
               <Route exact path="/home" render={(props) => <Home {...props} userId={this.state.userId} />} />
               <Route exact path="/admin/users" component={AdminUsers} />

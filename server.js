@@ -18,27 +18,13 @@ const pool = new Pool({
     database: dbconfig.dbconnection.database,
     password: dbconfig.dbconnection.password,
     port: dbconfig.dbconnection.port,
-    ssl: true
+    ssl:  dbconfig.dbconnection.ssl
 })
-//postgres://USERNAME:PASSWORD@HOST_NAME:PORT/DB_NAME
 
-//const conString = "postgres://" + dbconfig.dbconnection.user + ":"+ dbconfig.dbconnection.password + "@" + dbconfig.dbconnection.host + ":" + dbconfig.dbconnection.port + "/" + dbconfig.dbconnection.database
-
-//var mongoose = require("mongoose")
-//var MongoStore = require("connect-mongo")(session)
-//var mongourl = "mongodb://thehole:thehole123@ds155086.mlab.com:55086/heroku_bslwmg0n"
-
-//mongoose.connect(mongourl,  { useNewUrlParser: true })
-
-//mongoose.Promise = global.Promise;
-//const db = mongoose.connection;
 
 // Internal imports
 const routes = require("./routes/routes");
 const users = require("./routes/users");
-
-//console.log(" dbConf: ", dbservice)
-//dbservice.initializeDB()
 
 
 // Start express
@@ -54,15 +40,9 @@ app.use(bodyParser.json());
 // Handle sessions
 app.use(session({
 
-   // store: new FileStore({
-   //     path: "./session-store"
-   // }),
-  // store: new MongoStore({mongooseConnection: db}),
+
   store : new PostgreSqlStore({
-    /*
-    connection string is built by following the syntax:
-    postgres://USERNAME:PASSWORD@HOST_NAME:PORT/DB_NAME
-    */
+
     pool: pool
   }),
 
@@ -109,15 +89,7 @@ app.get('*', (req, res) => res.sendFile(path.join(__dirname + "/client/build/ind
 
 // Start server!
 app.listen(port, () => {
-  /*  process.on('SIGINT', () => {
-        console.log("Got SIGINT. Closing...");
-        dbservice.closePool();
-    });
 
-    process.on('SIGTERM', () => {
-        console.log("Got SIGTERM. Closing...");
-        dbservice.closePool();
-    });*/
     console.log("Listening on port: " + port);
 });
 
