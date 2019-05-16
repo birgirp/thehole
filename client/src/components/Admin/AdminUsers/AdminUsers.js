@@ -53,7 +53,6 @@ class AdminUsers extends Component {
 
   close = () => {
     this.cancel();
-    //this.getAllUsers();
   }
 
   addNewUser = (user) => {
