@@ -108,7 +108,6 @@ class AdminUsers extends Component {
           }).catch(error => {
             this.setState({ deletingUser: false });
             console.log(error);
-
           });
         }
       }).catch(err => {
