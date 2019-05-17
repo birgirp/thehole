@@ -6,10 +6,8 @@ import MenuBar from "./MenuBar/MenuBar";
 import Login from "./Login";
 import Home from "./Application/Home"
 import Tour from "./Application/Tour/Tour"
-//import CreateUser from "./Admin/AdminUsers/CreateUser"
 import AdminUsers from "./Admin/AdminUsers/AdminUsers"
 import AdminCourses from "./Admin/AdminCourses/AdminCourses"
-//import EditCourse from "./Admin/AdminCourses/EditCourse"
 import AdminTours from "./Admin/AdminTours/AdminTours"
 import Loading from "./Loading/Loading";
 
