@@ -85,14 +85,14 @@ class TourRound extends Component {
             .then(res => {
                 if (!res.data) {
                     let rowData = [];
-                    this.setState({ rowData: rowData })
-                    throw new Error('No data found');
-                }
+                    this.setState({ rowData: rowData,  isLoading: false  })
+                   
+                }else{
                 this.setState({ rowData: res.data })
                 if (this.state.isLoading) {
 
                     this.setState({ isLoading: false })
-                }
+                }}
             }).catch(err => {
                 console.log(err);
                 if (this.state.isLoading) {

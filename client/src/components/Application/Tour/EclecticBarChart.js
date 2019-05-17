@@ -55,7 +55,7 @@ export default class EclecticGraph extends PureComponent {
     }
 
     createChartData = (data) => {
-        let max = Math.max(...data.map(function (o) { return o.tour_round; }))
+      
 
         let arrdata = data.map((val, index, arr) => { return [val.tour_round, val.full_name, val.score] });
 

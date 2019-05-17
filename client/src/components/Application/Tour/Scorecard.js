@@ -25,12 +25,12 @@ class Scorecard extends Component {
 
         if (dd < 10) {
             dd = '0' + dd
-        }   
+        }
         if (mm < 10) {
             mm = '0' + mm
         }
         today = yyyy + '-' + mm + '-' + dd;
-       super(props);
+        super(props);
         this.state = {
             scorecardId: "",
             courses: [],
@@ -55,25 +55,25 @@ class Scorecard extends Component {
             submitting: false,
             columnDefs: [
                 { headerName: "", field: "rowname" },
-            { headerName: "1", field: "h1", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor},
-// { headerName: "1", field: "h1", width: 40, cellStyle: this.cellStyling },
-                { headerName: "2", field: "h2", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
-                { headerName: "3", field: "h3", width: 40, cellStyle: this.cellStyling ,   cellEditorFramework: NumericEditor},
-                { headerName: "4", field: "h4", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
-                { headerName: "5", field: "h5", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
-                { headerName: "6", field: "h6", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
-                { headerName: "7", field: "h7", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
-                { headerName: "8", field: "h8", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
-                { headerName: "9", field: "h9", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
-                { headerName: "10", field: "h10", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
-                { headerName: "11", field: "h11", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
-                { headerName: "12", field: "h12", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
-                { headerName: "13", field: "h13", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
-                { headerName: "14", field: "h14", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
-                { headerName: "15", field: "h15", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
-                { headerName: "16", field: "h16", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
-                { headerName: "17", field: "h17", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
-                { headerName: "18", field: "h18", width: 40, cellStyle: this.cellStyling,   cellEditorFramework: NumericEditor },
+                { headerName: "1", field: "h1", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                // { headerName: "1", field: "h1", width: 40, cellStyle: this.cellStyling },
+                { headerName: "2", field: "h2", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "3", field: "h3", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "4", field: "h4", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "5", field: "h5", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "6", field: "h6", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "7", field: "h7", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "8", field: "h8", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "9", field: "h9", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "10", field: "h10", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "11", field: "h11", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "12", field: "h12", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "13", field: "h13", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "14", field: "h14", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "15", field: "h15", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "16", field: "h16", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "17", field: "h17", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "18", field: "h18", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
             ],
             rowData: [
                 { rowname: "Par", h1: "", h2: "", h3: "", h4: "", h5: "", h6: "", h7: "", h8: "", h9: "", h10: "", h11: "", h12: "", h13: "", h14: "", h15: "", h16: "", h17: "", h18: "" },
@@ -88,7 +88,7 @@ class Scorecard extends Component {
                 suppressMovable: true,
                 onCellValueChanged: this.onCellValueChanged
             },
-            frameworkComponents: { 'scoreCellRenderer': ScoreCellRenderer}
+            frameworkComponents: { 'scoreCellRenderer': ScoreCellRenderer }
         }
     }
 
@@ -96,15 +96,15 @@ class Scorecard extends Component {
         return <input type="number"></input>
     }
 
-    cellRendering = (params) =>{
-       // return {inputType: 'number'}
-       // return params.value.toString()
-       return(<input type="number">{params.value}</input>)
-        
+    cellRendering = (params) => {
+        // return {inputType: 'number'}
+        // return params.value.toString()
+        return (<input type="number">{params.value}</input>)
+
     }
 
     cellStyling = (params) => {
-       // let background = { background: 'white', textAlign: 'center' }
+        // let background = { background: 'white', textAlign: 'center' }
         let background = { background: 'white' }
         let rowData = this.state.rowData
         let hole = params.colDef.field
@@ -144,11 +144,11 @@ class Scorecard extends Component {
         e.api.refreshCells()
     }
 
-    onGridReady = (params) =>{
+    onGridReady = (params) => {
         this.gridApi = params.api;
         this.columnApi = params.columnApi;
 
-      //  this.gridApi.sizeColumnsToFit();
+        //  this.gridApi.sizeColumnsToFit();
     }
 
     sumScores = () => {
@@ -177,31 +177,34 @@ class Scorecard extends Component {
         var firstline = null
         axios.post("/api/getscorecard", { tourId: this.props.tourId, roundNum: this.props.roundNum, playerId: this.props.playerId })
             .then(res => {
+               
                 if (!res.data) {
-                    this.setState({ createNew: true, handicap:this.props.handicap })
+                    this.setState({ createNew: true, handicap: this.props.handicap, isLoading: false  })
 
-                    throw new Error('No scorecard found');
+                } else {
+                    firstline = res.data[0]
+                    let date = firstline.round_date.split("T")[0]
+                    this.setState({ scorecardId: firstline.id, status: firstline.status, selectedCourseId: firstline.course_id, roundDate: date, handicap: firstline.handicap });
+                    let holeIds = [];
+                    let rowData = this.state.rowData;
+                    res.data.forEach(hole => {
+
+                        hole.strokes ? rowData[2]["h" + hole.hole] = hole.strokes : rowData[2]["h" + hole.hole] = ""
+                        hole.points ? rowData[3]["h" + hole.hole] = hole.points : rowData[3]["h" + hole.hole] = ""
+                        holeIds.push(hole.id)
+                    });
+
+                    this.setState({ rowData, holeIds: holeIds, isLoading: false });
+                    this.fetchCourse(firstline.course_id);
                 }
-                firstline = res.data[0]
-                let date = firstline.round_date.split("T")[0]
-                this.setState({ scorecardId: firstline.id, status: firstline.status, selectedCourseId: firstline.course_id, roundDate: date, handicap: firstline.handicap });
-                let holeIds = [];
-                let rowData = this.state.rowData;
-                res.data.forEach(hole => {
-
-                    hole.strokes ? rowData[2]["h" + hole.hole] = hole.strokes : rowData[2]["h" + hole.hole] = ""
-                    hole.points ?  rowData[3]["h" + hole.hole] = hole.points :  rowData[3]["h" + hole.hole] = ""
-                    holeIds.push(hole.id)
-                });
-
-                this.setState({ rowData, holeIds: holeIds, isLoading: false });
-                this.fetchCourse(firstline.course_id);
             }).catch(err => {
                 console.log(err);
-                axios.get("/users/logout")
+               
+                    axios.get("/users/logout")
+
+                    this.setState({ isLoading: false })
+                    window.location = "/"
                 
-                this.setState({ isLoading: false })
-                window.location = "/"
             })
     }
 
@@ -275,22 +278,22 @@ class Scorecard extends Component {
                 let scores = [];
                 let scorecardId = this.state.scorecardId;
                 this.setState({ isLoading: true })
-             
+
                 let score = "";
                 let points = "";
                 var i;
                 for (i = 1; i < 19; i++) {
-                   // console.log(i)
+                    // console.log(i)
                     let holeId = holeIds[i - 1]
                     score = rowData[2]["h" + i]
                     points = rowData[3]["h" + i]
                     if (this.state.createNew) {
-                      //  console.log(this.state.createNew)
+                        //  console.log(this.state.createNew)
                         scores.push([holeId, score, points])
                     } else {
-                      
+
                         scores.push({ scorecard_id: scorecardId, hole_id: holeId, strokes: parseInt(score), points: parseInt(points) })
-                       // console.log(scores)
+                        // console.log(scores)
                     }
                 }
                 if (this.state.createNew) {
@@ -395,7 +398,7 @@ class Scorecard extends Component {
 
         axios.post("/api/getholes", { courseId })
             .then(res => {
-              
+
                 let holeIds = [];
                 let rowData = this.state.rowData
                 res.data.forEach(hole => {

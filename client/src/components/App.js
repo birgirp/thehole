@@ -72,13 +72,8 @@ class App extends Component {
     } else{
    
     if (!this.state.isLoggedIn) {
-      console.log("not logged in")
-      if (window.location.pathname !== "/") {
-        console.log("path not slash")
-    //    window.location = "/"
-      }
-
-      return (
+     
+       return (
         <Router>
           <div>
             <Route exact path="/" render={(props) => <Login {...props} changeLoggedIn={this.changeLoggedIn} />} />
