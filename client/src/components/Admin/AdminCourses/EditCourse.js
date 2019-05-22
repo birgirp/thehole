@@ -84,7 +84,7 @@ class EditCourse extends Component {
 
         //params.node - for row identity
         //params.column - for column identity
-        console.log(params.column);
+    
         return params.column.colId !== "rowname" // - just as sample
     }
 

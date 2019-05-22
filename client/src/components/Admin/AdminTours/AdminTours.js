@@ -18,7 +18,7 @@ class AdminTours extends Component {
             isEditingTour: false,
             isLoading: false,
 
-            editingTour:{id:"", name:"", status:"", rounds:""}
+            editingTour: { id: "", name: "", status: "", rounds: "" }
 
         }
     }
@@ -27,8 +27,12 @@ class AdminTours extends Component {
         this.setState({ isLoading: true })
         axios.get("/api/getalltours")
             .then(res => {
-                this.setState({ tours: res.data })
-                this.setState({ isLoading: false })
+                if (res.lenght === 0) {
+                    console.log("No tours found")
+                } else {
+                    this.setState({ tours: res.data, isLoading: false })
+
+                }
             })
             .catch(err => {
                 console.log(err);
@@ -38,77 +42,96 @@ class AdminTours extends Component {
 
     closeCreateModal = () => { this.setState({ isCreatingTour: false }) }
     closeEditModal = () => { this.setState({ isEditingTour: false }) }
-     
+
     handleAddTour = (e) => { this.setState({ isCreatingTour: true }) }
-    
-    handleEditTour = (id, name, status, rounds) => { 
-        this.setState({ isEditingTour: true }) 
+
+    handleEditTour = (id, name, status, rounds) => {
+        this.setState({ isEditingTour: true })
         let editingTour = this.state.editingTour
         editingTour.id = id;
         editingTour.name = name;
-        editingTour.status= status;
+        editingTour.status = status;
         editingTour.rounds = rounds;
 
-        this.setState({editingTour:editingTour})
+        this.setState({ editingTour: editingTour })
 
 
     }
 
-    
+
 
     render() {
+        if(!this.state.tours) {
+            return(
+                <div>
+                    <span>No tours registered</span>
+                    <br /><br />
+                    <Button primary onClick={this.handleAddTour}>Add new Tour</Button>
+                   
+                    <Modal size="fullscreen" open={this.state.isCreatingTour} onClose={this.closeCreateModal}>
+                        <Modal.Header>Add new Tour</Modal.Header>
+                        <Modal.Content >
+                            {<CreateTour closeModal={this.closeCreateModal} />}
+                        </Modal.Content>
+                    </Modal>
+                </div>
+
+            )
+
+        }
+        
         const data = this.state.tours;
         if (this.state.isLoading) {
             return (<Loading />)
-          } else {
-        return (
-            <div>
-                <h1>Admin Tours</h1>
-                <Button primary onClick={this.handleAddTour}>Add new Tour</Button>
-                <br /><br />
-                <Table celled>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell width='1'>Edit</Table.HeaderCell>
-                            <Table.HeaderCell width='3'>Tour Name</Table.HeaderCell>
-                            <Table.HeaderCell width='2'>Status</Table.HeaderCell>
-                            <Table.HeaderCell width='2'>Rounds</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {data.map((tour) => {
-                            return (
-                                <Table.Row key={tour.id}>
-                                    <Table.Cell ><Icon name='edit' link onClick={() => this.handleEditTour(tour.id, tour.tour_name,tour.tour_status, tour.tour_rounds )} ></Icon></Table.Cell>
-                                    <Table.Cell >{tour.tour_name}</Table.Cell>
-                                    <Table.Cell >{tour.tour_status}</Table.Cell>
-                                    <Table.Cell >{tour.tour_rounds}</Table.Cell>
-                                </Table.Row>
-                            );
-                        })}
-                    </Table.Body>
-                </Table>
+        } else {
+            return (
+                <div>
+                    <h1>Admin Tours</h1>
+                    <Button primary onClick={this.handleAddTour}>Add new Tour</Button>
+                    <br /><br />
+                    <Table celled>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell width='1'>Edit</Table.HeaderCell>
+                                <Table.HeaderCell width='3'>Tour Name</Table.HeaderCell>
+                                <Table.HeaderCell width='2'>Status</Table.HeaderCell>
+                                <Table.HeaderCell width='2'>Rounds</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {data.map((tour) => {
+                                return (
+                                    <Table.Row key={tour.id}>
+                                        <Table.Cell ><Icon name='edit' link onClick={() => this.handleEditTour(tour.id, tour.tour_name, tour.tour_status, tour.tour_rounds)} ></Icon></Table.Cell>
+                                        <Table.Cell >{tour.tour_name}</Table.Cell>
+                                        <Table.Cell >{tour.tour_status}</Table.Cell>
+                                        <Table.Cell >{tour.tour_rounds}</Table.Cell>
+                                    </Table.Row>
+                                );
+                            })}
+                        </Table.Body>
+                    </Table>
 
 
-                <Modal size="fullscreen" open={this.state.isCreatingTour} onClose={this.closeCreateModal}>
-                    <Modal.Header>Add new Tour</Modal.Header>
-                    <Modal.Content >
-                        {<CreateTour closeModal={this.closeCreateModal} />}
-                    </Modal.Content>
-                </Modal>
+                    <Modal size="fullscreen" open={this.state.isCreatingTour} onClose={this.closeCreateModal}>
+                        <Modal.Header>Add new Tour</Modal.Header>
+                        <Modal.Content >
+                            {<CreateTour closeModal={this.closeCreateModal} />}
+                        </Modal.Content>
+                    </Modal>
 
-                <Modal size="fullscreen" open={this.state.isEditingTour} onClose={this.closeEditModal} >
-                    <Modal.Header>Edit Tour: {this.state.editingTour.name} </Modal.Header>
-                    <Modal.Content >
-                        {<EditTour closeModal={this.closeEditModal}  editingTour={this.state.editingTour}/>}
-                    </Modal.Content>
-                </Modal>
+                    <Modal size="fullscreen" open={this.state.isEditingTour} onClose={this.closeEditModal} >
+                        <Modal.Header>Edit Tour: {this.state.editingTour.name} </Modal.Header>
+                        <Modal.Content >
+                            {<EditTour closeModal={this.closeEditModal} editingTour={this.state.editingTour} />}
+                        </Modal.Content>
+                    </Modal>
 
 
-            </div>
-        )
+                </div>
+            )
+        }
     }
-}
 }
 
 export default AdminTours;

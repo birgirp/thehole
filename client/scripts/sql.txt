@@ -1,4 +1,35 @@
 
+
+v_holes_scores:
+select hs.hole_id, hs.scorecard_id, h.hole, hs.strokes, hs.points 
+from holes h join hole_scores hs on h.id = hs.hole_id
+
+v_tour_round_rank:
+with a as (
+select s.id as scorecard_id, s.player_id, s.tour_round, s.tour_id,
+(select sum(points) from v_hole_scores hs where hs.scorecard_id = s.id ) as sum_18,
+(select sum(points) from v_hole_scores hs where hs.scorecard_id = s.id  and hs.hole >8  ) as sum_s9,
+(select sum(points) from v_hole_scores hs where hs.scorecard_id = s.id  and hs.hole >12  ) as sum_s6,
+(select sum(points) from v_hole_scores hs where hs.scorecard_id = s.id  and hs.hole >15  ) as sum_s3,
+(select sum(points) from v_hole_scores hs where hs.scorecard_id = s.id  and hs.hole >17  ) as sum_s1
+from scorecards s
+where  s.status = 'Submitted'
+order by tour_round, player_id
+)
+select tour_id,tour_round, player_id, rank() over( PARTITION BY a.tour_round 
+ ORDER BY
+ a.sum_18, a.sum_s9, a.sum_s6, a.sum_s3, a.sum_s1) 
+from a 
+
+
+select 
+player_id,
+sum(rank)
+from v_tour_round_rank
+where tour_id = 1
+group by player_id
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
 ECLECTIC
  SELECT s.tour_id,
     s.player_id,

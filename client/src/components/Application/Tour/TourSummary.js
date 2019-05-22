@@ -6,13 +6,14 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import Loading from "../../Loading/Loading";
+import { Checkbox } from "semantic-ui-react";
 
 class TourSummary extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-
+            rankingCompetion:true,
             loading: false,
             columnDefs: [],
             rowData: [],
@@ -87,13 +88,19 @@ class TourSummary extends Component {
 
     createRowData = () => {
         let rounds = this.props.rounds;
+      //  console.log(rounds)
+
         let players = this.props.players;
+       // console.log(players)
+
         let scoreData = this.state.scoreData
+        //console.log(scoreData)
         let rowData = [];
         players.forEach(element => {
-            let row = { player: element.full_name }
+            let row = {player_id:element.player_id, player: element.full_name }
             let sum = 0;
             var key
+
             var z
             for (z = 1; z < rounds + 1; z++) {
                 key = 'r' + z
@@ -119,6 +126,11 @@ class TourSummary extends Component {
 
     }
 
+    createRowData2 = () => {
+
+
+    }
+
     
     fetchPars = () => {
           let tourId = this.props.tourId;
@@ -128,11 +140,13 @@ class TourSummary extends Component {
                 throw new Error('No pars found');
             }
             let parData = res.data
+            console.log("hg")
+            console.log(parData)
        
             let rowData =this.state.rowData
 
             parData.forEach(item =>{
-                let index = rowData.findIndex(x => x.player ===item.full_name);
+                let index = rowData.findIndex(x => x.player_id ===item.player_id);
                 rowData[index]["pars"] = item.pars
                 rowData[index]["birdies"] = item.birdies
                 rowData[index]["eagles"] = item.eagles
@@ -149,6 +163,11 @@ class TourSummary extends Component {
 
     }
 
+    toggleCheckbox = (e, v) =>{
+        console.log(v.checked)
+        console.log(this.state.rowData)
+    }
+
 
     render() {
 
@@ -160,7 +179,13 @@ class TourSummary extends Component {
             return (
                 <div>
                     <h1> Tour Summary </h1>
-                    <br />
+                  
+                    <Checkbox  
+                    label="Ranking Competition"
+                    onChange ={this.toggleCheckbox}
+                    >
+  
+                    </Checkbox>
                     <AgGridReact
                         columnDefs={this.state.columnDefs}
                         defaultColDef={this.state.defaultColDef}

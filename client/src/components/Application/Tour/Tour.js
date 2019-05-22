@@ -45,7 +45,7 @@ class Tour extends Component {
             }).then(res => {
                 let index = res.data.findIndex(x => x.player_id ===this.props.userId);
                 let handicap = res.data[index].handicap
-                console.log(handicap)
+              //  console.log(handicap)
                 this.setState({ players: res.data });
                 return axios.post("/api/gettourcourses", { tourId: tourId })
                     .then(res2 => {
