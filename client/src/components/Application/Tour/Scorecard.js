@@ -147,6 +147,8 @@ class Scorecard extends Component {
     onGridReady = (params) => {
         this.gridApi = params.api;
         this.columnApi = params.columnApi;
+        console.log("dfdfdfdf")
+        console.log(params)
 
         //  this.gridApi.sizeColumnsToFit();
     }
@@ -204,6 +206,7 @@ class Scorecard extends Component {
 
                     this.setState({ isLoading: false })
                     window.location = "/"
+                    
                 
             })
     }

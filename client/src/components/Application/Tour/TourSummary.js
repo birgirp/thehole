@@ -13,8 +13,10 @@ class TourSummary extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            rankingCompetion:true,
-            loading: false,
+            gridApi:null,
+            isRankingCompetion: true,
+            rankData: [],
+            isLoading: false,
             columnDefs: [],
             rowData: [],
             overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
@@ -22,7 +24,7 @@ class TourSummary extends Component {
             scoreData: [],
             defaultColDef: {
                 resizable: false,
-                 editable: this.checkEditFunction
+                editable: this.checkEditFunction
                 , width: 70,
                 suppressMovable: true
             }
@@ -30,7 +32,15 @@ class TourSummary extends Component {
 
         }
     }
+    onGridReady = (params) => {
+        this.state.gridApi = params.api;
+        this.columnApi = params.columnApi;
+        console.log("dfdfdfdf")
+        console.log(params)
 
+
+        //  this.gridApi.sizeColumnsToFit();
+    }
 
     checkEditFunction = (params) => {
 
@@ -48,8 +58,8 @@ class TourSummary extends Component {
         let tourId = this.props.tourId;
         let rounds = this.props.rounds;
         this.setState({ isLoading: true })
-        let columnDefs = [{ headerName: "Player", field: "player", width: 100 ,  pinned: "left"}]
-        let sumcol = { headerName: "Sum", field: "sum", width: 80,  sort: "desc" }
+        let columnDefs = [{ headerName: "Player", field: "player", width: 100, pinned: "left" }]
+        let sumcol = { headerName: "Sum", field: "sum", width: 80, sort: "desc" }
         columnDefs.push(sumcol)
 
         var i;
@@ -77,7 +87,7 @@ class TourSummary extends Component {
                 }
 
                 this.setState({ scoreData: res.data }, () => this.createRowData());
-              //  this.setState({ isLoading: false })
+                //  this.setState({ isLoading: false })
             })
             .catch(err => {
                 console.log(err);
@@ -88,16 +98,16 @@ class TourSummary extends Component {
 
     createRowData = () => {
         let rounds = this.props.rounds;
-      //  console.log(rounds)
+        //  console.log(rounds)
 
         let players = this.props.players;
-       // console.log(players)
+        // console.log(players)
 
         let scoreData = this.state.scoreData
         //console.log(scoreData)
         let rowData = [];
         players.forEach(element => {
-            let row = {player_id:element.player_id, player: element.full_name }
+            let row = { player_id: element.player_id, player: element.full_name }
             let sum = 0;
             var key
 
@@ -121,51 +131,87 @@ class TourSummary extends Component {
             rowData.push(row)
         });
 
-        this.setState({ rowData: rowData } )
+        this.setState({ rowData: rowData })
         this.fetchPars()
 
     }
 
-    createRowData2 = () => {
 
 
-    }
 
-    
     fetchPars = () => {
-          let tourId = this.props.tourId;
+        let tourId = this.props.tourId;
         axios.post("/api/getpars", { tourId: tourId })
-        .then(res => {
-            if (!res.data) {
-                throw new Error('No pars found');
-            }
-            let parData = res.data
-            console.log("hg")
-            console.log(parData)
-       
-            let rowData =this.state.rowData
+            .then(res => {
+                if (!res.data) {
+                    throw new Error('No pars found');
+                }
+                let parData = res.data
+                console.log("hg")
+                console.log(parData)
 
-            parData.forEach(item =>{
-                let index = rowData.findIndex(x => x.player_id ===item.player_id);
-                rowData[index]["pars"] = item.pars
-                rowData[index]["birdies"] = item.birdies
-                rowData[index]["eagles"] = item.eagles
-                //console.log(index)
+                let rowData = this.state.rowData
 
+                parData.forEach(item => {
+                    let index = rowData.findIndex(x => x.player_id === item.player_id);
+                    rowData[index]["pars"] = item.pars
+                    rowData[index]["birdies"] = item.birdies
+                    rowData[index]["eagles"] = item.eagles
+                    //console.log(index)
+
+                })
+
+                this.setState({ rowData: rowData, isLoading: false })
+            })
+            .catch(err => {
+                console.log(err);
+                this.setState({ isLoading: false })
             })
 
-            this.setState({rowData: rowData, isLoading: false })
-        })
-        .catch(err => {
-            console.log(err);
-            this.setState({ isLoading: false })
-        })
-
     }
 
-    toggleCheckbox = (e, v) =>{
-        console.log(v.checked)
-        console.log(this.state.rowData)
+    toggleCheckbox = (e, v) => {
+        this.setState({ isRankingCompetion: v.checked, isLoading: true })
+        // console.log(v.checked)
+        //   console.log(this.state.rowData)
+        let rankData = this.state.rankData
+        console.log(rankData.length)
+        let tourId = this.props.tourId;
+        if (rankData.length === 0) {
+            console.log("calling renakdata api")
+            axios.post("/api/getranksum", { tourId: tourId })
+                .then(res => {
+                    if (!res.data) {
+                        throw new Error('No rankdata found');
+                    }
+                    this.setState({ rankData: res.data, isLoading: false }, () => this.toggleRowData());
+
+                })
+                .catch(err => {
+                    console.log(err);
+                    this.setState({ isLoading: false })
+                })
+        }
+    }
+
+    toggleRowData = () => {
+        console.log("im here")
+        let rankData = this.state.rankData
+        let rowData = this.state.rowData
+        console.log(rankData)
+        if (this.state.isRankingCompetion) {
+            console.log("change sum...")
+            rankData.forEach(rank => {
+                let index = rowData.findIndex(row => row.player_id === rank.player_id);
+                rowData[index]['sum'] = rank.sum
+                }
+            )
+            console.log(rowData)
+            this.setState({ rowData: rowData, isLoading: false })
+
+
+        }
+
     }
 
 
@@ -179,12 +225,12 @@ class TourSummary extends Component {
             return (
                 <div>
                     <h1> Tour Summary </h1>
-                  
-                    <Checkbox  
-                    label="Ranking Competition"
-                    onChange ={this.toggleCheckbox}
+
+                    <Checkbox
+                        label="Ranking Competition"
+                        onChange={this.toggleCheckbox}
                     >
-  
+
                     </Checkbox>
                     <AgGridReact
                         columnDefs={this.state.columnDefs}
@@ -192,6 +238,7 @@ class TourSummary extends Component {
                         rowData={this.state.rowData}
                         enterMovesDownAfterEdit={false}
                         enterMovesDown={false}
+                        onGridReady={this.onGridReady}
                         overlayLoadingTemplate={this.state.overlayLoadingTemplate}
                         overlayNoRowsTemplate={this.state.overlayNoRowsTemplate}>
                     </AgGridReact>

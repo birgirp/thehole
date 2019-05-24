@@ -472,7 +472,6 @@ router.post("/api/geteclectictrend", (req, res) => {
     } else {
       res.json(data.rows)
     }
-
   }).catch((error) => {
     console.log(error)
     res.status(500);
@@ -491,7 +490,24 @@ router.post("/api/geteclecticbars", (req, res) => {
     } else {
       res.json(data.rows)
     }
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
 
+router.post("/api/getranksum", (req, res) => {
+  console.log("fetch ranking data")
+  let tourId = req.body.tourId
+  dbdata.getTourRankSum(tourId).then((data) => {
+    if (data.rows.length === 0) {
+      console.log("No ranking data")
+      res.json(null);
+
+    } else {
+      res.json(data.rows)
+    }
   }).catch((error) => {
     console.log(error)
     res.status(500);

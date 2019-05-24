@@ -392,7 +392,7 @@ module.exports = {
 
     getEclecticBars: function (tourId) {
         return new Promise((resolve, reject) => {
-            console.log("tourId " + tourId)
+          //  console.log("tourId " + tourId)
               pool.query('select full_name, tour_round, score from v_eclectic_trend_per_round where tour_id = $1 order by tour_round, full_name', [tourId]).then((results) => {
                 resolve(results);
             }).catch((error) => {
@@ -404,9 +404,20 @@ module.exports = {
 
 
     getRoundScorecards: function(tourId, round){
-        console.log("fetchingf  " + tourId + "  " + round)
+       // console.log("fetchingf  " + tourId + "  " + round)
             return new Promise((resolve, reject) => {
                 pool.query('select *  from v_scorecards_round where tour_id =  $1 and tour_round = $2;', [tourId, round]).then((results) => {
+                    resolve(results);
+                }).catch((error) => {
+                    console.log("db error...")
+                    reject(error)
+                })
+            })
+    },
+    getTourRankSum: function(tourId){
+       // console.log("fetchingf  " + tourId + "  " + round)
+            return new Promise((resolve, reject) => {
+                pool.query('select player_id, sum(rank) from v_tour_round_rank where tour_id =$1 group by player_id;', [tourId]).then((results) => {
                     resolve(results);
                 }).catch((error) => {
                     console.log("db error...")
