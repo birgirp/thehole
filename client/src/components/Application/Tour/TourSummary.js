@@ -33,10 +33,10 @@ class TourSummary extends Component {
         }
     }
     onGridReady = (params) => {
-        this.state.gridApi = params.api;
+        //this.state.gridApi = params.api;
         this.columnApi = params.columnApi;
-        console.log("dfdfdfdf")
-        console.log(params)
+       // console.log("dfdfdfdf")
+       // console.log(params)
 
 
         //  this.gridApi.sizeColumnsToFit();
@@ -46,11 +46,9 @@ class TourSummary extends Component {
 
         //params.node - for row identity
         //params.column - for column identity
-        console.log(params.column);
+     //   console.log(params.column);
         return false
     }
-
-
 
 
     componentDidMount() {
@@ -208,10 +206,7 @@ class TourSummary extends Component {
             )
             console.log(rowData)
             this.setState({ rowData: rowData, isLoading: false })
-
-
         }
-
     }
 
 
@@ -226,12 +221,8 @@ class TourSummary extends Component {
                 <div>
                     <h1> Tour Summary </h1>
 
-                    <Checkbox
-                        label="Ranking Competition"
-                        onChange={this.toggleCheckbox}
-                    >
-
-                    </Checkbox>
+         {1===2 && (<Checkbox label="Ranking Competition"   onChange={this.toggleCheckbox}> </Checkbox>)} 
+        
                     <AgGridReact
                         columnDefs={this.state.columnDefs}
                         defaultColDef={this.state.defaultColDef}

@@ -147,8 +147,8 @@ class Scorecard extends Component {
     onGridReady = (params) => {
         this.gridApi = params.api;
         this.columnApi = params.columnApi;
-        console.log("dfdfdfdf")
-        console.log(params)
+        //   console.log("dfdfdfdf")
+        //  console.log(params)
 
         //  this.gridApi.sizeColumnsToFit();
     }
@@ -179,35 +179,35 @@ class Scorecard extends Component {
         var firstline = null
         axios.post("/api/getscorecard", { tourId: this.props.tourId, roundNum: this.props.roundNum, playerId: this.props.playerId })
             .then(res => {
-               
+
                 if (!res.data) {
-                    this.setState({ createNew: true, handicap: this.props.handicap, isLoading: false  })
+                    this.setState({ createNew: true, handicap: this.props.handicap, isLoading: false })
 
                 } else {
+
                     firstline = res.data[0]
                     let date = firstline.round_date.split("T")[0]
                     this.setState({ scorecardId: firstline.id, status: firstline.status, selectedCourseId: firstline.course_id, roundDate: date, handicap: firstline.handicap });
-                    let holeIds = [];
                     let rowData = this.state.rowData;
                     res.data.forEach(hole => {
 
                         hole.strokes ? rowData[2]["h" + hole.hole] = hole.strokes : rowData[2]["h" + hole.hole] = ""
                         hole.points ? rowData[3]["h" + hole.hole] = hole.points : rowData[3]["h" + hole.hole] = ""
-                        holeIds.push(hole.id)
+
                     });
 
-                    this.setState({ rowData, holeIds: holeIds, isLoading: false });
+                    this.setState({ rowData, isLoading: false });
                     this.fetchCourse(firstline.course_id);
                 }
             }).catch(err => {
                 console.log(err);
-               
-                    axios.get("/users/logout")
 
-                    this.setState({ isLoading: false })
-                    window.location = "/"
-                    
-                
+                axios.get("/users/logout")
+
+                this.setState({ isLoading: false })
+                window.location = "/"
+
+
             })
     }
 
@@ -242,6 +242,7 @@ class Scorecard extends Component {
                     this.setState({ status: "Submitted" }, () => this.changeStatus('Submitted'))
                     //                   
                 } else {
+                    console.log("handlesave...")
                     this.setState({ status: "Submitted", submitting: true }, () => this.handleSave(true))
                 }
             }
@@ -281,24 +282,22 @@ class Scorecard extends Component {
                 let scores = [];
                 let scorecardId = this.state.scorecardId;
                 this.setState({ isLoading: true })
-
                 let score = "";
                 let points = "";
                 var i;
                 for (i = 1; i < 19; i++) {
-                    // console.log(i)
                     let holeId = holeIds[i - 1]
                     score = rowData[2]["h" + i]
                     points = rowData[3]["h" + i]
                     if (this.state.createNew) {
-                        //  console.log(this.state.createNew)
                         scores.push([holeId, score, points])
                     } else {
 
                         scores.push({ scorecard_id: scorecardId, hole_id: holeId, strokes: parseInt(score), points: parseInt(points) })
-                        // console.log(scores)
+
                     }
                 }
+
                 if (this.state.createNew) {
                     axios.post("/api/addscorecard", {
                         tourId: this.props.tourId, roundNum: this.props.roundNum,
@@ -398,7 +397,6 @@ class Scorecard extends Component {
 
     fetchCourse = (courseId) => {
         this.setState({ isLoading: true })
-
         axios.post("/api/getholes", { courseId })
             .then(res => {
 

@@ -110,7 +110,7 @@ module.exports = {
     },
     getHoles: function (courseId) {
         return new Promise((resolve, reject) => {
-            pool.query('SELECT id, hole, par, handicap FROM holes WHERE course_id = $1', [courseId]).then((results) => {
+            pool.query('SELECT id, hole, par, handicap FROM holes WHERE course_id = $1 order by hole', [courseId]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")
@@ -335,6 +335,9 @@ module.exports = {
     },
 
     getScorecardScores: function (tourId, roundNum,playerId) {
+        console.log( [tourId])
+        console.log( [roundNum,])
+        console.log( [playerId])
         return new Promise((resolve, reject) => {
             pool.query('select *  from v_scorecards_scores where tour_id =  $1 and tour_round = $2 and player_id = $3;', [tourId, roundNum,playerId]).then((results) => {
                 resolve(results);

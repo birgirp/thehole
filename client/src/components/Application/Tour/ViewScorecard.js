@@ -120,9 +120,12 @@ class Scorecard extends Component {
     componentDidMount() {
         this.setState({ isLoading: true })
         let courseId = this.props.scorecardData.course_id
+        console.log(this.props.scorecardData)
+        console.log(courseId)
         axios.post("/api/getholes", { courseId })
             .then(res => {
                 let rowData = this.state.rowData
+                console.log(res.data)
                 res.data.forEach(hole => {
                     rowData[0]["h" + hole.hole] = hole.par;
                     rowData[1]["h" + hole.hole] = hole.handicap;
