@@ -14,7 +14,7 @@ class TourSummary extends Component {
         super(props);
         this.state = {
             gridApi:null,
-            isRankingCompetion: true,
+            isRankingCompetion: false,
             rankData: [],
             isLoading: false,
             columnDefs: [],
@@ -33,8 +33,9 @@ class TourSummary extends Component {
         }
     }
     onGridReady = (params) => {
-        //this.state.gridApi = params.api;
+        this.gridApi = params.api;
         this.columnApi = params.columnApi;
+        params.api.setRowData(this.state.rowData)
        // console.log("dfdfdfdf")
        // console.log(params)
 
@@ -145,9 +146,6 @@ class TourSummary extends Component {
                     throw new Error('No pars found');
                 }
                 let parData = res.data
-                console.log("hg")
-                console.log(parData)
-
                 let rowData = this.state.rowData
 
                 parData.forEach(item => {
@@ -189,6 +187,9 @@ class TourSummary extends Component {
                     console.log(err);
                     this.setState({ isLoading: false })
                 })
+        }else{
+            this.toggleRowData()
+
         }
     }
 
@@ -204,9 +205,15 @@ class TourSummary extends Component {
                 rowData[index]['sum'] = rank.sum
                 }
             )
+            console.log("rowData")
             console.log(rowData)
             this.setState({ rowData: rowData, isLoading: false })
+        }else{
+            this.setState({ isLoading: false })
         }
+  
+             
+
     }
 
 
@@ -221,12 +228,16 @@ class TourSummary extends Component {
                 <div>
                     <h1> Tour Summary </h1>
 
-         {1===2 && (<Checkbox label="Ranking Competition"   onChange={this.toggleCheckbox}> </Checkbox>)} 
+                    <Checkbox label="Ranking Competition"   
+                    onChange={this.toggleCheckbox}
+                    checked ={this.state.isRankingCompetion}
+                    > 
+                    </Checkbox>)
         
                     <AgGridReact
                         columnDefs={this.state.columnDefs}
                         defaultColDef={this.state.defaultColDef}
-                        rowData={this.state.rowData}
+                        //rowData={this.state.rowData}
                         enterMovesDownAfterEdit={false}
                         enterMovesDown={false}
                         onGridReady={this.onGridReady}
