@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-//import { Tab, Form, Input, Dropdown } from "semantic-ui-react";
 import axios from "axios";
 
 import { AgGridReact } from 'ag-grid-react';
@@ -168,18 +167,18 @@ class TourSummary extends Component {
 
     toggleCheckbox = (e, v) => {
         this.setState({ isRankingCompetion: v.checked, isLoading: true })
-        // console.log(v.checked)
-        //   console.log(this.state.rowData)
+
         let rankData = this.state.rankData
-        console.log(rankData.length)
         let tourId = this.props.tourId;
+
         if (rankData.length === 0) {
-            console.log("calling renakdata api")
+            console.log("calling rankdata api")
             axios.post("/api/getranksum", { tourId: tourId })
                 .then(res => {
                     if (!res.data) {
                         throw new Error('No rankdata found');
                     }
+                    console.log(res.data)
                     this.setState({ rankData: res.data, isLoading: false }, () => this.toggleRowData());
 
                 })
@@ -194,19 +193,21 @@ class TourSummary extends Component {
     }
 
     toggleRowData = () => {
-        console.log("im here")
+      
+        let sumData = []
         let rankData = this.state.rankData
         let rowData = this.state.rowData
         console.log(rankData)
         if (this.state.isRankingCompetion) {
-            console.log("change sum...")
+          
             rankData.forEach(rank => {
                 let index = rowData.findIndex(row => row.player_id === rank.player_id);
+                sumData.push({player_id: rank.player_id, sum: rowData[index]['sum']  })
                 rowData[index]['sum'] = rank.sum
                 }
             )
-            console.log("rowData")
-            console.log(rowData)
+            console.log("sumData")
+            console.log(sumData)
             this.setState({ rowData: rowData, isLoading: false })
         }else{
             this.setState({ isLoading: false })
@@ -229,10 +230,10 @@ class TourSummary extends Component {
                     <h1> Tour Summary </h1>
 
                     <Checkbox label="Ranking Competition"   
-                    onChange={this.toggleCheckbox}
+                                        onChange={this.toggleCheckbox}
                     checked ={this.state.isRankingCompetion}
                     > 
-                    </Checkbox>)
+                    </Checkbox>
         
                     <AgGridReact
                         columnDefs={this.state.columnDefs}
