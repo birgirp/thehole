@@ -12,9 +12,10 @@ class TourSummary extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            gridApi:null,
+            gridApi: null,
             isRankingCompetion: false,
             rankData: [],
+            sumData: [],
             isLoading: false,
             columnDefs: [],
             rowData: [],
@@ -35,8 +36,8 @@ class TourSummary extends Component {
         this.gridApi = params.api;
         this.columnApi = params.columnApi;
         params.api.setRowData(this.state.rowData)
-       // console.log("dfdfdfdf")
-       // console.log(params)
+        // console.log("dfdfdfdf")
+        // console.log(params)
 
 
         //  this.gridApi.sizeColumnsToFit();
@@ -46,7 +47,7 @@ class TourSummary extends Component {
 
         //params.node - for row identity
         //params.column - for column identity
-     //   console.log(params.column);
+        //   console.log(params.column);
         return false
     }
 
@@ -179,41 +180,55 @@ class TourSummary extends Component {
                         throw new Error('No rankdata found');
                     }
                     console.log(res.data)
-                    this.setState({ rankData: res.data, isLoading: false }, () => this.toggleRowData());
+                    this.setState({ rankData: res.data, isLoading: false }, () => this.toggleRowData(true, v.checked));
 
                 })
                 .catch(err => {
                     console.log(err);
                     this.setState({ isLoading: false })
                 })
-        }else{
-            this.toggleRowData()
+        } else {
+            this.toggleRowData(false,  v.checked)
 
         }
     }
 
-    toggleRowData = () => {
-      
+    toggleRowData = (isFirstTime, checked) => {
+
         let sumData = []
         let rankData = this.state.rankData
         let rowData = this.state.rowData
         console.log(rankData)
-        if (this.state.isRankingCompetion) {
-          
+        if (checked) {
+
             rankData.forEach(rank => {
                 let index = rowData.findIndex(row => row.player_id === rank.player_id);
-                sumData.push({player_id: rank.player_id, sum: rowData[index]['sum']  })
+                if (isFirstTime) { sumData.push({ player_id: rank.player_id, sum: rowData[index]['sum'] }) }
                 rowData[index]['sum'] = rank.sum
-                }
+            }
             )
             console.log("sumData")
             console.log(sumData)
-            this.setState({ rowData: rowData, isLoading: false })
-        }else{
-            this.setState({ isLoading: false })
+            if (isFirstTime) {
+                this.setState({ rowData: rowData, sumData: sumData, isLoading: false }, () => this.gridApi.refreshCells())
+            } else {
+                this.setState({ rowData: rowData, isLoading: false }, () => this.gridApi.refreshCells())
+            }
+        } else {
+            sumData = this.state.sumData
+            console.log("set sumdata")
+            sumData.forEach(sum => {
+                let index = rowData.findIndex(row => row.player_id === sum.player_id);
+                console.log(sum.sum)
+                rowData[index]['sum'] = sum.sum
+            })
+            console.log("rowData")
+            console.log(rowData)
+            this.setState({ rowData: rowData, isLoading: false }, () => this.gridApi.refreshCells())
+       
         }
-  
-             
+
+
 
     }
 
@@ -229,12 +244,12 @@ class TourSummary extends Component {
                 <div>
                     <h1> Tour Summary </h1>
 
-                    <Checkbox label="Ranking Competition"   
-                                        onChange={this.toggleCheckbox}
-                    checked ={this.state.isRankingCompetion}
-                    > 
+                    <Checkbox label="Ranking Competition"
+                        onChange={this.toggleCheckbox}
+                        checked={this.state.isRankingCompetion}
+                    >
                     </Checkbox>
-        
+
                     <AgGridReact
                         columnDefs={this.state.columnDefs}
                         defaultColDef={this.state.defaultColDef}
