@@ -12,7 +12,6 @@ class TourSummary extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            gridApi: null,
             isRankingCompetion: false,
             rankData: [],
             sumData: [],
@@ -26,7 +25,8 @@ class TourSummary extends Component {
                 resizable: false,
                 editable: this.checkEditFunction
                 , width: 70,
-                suppressMovable: true
+                suppressMovable: true,
+                sortable: true
             }
 
 
@@ -36,11 +36,7 @@ class TourSummary extends Component {
         this.gridApi = params.api;
         this.columnApi = params.columnApi;
         params.api.setRowData(this.state.rowData)
-        // console.log("dfdfdfdf")
-        // console.log(params)
 
-
-        //  this.gridApi.sizeColumnsToFit();
     }
 
     checkEditFunction = (params) => {
@@ -58,7 +54,7 @@ class TourSummary extends Component {
         let rounds = this.props.rounds;
         this.setState({ isLoading: true })
         let columnDefs = [{ headerName: "Player", field: "player", width: 100, pinned: "left" }]
-        let sumcol = { headerName: "Sum", field: "sum", width: 80, sort: "desc" }
+        let sumcol = { headerName: "Sum", field: "sum", width: 80 }
         columnDefs.push(sumcol)
 
         var i;
@@ -156,7 +152,7 @@ class TourSummary extends Component {
                     //console.log(index)
 
                 })
-
+                rowData.sort((a, b) => (a.sum < b.sum) ? 1 : -1)
                 this.setState({ rowData: rowData, isLoading: false })
             })
             .catch(err => {
@@ -179,7 +175,7 @@ class TourSummary extends Component {
                     if (!res.data) {
                         throw new Error('No rankdata found');
                     }
-                    console.log(res.data)
+
                     this.setState({ rankData: res.data, isLoading: false }, () => this.toggleRowData(true, v.checked));
 
                 })
@@ -188,31 +184,28 @@ class TourSummary extends Component {
                     this.setState({ isLoading: false })
                 })
         } else {
-            this.toggleRowData(false,  v.checked)
+            this.toggleRowData(false, v.checked)
 
         }
     }
 
     toggleRowData = (isFirstTime, checked) => {
-
         let sumData = []
         let rankData = this.state.rankData
         let rowData = this.state.rowData
-        console.log(rankData)
         if (checked) {
 
             rankData.forEach(rank => {
                 let index = rowData.findIndex(row => row.player_id === rank.player_id);
                 if (isFirstTime) { sumData.push({ player_id: rank.player_id, sum: rowData[index]['sum'] }) }
-                rowData[index]['sum'] = rank.sum
-            }
-            )
-            console.log("sumData")
-            console.log(sumData)
+                rowData[index]['sum'] = parseInt(rank.sum)
+            });
+            
+            rowData.sort((a, b) => (a.sum < b.sum) ? 1 : -1)
             if (isFirstTime) {
-                this.setState({ rowData: rowData, sumData: sumData, isLoading: false }, () => this.gridApi.refreshCells())
+                this.setState({ rowData: rowData, sumData: sumData, isLoading: false }, () =>  this.gridApi.setRowData(this.state.rowData))
             } else {
-                this.setState({ rowData: rowData, isLoading: false }, () => this.gridApi.refreshCells())
+                this.setState({ rowData: rowData, isLoading: false },  this.gridApi.setRowData(this.state.rowData))
             }
         } else {
             sumData = this.state.sumData
@@ -220,22 +213,21 @@ class TourSummary extends Component {
             sumData.forEach(sum => {
                 let index = rowData.findIndex(row => row.player_id === sum.player_id);
                 console.log(sum.sum)
-                rowData[index]['sum'] = sum.sum
+                rowData[index]['sum'] = parseInt(sum.sum)
             })
-            console.log("rowData")
+            rowData.sort((a, b) => (a.sum < b.sum) ? 1 : -1)
+            console.log("rowData unchecked")
             console.log(rowData)
-            this.setState({ rowData: rowData, isLoading: false }, () => this.gridApi.refreshCells())
-       
+            this.setState({ rowData: rowData, isLoading: false }, () =>  {
+                this.gridApi.setRowData(this.state.rowData)
+            })
+            console.log(this.state)
         }
-
-
-
     }
 
 
     render() {
 
-        //console.log(this.state)
         if (this.state.isLoading) {
             return (<Loading />)
         } else {
@@ -253,7 +245,7 @@ class TourSummary extends Component {
                     <AgGridReact
                         columnDefs={this.state.columnDefs}
                         defaultColDef={this.state.defaultColDef}
-                        //rowData={this.state.rowData}
+                        rowData={this.state.rowData}
                         enterMovesDownAfterEdit={false}
                         enterMovesDown={false}
                         onGridReady={this.onGridReady}

@@ -27,7 +27,7 @@ class Tour extends Component {
  
 
     componentDidMount() {
-  //      this.setState({ isLoading: true })
+       this.setState({ isLoading: true })
         const tourId = this.props.match.params.id
         var rounds;
         this.setState({ id: tourId })
@@ -64,11 +64,11 @@ class Tour extends Component {
 
                         this.setState({tabs: tabs})
 
-               //         this.setState({ isLoading: false });
+                       this.setState({ isLoading: false });
                     })
             }).catch(err => {
                 console.log(err);
-               // this.setState({ isLoading: false })
+                this.setState({ isLoading: false })
             })
     }
 

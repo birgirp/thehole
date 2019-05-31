@@ -36,7 +36,11 @@ class App extends Component {
   }
 
   logout = () => {
-    this.setState({ userId: null, isLoggedIn: false, isAdmin: false });
+    console.log("sds")
+    axios.get("/users/logout").then(() =>{
+      this.setState({ userId: null, isLoggedIn: false, isAdmin: false }, () => window.location = "/" );
+    })
+   
   }
 
 

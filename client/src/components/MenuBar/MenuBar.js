@@ -24,9 +24,9 @@ class MenuBar extends Component {
 
   handleLogoutItemClick = (e, { name }) => {
     console.log("Logging out");
-    axios.get("/users/logout")
     this.props.logout()
-    window.location = "/"
+    
+    
   }
 
   componentWillMount() {
