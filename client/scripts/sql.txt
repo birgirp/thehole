@@ -1,4 +1,86 @@
 
+ 
+ v_scorecards_round2:
+
+ SELECT s.id,
+    u.full_name,
+    c.course_name,
+    c.id AS course_id,
+    c.tee,
+    s.handicap,
+    s.tour_id,
+    s.tour_round,
+    s.round_date,
+	   ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 1) AS h1,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 2) AS h2,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 3) AS h3,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 4) AS h4,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 5) AS h5,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 6) AS h6,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 7) AS h7,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 8) AS h8,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 9) AS h9,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 10) AS h10,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 11) AS h11,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 12) AS h12,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 13) AS h13,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 14) AS h14,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 15) AS h15,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 16) AS h16,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 17) AS h17,
+    ( SELECT x.strokes
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole = 18) AS h18,
+    ( SELECT sum(x.points) AS sum
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole < 10) AS f9,
+    ( SELECT sum(x.points) AS sum
+           FROM v_scorecards_scores x
+          WHERE x.id = s.id AND x.hole > 9) AS s9,
+    sum(hs.points) AS points
+   FROM scorecards s
+     JOIN hole_scores hs ON hs.scorecard_id = s.id
+     JOIN users u ON u.id = s.player_id
+     JOIN courses c ON c.id = s.course_id
+  GROUP BY s.id, u.full_name, c.course_name, c.id, c.tee, s.round_date
+  ORDER BY s.tour_round, u.full_name;
+
+------------------------------------------------------------------------------------------------
+
 
 v_holes_scores:
 select hs.hole_id, hs.scorecard_id, h.hole, hs.strokes, hs.points 

@@ -409,7 +409,7 @@ module.exports = {
     getRoundScorecards: function(tourId, round){
        // console.log("fetchingf  " + tourId + "  " + round)
             return new Promise((resolve, reject) => {
-                pool.query('select *  from v_scorecards_round where tour_id =  $1 and tour_round = $2;', [tourId, round]).then((results) => {
+                pool.query('select *  from v_scorecards_round2 where tour_id =  $1 and tour_round = $2;', [tourId, round]).then((results) => {
                     resolve(results);
                 }).catch((error) => {
                     console.log("db error...")

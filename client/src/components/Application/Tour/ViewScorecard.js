@@ -43,6 +43,7 @@ class Scorecard extends Component {
                 { headerName: "7", field: "h7", width: 40, cellStyle: this.cellStyling, },
                 { headerName: "8", field: "h8", width: 40, cellStyle: this.cellStyling, },
                 { headerName: "9", field: "h9", width: 40, cellStyle: this.cellStyling, },
+                { headerName: "Out", field: "sumf9", width: 40 },
                 { headerName: "10", field: "h10", width: 40, cellStyle: this.cellStyling, },
                 { headerName: "11", field: "h11", width: 40, cellStyle: this.cellStyling, },
                 { headerName: "12", field: "h12", width: 40, cellStyle: this.cellStyling, },
@@ -52,6 +53,8 @@ class Scorecard extends Component {
                 { headerName: "16", field: "h16", width: 40, cellStyle: this.cellStyling, },
                 { headerName: "17", field: "h17", width: 40, cellStyle: this.cellStyling, },
                 { headerName: "18", field: "h18", width: 40, cellStyle: this.cellStyling, },
+                { headerName: "In", field: "sums9", width: 40 },
+                { headerName: "Total", field: "sum18", width: 40 },
             ],
             rowData: [
                 { rowname: "Par", h1: "", h2: "", h3: "", h4: "", h5: "", h6: "", h7: "", h8: "", h9: "", h10: "", h11: "", h12: "", h13: "", h14: "", h15: "", h16: "", h17: "", h18: "" },
@@ -134,9 +137,19 @@ class Scorecard extends Component {
                 var i
                 for (i = 0; i < 19; i++) {
                     rowData[2]["h" + i] = this.props.scorecardData["h" + i]
+                    rowData[3]["h" + i] = this.props.scorecardData["p" + i]
 
                 }
-                this.setState({ rowData: rowData }, this.calculateAllPoints())
+                rowData[2]["sumf9"] = this.props.scorecardData["sf9"]
+                rowData[3]["sumf9"] = this.props.scorecardData["f9"]
+                rowData[2]["sums9"] = this.props.scorecardData["ss9"]
+                rowData[3]["sums9"] = this.props.scorecardData["s9"]
+
+                rowData[2]["sum18"] = this.props.scorecardData["strokes"]
+                rowData[3]["sum18"] = this.props.scorecardData["points"]
+
+
+                this.setState({ rowData: rowData })
                 this.setState({ isLoading: false })
             }).catch(err => {
                 console.log(err);

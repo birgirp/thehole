@@ -29,9 +29,13 @@ class TourRound extends Component {
                 { headerName: "Player", field: "full_name", width: 100, pinned: "left" },
                 { headerName: "Course", field: "course_name", width: 100 },
                 { headerName: "Hcp", field: "handicap", width: 40 },
+                { headerName: "In", field: "f9", width: 40 },
+                { headerName: "Out", field: "s9", width: 40 },
+                { headerName: "Total", field: "points", width: 50 },
+ /*
                 { headerName: "Sum", field: "strokes", width: 60 },
                 { headerName: "Points", field: "points", width: 60,  sort: "desc" },
-               /* { headerName: "1", field: "h1", width: 30 },
+               { headerName: "1", field: "h1", width: 30 },
                 { headerName: "2", field: "h2", width: 30 },
                 { headerName: "3", field: "h3", width: 30 },
                 { headerName: "4", field: "h4", width: 30 },
@@ -74,7 +78,6 @@ class TourRound extends Component {
     componentDidMount() {
         this.setState({ selectedRound: this.props.roundNum });
         this.fetchScorecards();
-
     }
 
     fetchScorecards = () => {
@@ -88,6 +91,7 @@ class TourRound extends Component {
                     this.setState({ rowData: rowData,  isLoading: false  })
                    
                 }else{
+                    console.log(res.data)
                 this.setState({ rowData: res.data })
                 if (this.state.isLoading) {
 

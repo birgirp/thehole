@@ -4,9 +4,6 @@ import 'semantic-ui-css/semantic.min.css';
 import axios from "axios";
 import Loading from "../../Loading/Loading";
 import { DateInput } from 'semantic-ui-calendar-react';
-//import SemanticDatepicker from 'react-semantic-ui-datepickers';
-//import ptLocale from 'react-semantic-ui-datepickers/dist/locales/pt-BR';
-//import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
@@ -56,7 +53,6 @@ class Scorecard extends Component {
             columnDefs: [
                 { headerName: "", field: "rowname" },
                 { headerName: "1", field: "h1", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
-                // { headerName: "1", field: "h1", width: 40, cellStyle: this.cellStyling },
                 { headerName: "2", field: "h2", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
                 { headerName: "3", field: "h3", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
                 { headerName: "4", field: "h4", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
@@ -65,6 +61,7 @@ class Scorecard extends Component {
                 { headerName: "7", field: "h7", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
                 { headerName: "8", field: "h8", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
                 { headerName: "9", field: "h9", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "Out", field: "sumf9", width: 40 },
                 { headerName: "10", field: "h10", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
                 { headerName: "11", field: "h11", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
                 { headerName: "12", field: "h12", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
@@ -74,6 +71,8 @@ class Scorecard extends Component {
                 { headerName: "16", field: "h16", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
                 { headerName: "17", field: "h17", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
                 { headerName: "18", field: "h18", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
+                { headerName: "In", field: "sums9", width: 40 },
+                { headerName: "Total", field: "sum18", width: 40 },
             ],
             rowData: [
                 { rowname: "Par", h1: "", h2: "", h3: "", h4: "", h5: "", h6: "", h7: "", h8: "", h9: "", h10: "", h11: "", h12: "", h13: "", h14: "", h15: "", h16: "", h17: "", h18: "" },
@@ -147,10 +146,7 @@ class Scorecard extends Component {
     onGridReady = (params) => {
         this.gridApi = params.api;
         this.columnApi = params.columnApi;
-        //   console.log("dfdfdfdf")
-        //  console.log(params)
-
-        //  this.gridApi.sizeColumnsToFit();
+        params.api.setRowData(this.state.rowData)
     }
 
     sumScores = () => {
@@ -158,12 +154,35 @@ class Scorecard extends Component {
         let sumPoints = 0
         let rowData = this.state.rowData;
         var i
-        for (i = 1; i < 19; i++) {
+        for (i = 1; i < 10; i++) {
             if (rowData[2]["h" + i] !== "") {
                 sumStrokes = sumStrokes + parseInt(rowData[2]["h" + i])
                 sumPoints = sumPoints + parseInt(rowData[3]["h" + i])
             }
         }
+
+        rowData[2]["sumf9"] = sumStrokes
+        rowData[3]["sumf9"] = sumPoints
+        sumStrokes = 0
+        sumPoints = 0
+        for (i = 10; i < 19; i++) {
+            if (rowData[2]["h" + i] !== "") {
+                sumStrokes = sumStrokes + parseInt(rowData[2]["h" + i])
+                sumPoints = sumPoints + parseInt(rowData[3]["h" + i])
+            }
+        }
+        rowData[2]["sums9"] = sumStrokes
+        rowData[3]["sums9"] = sumPoints
+
+        rowData[2]["sum18"] = sumStrokes + rowData[2]["sumf9"] 
+        rowData[3]["sum18"] = sumPoints + rowData[3]["sumf9"]
+
+
+        sumStrokes = 0
+        sumPoints = 0
+
+
+
         this.setState({ sumStrokes: sumStrokes, sumPoints: sumPoints })
     }
 
@@ -494,14 +513,7 @@ class Scorecard extends Component {
                     >
                     </AgGridReact>
                     <br />
-                    <Grid>
-                        <Grid.Column floated='right'>
-                            <Grid.Row>
-                                <Label floated='right'>Strokes: {isNaN(this.state.sumStrokes) ? 0 : this.state.sumStrokes}</Label>
-                                <Label floated='right'>Points:  {isNaN(this.state.sumPoints) ? 0 : this.state.sumPoints}</Label>
-                            </Grid.Row>
-                        </Grid.Column>
-                    </Grid>
+ 
                     <Grid colums={1} >
                         <Grid.Row>
                             <Grid.Column>
