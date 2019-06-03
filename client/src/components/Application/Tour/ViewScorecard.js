@@ -43,7 +43,7 @@ class Scorecard extends Component {
                 { headerName: "7", field: "h7", width: 40, cellStyle: this.cellStyling, },
                 { headerName: "8", field: "h8", width: 40, cellStyle: this.cellStyling, },
                 { headerName: "9", field: "h9", width: 40, cellStyle: this.cellStyling, },
-                { headerName: "Out", field: "sumf9", width: 40 },
+                { headerName: "Out", field: "sumf9", width: 40, cellStyle: { fontWeight: 'bold', borderLeft:"3px" } },
                 { headerName: "10", field: "h10", width: 40, cellStyle: this.cellStyling, },
                 { headerName: "11", field: "h11", width: 40, cellStyle: this.cellStyling, },
                 { headerName: "12", field: "h12", width: 40, cellStyle: this.cellStyling, },
@@ -53,8 +53,8 @@ class Scorecard extends Component {
                 { headerName: "16", field: "h16", width: 40, cellStyle: this.cellStyling, },
                 { headerName: "17", field: "h17", width: 40, cellStyle: this.cellStyling, },
                 { headerName: "18", field: "h18", width: 40, cellStyle: this.cellStyling, },
-                { headerName: "In", field: "sums9", width: 40 },
-                { headerName: "Total", field: "sum18", width: 40 },
+                { headerName: "In", field: "sums9", width: 40, cellStyle: { fontWeight: 'bold' } },
+                { headerName: "Total", field: "sum18", width: 40, cellStyle: { fontWeight: 'bold' } },
             ],
             rowData: [
                 { rowname: "Par", h1: "", h2: "", h3: "", h4: "", h5: "", h6: "", h7: "", h8: "", h9: "", h10: "", h11: "", h12: "", h13: "", h14: "", h15: "", h16: "", h17: "", h18: "" },
@@ -105,7 +105,7 @@ class Scorecard extends Component {
         //  this.gridApi.sizeColumnsToFit();
     }
 
-    sumScores = () => {
+    /*sumScores = () => {
         let sumStrokes = 0
         let sumPoints = 0
         let rowData = this.state.rowData;
@@ -117,7 +117,7 @@ class Scorecard extends Component {
             }
         }
         this.setState({ sumStrokes: sumStrokes, sumPoints: sumPoints })
-    }
+    }*/
 
 
     componentDidMount() {
@@ -165,69 +165,69 @@ class Scorecard extends Component {
         this.props.closeModal();
     }
 
-    calculateAllPoints = () => {
-        let rowData = this.state.rowData;
-        let handicap = this.props.scorecardData.handicap
-        var i;
-        for (i = 1; i < 19; i++) {
-            let par = rowData[0]["h" + i]
-            let hcp = rowData[1]["h" + i]
-            let score = rowData[2]["h" + i]
-            if (score) {
-                let points = this.calculatePointsPerHole(par, hcp, score, handicap)
-                rowData[3]["h" + i] = points;
-            }
-
-        }
-
-        this.setState({ rowData: rowData }, () => this.sumScores())
-    }
-
-    calculatePointsPerHole = (par, hcp, score, handicap) => {
-        let pph = this.pointPerHole(handicap, hcp)
-        let input = score - pph - par
-        let points = this.staplefordPoints(input)
-        return points
-    }
-
-    pointPerHole = (handicap, holehcp) => {
-        let extrapoints = 0
-        if (handicap >= holehcp) { extrapoints++ }
-        if (holehcp + 18 <= handicap) { extrapoints++ }
-        if (holehcp + 36 <= handicap) { extrapoints++ }
-        return extrapoints
-    }
-
-    staplefordPoints = (strokes) => {
-
-
-        let points = 0
-        switch (strokes) {
-            case -3:
-                points = 5
-                break;
-            case -2:
-                points = 4
-                break;
-            case -1:
-                points = 3
-                break;
-            case 0:
-                points = 2
-                break;
-            case 1:
-                points = 1
-                break;
-            case 2:
-                points = 0
-                break;
-            default:
-                points = 0
-        }
-        return points
-
-    }
-
+    /* calculateAllPoints = () => {
+         let rowData = this.state.rowData;
+         let handicap = this.props.scorecardData.handicap
+         var i;
+         for (i = 1; i < 19; i++) {
+             let par = rowData[0]["h" + i]
+             let hcp = rowData[1]["h" + i]
+             let score = rowData[2]["h" + i]
+             if (score) {
+                 let points = this.calculatePointsPerHole(par, hcp, score, handicap)
+                 rowData[3]["h" + i] = points;
+             }
+ 
+         }
+ 
+         this.setState({ rowData: rowData }, () => this.sumScores())
+     }
+ 
+     calculatePointsPerHole = (par, hcp, score, handicap) => {
+         let pph = this.pointPerHole(handicap, hcp)
+         let input = score - pph - par
+         let points = this.staplefordPoints(input)
+         return points
+     }
+ 
+     pointPerHole = (handicap, holehcp) => {
+         let extrapoints = 0
+         if (handicap >= holehcp) { extrapoints++ }
+         if (holehcp + 18 <= handicap) { extrapoints++ }
+         if (holehcp + 36 <= handicap) { extrapoints++ }
+         return extrapoints
+     }
+ 
+     staplefordPoints = (strokes) => {
+ 
+ 
+         let points = 0
+         switch (strokes) {
+             case -3:
+                 points = 5
+                 break;
+             case -2:
+                 points = 4
+                 break;
+             case -1:
+                 points = 3
+                 break;
+             case 0:
+                 points = 2
+                 break;
+             case 1:
+                 points = 1
+                 break;
+             case 2:
+                 points = 0
+                 break;
+             default:
+                 points = 0
+         }
+         return points
+ 
+     }
+ */
 
 
 
@@ -261,14 +261,7 @@ class Scorecard extends Component {
                     >
                     </AgGridReact>
                     <br />
-                    <Grid>
-                        <Grid.Column floated='right'>
-                            <Grid.Row>
-                                <Label floated='right'>Strokes: {this.props.scorecardData.strokes}</Label>
-                                <Label floated='right'>Points:  {this.props.scorecardData.points}</Label>
-                            </Grid.Row>
-                        </Grid.Column>
-                    </Grid>
+
                     <Grid colums={1} >
                         <Grid.Row>
                             <Grid.Column>
