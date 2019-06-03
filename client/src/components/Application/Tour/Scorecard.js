@@ -99,7 +99,6 @@ class Scorecard extends Component {
         // return {inputType: 'number'}
         // return params.value.toString()
         return (<input type="number">{params.value}</input>)
-
     }
 
     cellStyling = (params) => {
