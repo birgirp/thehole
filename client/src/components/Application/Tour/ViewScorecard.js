@@ -165,9 +165,6 @@ class Scorecard extends Component {
         this.props.closeModal();
     }
 
- 
-
-
 
     render() {
         if (this.state.isLoading) {
