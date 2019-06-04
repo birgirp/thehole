@@ -43,7 +43,7 @@ class Scorecard extends Component {
                 { headerName: "7", field: "h7", width: 40, cellStyle: this.cellStyling, },
                 { headerName: "8", field: "h8", width: 40, cellStyle: this.cellStyling, },
                 { headerName: "9", field: "h9", width: 40, cellStyle: this.cellStyling, },
-                { headerName: "Out", field: "sumf9", width: 40, cellStyle: { fontWeight: 'bold', borderLeft:"3px" } },
+                { headerName: "Out", field: "sumf9", width: 40, cellStyle: { fontWeight: 'bold', borderLeft:"3px" },  headerComponentParams: {fontWeight: 'bold' }},
                 { headerName: "10", field: "h10", width: 40, cellStyle: this.cellStyling, },
                 { headerName: "11", field: "h11", width: 40, cellStyle: this.cellStyling, },
                 { headerName: "12", field: "h12", width: 40, cellStyle: this.cellStyling, },
@@ -105,19 +105,6 @@ class Scorecard extends Component {
         //  this.gridApi.sizeColumnsToFit();
     }
 
-    /*sumScores = () => {
-        let sumStrokes = 0
-        let sumPoints = 0
-        let rowData = this.state.rowData;
-        var i
-        for (i = 1; i < 19; i++) {
-            if (rowData[2]["h" + i] !== "") {
-                sumStrokes = sumStrokes + parseInt(rowData[2]["h" + i])
-                sumPoints = sumPoints + parseInt(rowData[3]["h" + i])
-            }
-        }
-        this.setState({ sumStrokes: sumStrokes, sumPoints: sumPoints })
-    }*/
 
 
     componentDidMount() {
@@ -125,6 +112,9 @@ class Scorecard extends Component {
         let courseId = this.props.scorecardData.course_id
         console.log(this.props.scorecardData)
         console.log(courseId)
+        let parf9 = 0
+        let pars9 = 0
+        let par18  = 0
         axios.post("/api/getholes", { courseId })
             .then(res => {
                 let rowData = this.state.rowData
@@ -132,14 +122,24 @@ class Scorecard extends Component {
                 res.data.forEach(hole => {
                     rowData[0]["h" + hole.hole] = hole.par;
                     rowData[1]["h" + hole.hole] = hole.handicap;
+                    if(hole.hole<10){parf9 +=hole.par}  
+                    if(hole.hole>9){pars9 +=hole.par}  
 
                 });
+
+                par18 = parf9 + pars9
+                console.log("par18")
+                console.log(par18)
                 var i
                 for (i = 0; i < 19; i++) {
                     rowData[2]["h" + i] = this.props.scorecardData["h" + i]
                     rowData[3]["h" + i] = this.props.scorecardData["p" + i]
 
                 }
+                rowData[0]["sumf9"] = parf9
+                rowData[0]["sums9"] = pars9
+                rowData[0]["sum18"] = par18
+
                 rowData[2]["sumf9"] = this.props.scorecardData["sf9"]
                 rowData[3]["sumf9"] = this.props.scorecardData["f9"]
                 rowData[2]["sums9"] = this.props.scorecardData["ss9"]
@@ -165,69 +165,7 @@ class Scorecard extends Component {
         this.props.closeModal();
     }
 
-    /* calculateAllPoints = () => {
-         let rowData = this.state.rowData;
-         let handicap = this.props.scorecardData.handicap
-         var i;
-         for (i = 1; i < 19; i++) {
-             let par = rowData[0]["h" + i]
-             let hcp = rowData[1]["h" + i]
-             let score = rowData[2]["h" + i]
-             if (score) {
-                 let points = this.calculatePointsPerHole(par, hcp, score, handicap)
-                 rowData[3]["h" + i] = points;
-             }
  
-         }
- 
-         this.setState({ rowData: rowData }, () => this.sumScores())
-     }
- 
-     calculatePointsPerHole = (par, hcp, score, handicap) => {
-         let pph = this.pointPerHole(handicap, hcp)
-         let input = score - pph - par
-         let points = this.staplefordPoints(input)
-         return points
-     }
- 
-     pointPerHole = (handicap, holehcp) => {
-         let extrapoints = 0
-         if (handicap >= holehcp) { extrapoints++ }
-         if (holehcp + 18 <= handicap) { extrapoints++ }
-         if (holehcp + 36 <= handicap) { extrapoints++ }
-         return extrapoints
-     }
- 
-     staplefordPoints = (strokes) => {
- 
- 
-         let points = 0
-         switch (strokes) {
-             case -3:
-                 points = 5
-                 break;
-             case -2:
-                 points = 4
-                 break;
-             case -1:
-                 points = 3
-                 break;
-             case 0:
-                 points = 2
-                 break;
-             case 1:
-                 points = 1
-                 break;
-             case 2:
-                 points = 0
-                 break;
-             default:
-                 points = 0
-         }
-         return points
- 
-     }
- */
 
 
 
@@ -239,17 +177,20 @@ class Scorecard extends Component {
             return (
 
                 <div>
-                    <Grid colums={3} >
+                    <Grid columns='equal' >
                         <Grid.Row>
-                            <Grid.Column width={2}>
-                                <Label>Handicap: {this.props.scorecardData.handicap}</Label>
+                            <Grid.Column>
+                                <Label paddingRight="5px">Handicap: {this.props.scorecardData.handicap}</Label>
 
                             </Grid.Column>
-                            <Grid.Column width={8}>
+                            <Grid.Column >
                                 <Label>Course: {this.props.scorecardData.course_name}-{this.props.scorecardData.tee}</Label>
                             </Grid.Column>
-                            <Grid.Column width={6}>
+                            <Grid.Column >
                                 <Label>Date: {this.props.scorecardData.round_date.split("T")[0]}</Label>
+                            </Grid.Column>
+                            <Grid.Column >
+                               
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>

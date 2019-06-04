@@ -61,7 +61,7 @@ class Scorecard extends Component {
                 { headerName: "7", field: "h7", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
                 { headerName: "8", field: "h8", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
                 { headerName: "9", field: "h9", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
-                { headerName: "Out", field: "sumf9", width: 40 },
+                { headerName: "Out", field: "sumf9", width: 40, cellStyle: { fontWeight: 'bold' } },
                 { headerName: "10", field: "h10", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
                 { headerName: "11", field: "h11", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
                 { headerName: "12", field: "h12", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
@@ -71,8 +71,8 @@ class Scorecard extends Component {
                 { headerName: "16", field: "h16", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
                 { headerName: "17", field: "h17", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
                 { headerName: "18", field: "h18", width: 40, cellStyle: this.cellStyling, cellEditorFramework: NumericEditor },
-                { headerName: "In", field: "sums9", width: 40 },
-                { headerName: "Total", field: "sum18", width: 40 },
+                { headerName: "In", field: "sums9", width: 40, cellStyle: { fontWeight: 'bold' } },
+                { headerName: "Total", field: "sum18", width: 40, cellStyle: { fontWeight: 'bold' } },
             ],
             rowData: [
                 { rowname: "Par", h1: "", h2: "", h3: "", h4: "", h5: "", h6: "", h7: "", h8: "", h9: "", h10: "", h11: "", h12: "", h13: "", h14: "", h15: "", h16: "", h17: "", h18: "" },
@@ -417,14 +417,25 @@ class Scorecard extends Component {
         this.setState({ isLoading: true })
         axios.post("/api/getholes", { courseId })
             .then(res => {
-
+                let parf9 = 0
+                let pars9 = 0
+                let par18  = 0
                 let holeIds = [];
                 let rowData = this.state.rowData
                 res.data.forEach(hole => {
                     rowData[0]["h" + hole.hole] = hole.par;
                     rowData[1]["h" + hole.hole] = hole.handicap;
+                    if(hole.hole<10){parf9 +=hole.par}  
+                    if(hole.hole>9){pars9 +=hole.par}  
+
                     holeIds.push(hole.id)
                 });
+                
+                par18 = parf9 + pars9
+                rowData[0]["sumf9"] = parf9;
+                rowData[0]["sums9"] = pars9;
+                rowData[0]["sum18"] = par18;
+
 
                 this.setState({ rowData: rowData, holeIds: holeIds }, () => this.calculateAllPoints())
 
