@@ -110,15 +110,14 @@ class Scorecard extends Component {
     componentDidMount() {
         this.setState({ isLoading: true })
         let courseId = this.props.scorecardData.course_id
-        console.log(this.props.scorecardData)
-        console.log(courseId)
+
         let parf9 = 0
         let pars9 = 0
         let par18  = 0
         axios.post("/api/getholes", { courseId })
             .then(res => {
                 let rowData = this.state.rowData
-                console.log(res.data)
+
                 res.data.forEach(hole => {
                     rowData[0]["h" + hole.hole] = hole.par;
                     rowData[1]["h" + hole.hole] = hole.handicap;
@@ -128,8 +127,7 @@ class Scorecard extends Component {
                 });
 
                 par18 = parf9 + pars9
-                console.log("par18")
-                console.log(par18)
+
                 var i
                 for (i = 0; i < 19; i++) {
                     rowData[2]["h" + i] = this.props.scorecardData["h" + i]
@@ -147,7 +145,6 @@ class Scorecard extends Component {
 
                 rowData[2]["sum18"] = this.props.scorecardData["strokes"]
                 rowData[3]["sum18"] = this.props.scorecardData["points"]
-
 
                 this.setState({ rowData: rowData })
                 this.setState({ isLoading: false })
@@ -177,7 +174,7 @@ class Scorecard extends Component {
                     <Grid columns='equal' >
                         <Grid.Row>
                             <Grid.Column>
-                                <Label paddingRight="5px">Handicap: {this.props.scorecardData.handicap}</Label>
+                                <Label >Handicap: {this.props.scorecardData.handicap}</Label>
 
                             </Grid.Column>
                             <Grid.Column >

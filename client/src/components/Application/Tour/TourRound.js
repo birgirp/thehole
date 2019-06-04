@@ -27,7 +27,7 @@ class TourRound extends Component {
             scorecardData:null,
             columnDefs: [
                 { headerName: "Player", field: "full_name", width: 100, pinned: "left" },
-                { headerName: "Course", field: "course_name", width: 100 },
+                { headerName: "Course", field: "course_name",width: 130, },
                 { headerName: "Hcp", field: "handicap", width: 40 },
                 { headerName: "In", field: "f9", width: 40 },
                 { headerName: "Out", field: "s9", width: 40 },
@@ -80,6 +80,12 @@ class TourRound extends Component {
         this.fetchScorecards();
     }
 
+    onGridReady = (params) => {
+        this.gridApi = params.api;
+        this.columnApi = params.columnApi;
+        params.api.sizeColumnsToFit()
+    }
+
     fetchScorecards = () => {
         if (!this.state.isLoading) {
             this.setState({ isLoading: true })
@@ -91,7 +97,7 @@ class TourRound extends Component {
                     this.setState({ rowData: rowData,  isLoading: false  })
                    
                 }else{
-                    console.log(res.data)
+                  
                 this.setState({ rowData: res.data })
                 if (this.state.isLoading) {
 
