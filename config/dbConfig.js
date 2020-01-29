@@ -1,5 +1,5 @@
 
-/*module.exports = {
+module.exports = {
     "dbType": "pgHeroku",
         "dbconnection": {
             "host": "ec2-23-23-195-205.compute-1.amazonaws.com",
@@ -10,8 +10,8 @@
             "ssl": true
 
     }
-};*/
-
+};
+/*
 module.exports = {
     "dbType": "pg",
         "dbconnection": {
@@ -24,3 +24,5 @@ module.exports = {
 
     }
 };
+
+*/

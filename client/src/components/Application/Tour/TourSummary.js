@@ -80,7 +80,7 @@ class TourSummary extends Component {
                 if (!res.data) {
                     throw new Error('No scorecards found');
                 }
-
+                console.log(res.data)
                 this.setState({ scoreData: res.data }, () => this.createRowData());
                 //  this.setState({ isLoading: false })
             })
@@ -200,12 +200,12 @@ class TourSummary extends Component {
                 if (isFirstTime) { sumData.push({ player_id: rank.player_id, sum: rowData[index]['sum'] }) }
                 rowData[index]['sum'] = parseInt(rank.sum)
             });
-            
+
             rowData.sort((a, b) => (a.sum < b.sum) ? 1 : -1)
             if (isFirstTime) {
-                this.setState({ rowData: rowData, sumData: sumData, isLoading: false }, () =>  this.gridApi.setRowData(this.state.rowData))
+                this.setState({ rowData: rowData, sumData: sumData, isLoading: false }, () => this.gridApi.setRowData(this.state.rowData))
             } else {
-                this.setState({ rowData: rowData, isLoading: false },  this.gridApi.setRowData(this.state.rowData))
+                this.setState({ rowData: rowData, isLoading: false }, this.gridApi.setRowData(this.state.rowData))
             }
         } else {
             sumData = this.state.sumData
@@ -218,13 +218,19 @@ class TourSummary extends Component {
             rowData.sort((a, b) => (a.sum < b.sum) ? 1 : -1)
             console.log("rowData unchecked")
             console.log(rowData)
-            this.setState({ rowData: rowData, isLoading: false }, () =>  {
+            this.setState({ rowData: rowData, isLoading: false }, () => {
                 this.gridApi.setRowData(this.state.rowData)
             })
             console.log(this.state)
         }
     }
 
+    handleCellClicked = (e) => {
+        
+        console.log(e)
+        //this.setState({ scoreCardPlayer: e.data.full_name, scorecardData: e.data, isOpenViewScorecard: true })
+
+    }
 
     render() {
 
@@ -249,6 +255,7 @@ class TourSummary extends Component {
                         enterMovesDownAfterEdit={false}
                         enterMovesDown={false}
                         onGridReady={this.onGridReady}
+                        onCellDoubleClicked={this.handleCellClicked}
                         overlayLoadingTemplate={this.state.overlayLoadingTemplate}
                         overlayNoRowsTemplate={this.state.overlayNoRowsTemplate}>
                     </AgGridReact>

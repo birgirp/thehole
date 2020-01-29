@@ -127,6 +127,7 @@ class TourRound extends Component {
     }
 
     handleCellClicked = (e) =>{
+        console.log(e.data)
         this.setState({ scoreCardPlayer:e.data.full_name, scorecardData: e.data, isOpenViewScorecard: true })
       
     }
