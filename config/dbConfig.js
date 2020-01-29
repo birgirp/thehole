@@ -1,5 +1,5 @@
 
-module.exports = {
+/*module.exports = {
     "dbType": "pgHeroku",
         "dbconnection": {
             "host": "ec2-23-23-195-205.compute-1.amazonaws.com",
@@ -10,18 +10,17 @@ module.exports = {
             "ssl": true
 
     }
-};
+};*/
 
-/*module.exports = {
+module.exports = {
     "dbType": "pg",
         "dbconnection": {
             "host": "localhost",
-            "database": "thehole5",
-            "user": "golfapp",
+            "database": "postgres",
+            "user": "thehole",
             "port": 5432,
-            "password": "golf",
+            "password": "beta3",
             "ssl": false
 
     }
 };
-*/

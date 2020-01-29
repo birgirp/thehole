@@ -6,6 +6,7 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 // Own components...
 //import Loading from "../../Loading/Loading";
+import CourseHoles from "./CourseHoles";
 
 class CreatCourse extends Component {
 
@@ -15,90 +16,129 @@ class CreatCourse extends Component {
             country: "",
             courseName: "",
             tee: "",
+            rowData: []
         };
     }
 
 
 
     handleSubmit = () => {
-        this.setState({ loading: true });
-        axios.post("/api/addcourse", {
-            courseName: this.state.courseName,
-            tee: this.state.tee,
-            country: this.state.country,
-            holes: this.state.rowData
-        })
-            .then(response => {
-                console.log(response.data.id);
-                let course = { id: response.data.id, course_name:  this.state.courseName, tee: this.state.tee, country:this.state.country  }
-                this.props.addNewCourse(course)
-                this.setState({ loading: false })
-                this.props.closeModal();
-             })
-            .catch(error => {
-                console.log(error);
-            });
+       
+        if(this.validateHoles()){
+            this.setState({ loading: true });
+            axios.post("/api/addcourse", {
+                courseName: this.state.courseName,
+                tee: this.state.tee,
+                country: this.state.country,
+                holes: this.state.rowData
+            })
+                .then(response => {
+                    console.log(response.data);
+                    let course = { id: response.data, course_name: this.state.courseName, tee: this.state.tee, country: this.state.country }
+                    this.props.addNewCourse(course)
+                    this.setState({ loading: false })
+                    this.props.closeModal();
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+
+
+         }
+
+
     }
 
-handleCancel = () => {
-    this.props.closeModal();
-}
+    handleCancel = () => {
+        this.props.closeModal();
+    }
 
-handleNameChange = (event) => {
-    this.setState({ courseName: event.target.value });
-}
-
-
-handleTeeChange = (event) => {
-    this.setState({ tee: event.target.value });
-}
-
-handleCountryChange = (event) => {
-    this.setState({ country: event.target.value });
-}
+    handleNameChange = (event) => {
+        this.setState({ courseName: event.target.value });
+    }
 
 
-render() {
+    handleTeeChange = (event) => {
+        this.setState({ tee: event.target.value });
+    }
 
-    //<div className="ag-theme-balham" style={{ height: '200px', width: '1200px'  }}>
-    return (
-        <div>
-            <h1>  Add new Course </h1>
-            <br />
-            <Form>
-                <Form.Group>
-                    <Form.Field
-                        required
-                        control={Input}
-                        label='Name'
-                        placeholder='Name'
-                        value={this.state.courseName} onChange={this.handleNameChange}
-                    />
-                    <Form.Field
-                        required
-                        control={Input}
-                        label='Tee'
-                        placeholder='Tee'
-                        value={this.state.tee} onChange={this.handleTeeChange}
-                    />
-                    <Form.Field
-                        required
-                        control={Input}
-                        label='Country'
-                        placeholder='Country'
-                        value={this.state.country} onChange={this.handleCountryChange}
-                    />
-                </Form.Group>
-            </Form>
-            <br />
+    handleCountryChange = (event) => {
+        this.setState({ country: event.target.value });
+    }
+
+    handler = (holes) => {
+
+        this.setState({ rowData: holes }, () => console.log(this.state.rowData));
+    }
+
+    validateHoles = () => {
+        let isValid = true
+
+        let pars = this.state.rowData[0];
+        let handicaps = this.state.rowData[1];
 
 
-            <Button primary onClick={this.handleSubmit}>Submit</Button>
-            <Button secondary onClick={this.handleCancel}>Cancel</Button>
+        if(this.objectContains(pars,"") || this.objectContains(handicaps, "")){
+            isValid = false
+        }
+        console.log("isValid:")
+        console.log(isValid)
+        return isValid
+    }
 
-        </div>
-    )
-}
+    objectContains = (myObj, value) => {
+        let contains = false
+        Object.keys(myObj).forEach(key => {
+          
+            if (myObj[key] === value) {
+                contains = true
+            }
+
+        })
+        return contains
+    }
+
+    render() {
+
+        //<div className="ag-theme-balham" style={{ height: '200px', width: '1200px'  }}>
+        return (
+            <div>
+                <h1>  Add new Course </h1>
+                <br />
+                <Form>
+                    <Form.Group>
+                        <Form.Field
+                            required
+                            control={Input}
+                            label='Name'
+                            placeholder='Name'
+                            value={this.state.courseName} onChange={this.handleNameChange}
+                        />
+                        <Form.Field
+                            required
+                            control={Input}
+                            label='Tee'
+                            placeholder='Tee'
+                            value={this.state.tee} onChange={this.handleTeeChange}
+                        />
+                        <Form.Field
+                            required
+                            control={Input}
+                            label='Country'
+                            placeholder='Country'
+                            value={this.state.country} onChange={this.handleCountryChange}
+                        />
+                    </Form.Group>
+                </Form>
+                <br />
+                <CourseHoles action={this.handler} />
+
+                <Button primary onClick={this.handleSubmit}>Submit</Button>
+                <Button secondary onClick={this.handleCancel}>Cancel</Button>
+
+            </div>
+        )
+    }
 }
 
 

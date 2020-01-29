@@ -64,15 +64,79 @@ router.post("/api/getholes", isLoggedIn, (req, res) => {
 
 
 router.post("/api/addcourse", (req, res) => {
+  console.log(JSON.stringify(req.body))
+  let id = null
   dbdata.insertCourse(req.body.courseName, req.body.tee, req.body.country).then((response) => {
-    console.log("after inserting course : " + JSON.stringify(response));
-    res.json(response.rows[0]);
+    console.log("after inserting course : " + JSON.stringify(response.rows[0]));
+    let rows = req.body.holes;
+    let courseId = response.rows[0].id;
+    //console.log(JSON.stringify(req.body));
+    let holes = [];
+    id = response.rows[0].id
+    console.log("course id ..." + response.rows[0].id)
+    for (i = 1; i < 19; i++) {
+      par = rows[0]["h" + i];
+      hcp = rows[1]["h" + i];
+      hole = i;
+      hole = [courseId, hole, par, hcp];
+      holes.push(hole);
+    }
+
+    return dbdata.insertHoles(holes);
+
+
+  }).then((response2) => {
+    res.json(id);
   }).catch((error) => {
     console.log(error)
     res.status(500);
     res.json({ error: error });
-  })
-});
+  });
+
+})
+
+
+
+/*
+  router.post("/api/addcourse", (req, res) => {
+    console.log(JSON.stringify(req.body))
+
+
+    dbdata.insertCourse(req.body.courseName, req.body.tee, req.body.country).then((response) => {
+      console.log("after inserting course : " + JSON.stringify(response.rows[0]));
+      // res.json(response.rows[0]);
+    }).then(([response, req]) => {
+      let rows = req.body.holes;
+      let courseId = response.rows[0].id;
+      //console.log(JSON.stringify(req.body));
+      let holes = [];
+      console.log("course id ..." + response.rows[0].id)
+      for (i = 1; i < 19; i++) {
+        par = rows[0]["h" + i];
+        hcp = rows[1]["h" + i];
+        hole = i;
+        hole = [courseId, hole, par, hcp];
+        holes.push(hole);
+      }
+      dbdata.insertHoles(holes).then((response) => {
+        res.json("ok");
+      })
+    }).catch((error) => {
+      console.log(error);
+      res.status(500);
+      res.json({ error: error });
+    });
+
+*/
+/*dbdata.insertCourse(req.body.courseName, req.body.tee, req.body.country).then((response) => {
+  console.log("after inserting course : " + JSON.stringify(response));
+  res.json(response.rows[0]);
+}).catch((error) => {
+  console.log(error)
+  res.status(500);
+  res.json({ error: error });
+})*/
+
 
 /*rowData: [
     { rowname: "Par", h1: "", h2: "", h3: "", h4: "", h5: "", h6: "", h7: "", h8: "", h9: "", h10: "", h11: "", h12: "", h13: "", h14: "", h15: "", h16: "", h17: "", h18: "" },
@@ -103,6 +167,24 @@ router.post("/api/addholes", (req, res) => {
   })
 });
 
+
+router.post("/api/editholes", (req, res) => {
+  //holes.push({"id": id, "par": par, "hcp": hcp })
+  let rows = req.body.holes;
+  console.log(JSON.stringify("rows"));
+  console.log(JSON.stringify(rows));
+
+  dbdata.updateHoles(rows).then((respone) => {
+    res.json("ok");
+  }).catch((error) => {
+    console.log(error);
+    res.status(500);
+    res.json({ error: error });
+  })
+
+});
+
+
 router.post("/api/addholescores", (req, res) => {
   //scores = [{3, 1, 5, 7},{3, 2, 5, 4},.., {scoredardid, holeid, strokes, points} ]
   let rows = req.body.rowData;
@@ -130,7 +212,7 @@ router.post("/api/addholescores", (req, res) => {
 router.post("/api/addholescores", (req, res) => {
   //scores = [{3, 1, 5, 7},{3, 2, 5, 4},.., {scoredardid, holeid, strokes, points} ]
   let rows = req.body.rowData;
-
+ 
   let courseId = req.body.courseId;
   console.log(JSON.stringify(req.body));
   let holes = [];
@@ -259,11 +341,11 @@ router.post("/api/addtour", (req, res) => {
 });
 
 router.post("/api/updatetour", (req, res) => {
-  const  tourId = req.body.tourId;
+  const tourId = req.body.tourId;
   const rounds = req.body.rounds;
   const tourStatus = req.body.tourStatus;
   const tourName = req.body.tourName;
-  dbdata.updateTour(tourId, tourName, tourStatus, rounds).then((response) =>{
+  dbdata.updateTour(tourId, tourName, tourStatus, rounds).then((response) => {
     res.json(response)
 
   }).catch((error) => {
@@ -273,7 +355,7 @@ router.post("/api/updatetour", (req, res) => {
   })
 
 
-} )
+})
 
 router.get("/api/getalltours", (req, res) => {
   dbdata.getAllTours().then((data) => {

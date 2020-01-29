@@ -25,7 +25,7 @@ class AdminCourses extends Component {
   componentDidMount() {
     axios.get("/api/getallcourses")
       .then(res => {
-        console.log(res.data);
+      
         if(res.length===0){
           console.log("No courses found")
         }else {
@@ -91,9 +91,11 @@ class AdminCourses extends Component {
       )
     } else {
       const data = this.state.courses;
+      console.log(data)
       return (
         <div>
           <Button primary onClick={this.handleAddCourse}>Add new Course</Button>
+
           <br /><br />
           <Table celled>
             <Table.Header>

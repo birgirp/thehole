@@ -1,24 +1,20 @@
 // External libs
 import React, { Component } from "react";
-import { Button } from "semantic-ui-react";
-import axios from "axios";
+
+
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 // Own components...
 import Loading from "../../Loading/Loading";
 
-class EditCourse extends Component {
+class CourseHoles extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             courseId: "",
-            ids: [],
             loading: false,
-            country: "",
-            courseName: "",
-            tee: "",
             columnDefs: [
                 { headerName: "", field: "rowname" },
                 { headerName: "H1", field: "h1", width: 40 },
@@ -43,105 +39,34 @@ class EditCourse extends Component {
             rowData: [
                 { rowname: "Par", h1: "", h2: "", h3: "", h4: "", h5: "", h6: "", h7: "", h8: "", h9: "", h10: "", h11: "", h12: "", h13: "", h14: "", h15: "", h16: "", h17: "", h18: "" },
                 { rowname: "Hcp", h1: "", h2: "", h3: "", h4: "", h5: "", h6: "", h7: "", h8: "", h9: "", h10: "", h11: "", h12: "", h13: "", h14: "", h15: "", h16: "", h17: "", h18: "" },
-            ],
+                 ],
             defaultColDef: {
+                onCellValueChanged: this.onCellValueChanged,
                 resizable: false,
-                editable: this.checkEditFunction,
+                editable: this.checkEditFunction, 
                 width: 70,
                 suppressMovable: true,
+               
             }
         };
     }
 
     componentDidMount() {
-        this.setState({ loading: true })
-        axios.post("/api/getholes", {
-            courseId: this.props.courseId
 
-        }).then(response => {
-            if (response.data.length === 0) {
-                console.log("no holes for course");
-                this.setState({ loading: false })
-            } else {
-                let rowData = this.state.rowData
-                let ids = this.state.ids
-                response.data.forEach(hole => {
-                    rowData[0]["h" + hole.hole] = hole.par;
-                    rowData[1]["h" + hole.hole] = hole.handicap;
-                    ids.push(hole.id)
-                });
-
-                this.setState({ rowData, ids })
-                this.setState({ loading: false })
-            }
-        })
-            .catch(error => {
-                console.log(error);
-            });
+        this.props.action(this.state.rowData)
     }
 
     checkEditFunction = (params) => {
 
         //params.node - for row identity
         //params.column - for column identity
-
+    
         return params.column.colId !== "rowname" // - just as sample
     }
 
-    handleSubmit = () => {
-        if (this.validateSubmit) {
-         
-            this.setState({ loading: true });
-            let rowData = this.state.rowData;
-            let ids = this.state.ids;
-            let holes = []
-            for (var i = 1; i < 19; i++) {
-                let par = rowData[0]["h" + i]
-                let hcp = rowData[1]["h" + i]
-                let id = ids[i - 1]
-                holes.push({ "id": id, "par": par, "handicap": hcp })
-            }
-
-
-
-            axios.post("/api/editholes", {
-                holes: holes
-            }).then(response => {
-                console.log(response);
-                this.setState({ loading: false })
-                this.props.closeModal();
-            })
-                .catch(error => {
-                    console.log(error);
-                    this.props.closeModal();
-                });
-        }
+    onCellValueChanged = (e) => {
+        this.props.action(this.state.rowData)
     }
-
-    validateSubmit = () => {
-        let ok = true;
-        let rowData = this.state.rowData;
-        let sumHcp = 0;
-        for (var i = 1; i < 19; i++) {
-            let par = rowData[0]["h" + i]
-            let hcp = rowData[1]["h" + i]
-            if (!par || !hcp) {
-                ok = false
-            } else {
-                sumHcp += hcp
-            }
-        }
-        if (ok) {
-            if (sumHcp !== 171) {
-                console.log("sum of hcp values !== 171")
-                ok = false
-            }
-        }
-        return ok
-
-    }
-
-    handleCancel = () => { this.props.closeModal(); }
 
     render() {
 
@@ -163,14 +88,10 @@ class EditCourse extends Component {
                         rowData={this.state.rowData}>
                     </AgGridReact>
                     <br />
-
-                    <Button primary onClick={this.handleSubmit}>Submit</Button>
-                    <Button secondary onClick={this.handleCancel}>Cancel</Button>
-
                 </div>
             )
         }
     }
 }
 
-export default EditCourse;
+export default CourseHoles;
