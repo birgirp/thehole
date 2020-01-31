@@ -1,6 +1,7 @@
 const Pool = require('pg').Pool;
 const format = require('pg-format');
 const dbconfig = require('./config/dbConfig');
+
 const pgp = require('pg-promise')({
     capSQL: true // if you want all generated SQL capitalized
 });
@@ -354,6 +355,7 @@ module.exports = {
             })
         })
     },
+    
     getTourScorecards: function (tourId) {
         return new Promise((resolve, reject) => {
             pool.query('select player_id, tour_round, strokes, points  from v_scorecards_sum where tour_id =  $1;', [tourId]).then((results) => {

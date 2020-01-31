@@ -194,6 +194,7 @@ class Scorecard extends Component {
 
     componentDidMount() {
         this.setState({ isLoading: true });
+        
         var firstline = null
         axios.post("/api/getscorecard", { tourId: this.props.tourId, roundNum: this.props.roundNum, playerId: this.props.playerId })
             .then(res => {

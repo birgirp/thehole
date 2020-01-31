@@ -80,7 +80,7 @@ class TourSummary extends Component {
                 if (!res.data) {
                     throw new Error('No scorecards found');
                 }
-                console.log(res.data)
+                //console.log(res.data)
                 this.setState({ scoreData: res.data }, () => this.createRowData());
                 //  this.setState({ isLoading: false })
             })
@@ -227,7 +227,33 @@ class TourSummary extends Component {
 
     handleCellClicked = (e) => {
         
-        console.log(e)
+        if(e.column.colId.startsWith('r') && e.value !== "" ) {
+
+            let playerId = e.data.player_id
+            let tourId = this.props.tourId
+            let roundNum = parseInt(e.column.colId.substring(1))
+            console.log(roundNum)
+            console.log(tourId)
+            console.log(playerId)
+
+            axios.post("/api/getscorecard", { tourId: tourId, roundNum:roundNum, playerId:playerId})
+            .then(res => {
+                if (!res.data) {
+                    throw new Error('No rankdata found');
+                }
+
+                console.log(res.data)
+
+            })
+            .catch(err => {
+                console.log(err);
+                this.setState({ isLoading: false })
+            })
+        }
+
+
+
+
         //this.setState({ scoreCardPlayer: e.data.full_name, scorecardData: e.data, isOpenViewScorecard: true })
 
     }

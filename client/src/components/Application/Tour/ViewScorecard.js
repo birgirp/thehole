@@ -110,7 +110,7 @@ class Scorecard extends Component {
     componentDidMount() {
         this.setState({ isLoading: true })
         let courseId = this.props.scorecardData.course_id
-
+        console.log("hi!")
         let parf9 = 0
         let pars9 = 0
         let par18  = 0
