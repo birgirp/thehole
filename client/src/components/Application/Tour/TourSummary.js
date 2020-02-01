@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import axios from "axios";
-
+import { Modal, Checkbox } from "semantic-ui-react";
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import Loading from "../../Loading/Loading";
-import { Checkbox } from "semantic-ui-react";
+import ViewScorecard from "./ViewScorecard";
+
 
 class TourSummary extends Component {
 
@@ -13,6 +14,10 @@ class TourSummary extends Component {
         super(props);
         this.state = {
             isRankingCompetion: false,
+            isOpenViewScorecard: false,
+            viewRoundNumber:"",
+            scoreCardPlayer:"",
+            scorecardData:null,
             rankData: [],
             sumData: [],
             isLoading: false,
@@ -225,36 +230,40 @@ class TourSummary extends Component {
         }
     }
 
-    handleCellClicked = (e) => {
-        
-        if(e.column.colId.startsWith('r') && e.value !== "" ) {
+    closeViewScorecard = () => {
+        this.setState({ isOpenViewScorecard: false })
+    }
 
+    handleCellClicked = (e) => {
+
+        if (e.column.colId.startsWith('r') && e.value !== "") {
+            let playerName = e.data.player
             let playerId = e.data.player_id
             let tourId = this.props.tourId
             let roundNum = parseInt(e.column.colId.substring(1))
-            console.log(roundNum)
-            console.log(tourId)
-            console.log(playerId)
 
-            axios.post("/api/getscorecard", { tourId: tourId, roundNum:roundNum, playerId:playerId})
-            .then(res => {
-                if (!res.data) {
-                    throw new Error('No rankdata found');
-                }
 
-                console.log(res.data)
 
-            })
-            .catch(err => {
-                console.log(err);
-                this.setState({ isLoading: false })
-            })
+            axios.post("/api/getplayerscorecard", { tourId: tourId, roundNum: roundNum, playerId: playerId })
+                .then(res => {
+                    if (!res.data) {
+                        throw new Error('No scorecard data found');
+                    }
+                    
+                    this.setState({ scoreCardPlayer: playerName, scorecardData: res.data[0], viewRoundNumber: roundNum, isOpenViewScorecard: true })
+                 
+
+                })
+                .catch(err => {
+                    console.log(err);
+                    this.setState({ isLoading: false })
+                })
         }
 
 
 
 
-        //this.setState({ scoreCardPlayer: e.data.full_name, scorecardData: e.data, isOpenViewScorecard: true })
+       
 
     }
 
@@ -286,7 +295,13 @@ class TourSummary extends Component {
                         overlayNoRowsTemplate={this.state.overlayNoRowsTemplate}>
                     </AgGridReact>
                     <br />
-
+                    <Modal id="tourRoundModal" size="fullscreen" open={this.state.isOpenViewScorecard} onClose={this.closeViewScorecard}
+                        closeOnDimmerClick={false}>
+                        <Modal.Header>{this.state.scoreCardPlayer}: Round {this.state.viewRoundNumber}</Modal.Header>
+                        <Modal.Content >
+                            {<ViewScorecard scorecardData={this.state.scorecardData} closeModal={this.closeViewScorecard} />}
+                        </Modal.Content>
+                    </Modal>
 
                 </div>
             )
