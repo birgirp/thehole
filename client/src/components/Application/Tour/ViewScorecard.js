@@ -110,15 +110,13 @@ class Scorecard extends Component {
     componentDidMount() {
         this.setState({ isLoading: true })
         let courseId = this.props.scorecardData.course_id
-        console.log("hi!")
 
-        console.log(this.props.scorecardData)
         let parf9 = 0
         let pars9 = 0
         let par18  = 0
         axios.post("/api/getholes", { courseId })
             .then(res => {
-                console.log(res)
+
                 let rowData = this.state.rowData
 
                 res.data.forEach(hole => {
