@@ -1,17 +1,246 @@
+CREATE TABLE users
+(
+    id serial NOT NULL,
+    email text  NOT NULL,
+    full_name text  NOT NULL,
+    handicap double precision NOT NULL,
+    password text NOT NULL,
+    is_admin boolean NOT NULL,
+    CONSTRAINT pk_users PRIMARY KEY (id)
+)
+CREATE TABLE courses
+(
+    id serial NOT NULL ,
+    country text NOT NULL,
+    tee text   NOT NULL,
+    CONSTRAINT pk_courses PRIMARY KEY (id)
+)
 
- 
- v_scorecards_round2:
+CREATE TABLE holes
+(
+    hole integer NOT NULL,
+    par integer NOT NULL,
+    handicap integer NOT NULL,
+    course_id integer NOT NULL,
+    id serial NOT NULL,
+    CONSTRAINT pk_holes PRIMARY KEY (id),
+    CONSTRAINT fk_holes FOREIGN KEY (course_id)
+        REFERENCES courses (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
 
-  SELECT s.id,
+CREATE TABLE tours
+(
+    id serial NOT NULL,
+    tour_name text NOT NULL,
+    tour_status text NOT NULL,
+    rounds integer,
+    CONSTRAINT pk_tour_id PRIMARY KEY (id)
+)
+
+CREATE TABLE tour_courses
+(
+    tour_id integer NOT NULL,
+    course_id integer NOT NULL,
+    CONSTRAINT fk_course_id FOREIGN KEY (course_id)
+        REFERENCES courses (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_tour_id FOREIGN KEY (tour_id)
+        REFERENCES tours (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+CREATE TABLE tour_players
+(
+    tour_id integer NOT NULL,
+    player_id integer NOT NULL,
+    CONSTRAINT fk_player_id FOREIGN KEY (player_id)
+        REFERENCES users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_tour_id FOREIGN KEY (tour_id)
+        REFERENCES tours (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+CREATE TABLE tour_teams
+(
+    id serial NOT NULL ,
+    tour_id integer NOT NULL,
+    name text  NOT NULL,
+    CONSTRAINT tour_teams_pkey PRIMARY KEY (id),
+    CONSTRAINT tour_teams_tour_id_fkey FOREIGN KEY (tour_id)
+        REFERENCES tours (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+CREATE TABLE team_members
+(
+    team_id integer NOT NULL,
+    player_id integer NOT NULL,
+    CONSTRAINT team_members_pkey PRIMARY KEY (team_id, player_id),
+    CONSTRAINT team_members_player_id_fkey FOREIGN KEY (player_id)
+        REFERENCES users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT team_members_team_id_fkey FOREIGN KEY (team_id)
+        REFERENCES tour_teams (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+CREATE TABLE scorecards
+(
+    id serial NOT NULL ,
+    player_id integer NOT NULL,
+    round_date date NOT NULL,
+    course_id integer NOT NULL,
+    handicap integer NOT NULL,
+    status text  NOT NULL,
+    tour_id integer NOT NULL,
+    tour_round integer NOT NULL,
+    CONSTRAINT pk_scorecard_id PRIMARY KEY (id),
+    CONSTRAINT fk_course_id2 FOREIGN KEY (course_id)
+        REFERENCES courses (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_player_id FOREIGN KEY (player_id)
+        REFERENCES users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+CREATE TABLE hole_scores
+(
+    scorecard_id integer NOT NULL,
+    hole_id integer NOT NULL,
+    strokes integer,
+    points integer,
+    CONSTRAINT fk_hole FOREIGN KEY (hole_id)
+        REFERENCES holes (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_scorecard FOREIGN KEY (scorecard_id)
+        REFERENCES scorecards (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+CREATE TABLE game_types
+(
+    id serial NOT NULL ,
+    min_players integer NOT NULL,
+    name text  NOT NULL,
+    CONSTRAINT game_types_pkey PRIMARY KEY (id)
+)
+
+CREATE TABLE session
+(
+    sid character varying COLLATE pg_catalog."default" NOT NULL,
+    sess json NOT NULL,
+    expire timestamp(6) without time zone NOT NULL,
+    CONSTRAINT session_pkey PRIMARY KEY (sid)
+)
+
+
+--- views ---
+
+CREATE OR REPLACE VIEW v_birdies
+ AS
+ SELECT s.player_id,
+    s.tour_id,
+    count(h.id) AS count
+   FROM scorecards s
+     JOIN hole_scores hs ON hs.scorecard_id = s.id
+     JOIN holes h ON h.id = hs.hole_id
+  WHERE s.status = 'Submitted'::text AND (hs.strokes - h.par) = '-1'::integer
+  GROUP BY s.tour_id, s.player_id
+  ORDER BY s.player_id;
+  
+  CREATE OR REPLACE VIEW v_eagles
+ AS
+ SELECT s.player_id,
+    s.tour_id,
+    count(h.id) AS count
+   FROM scorecards s
+     JOIN hole_scores hs ON hs.scorecard_id = s.id
+     JOIN holes h ON h.id = hs.hole_id
+  WHERE s.status = 'Submitted'::text AND (hs.strokes - h.par) = '-2'::integer
+  GROUP BY s.tour_id, s.player_id
+  ORDER BY s.player_id;
+  
+  
+CREATE OR REPLACE VIEW v_pars
+ AS
+ SELECT s.player_id,
+    s.tour_id,
+    count(h.id) AS count
+   FROM scorecards s
+     JOIN hole_scores hs ON hs.scorecard_id = s.id
+     JOIN holes h ON h.id = hs.hole_id
+  WHERE s.status = 'Submitted'::text AND (h.par - hs.strokes) = 0
+  GROUP BY s.tour_id, s.player_id
+  ORDER BY s.player_id;
+  
+  CREATE OR REPLACE VIEW v_countpars
+ AS
+ SELECT u.tour_id,
+    x.full_name,
+    u.player_id,
+    pp.count AS pars,
+    b.count AS birdies,
+    e.count AS eagles
+   FROM tour_players u
+     JOIN users x ON x.id = u.player_id
+     LEFT JOIN v_birdies b ON u.player_id = b.player_id AND u.tour_id = b.tour_id
+     LEFT JOIN v_pars pp ON u.player_id = pp.player_id AND pp.tour_id = u.tour_id
+     LEFT JOIN v_eagles e ON u.player_id = e.player_id AND e.tour_id = u.tour_id;
+	 
+	 CREATE OR REPLACE VIEW v_hole_scores
+ AS
+ SELECT hs.hole_id,
+    hs.scorecard_id,
+    h.hole,
+    hs.strokes,
+    hs.points
+   FROM holes h
+     JOIN hole_scores hs ON h.id = hs.hole_id;
+	 
+	 CREATE OR REPLACE VIEW v_scorecards_scores
+ AS
+ SELECT s.id,
+    s.round_date,
+    s.player_id,
+    s.course_id,
+    s.handicap,
+    s.status,
+    s.tour_id,
+    s.tour_round,
+    h.hole,
+    hs.strokes,
+    hs.points
+   FROM scorecards s
+     JOIN hole_scores hs ON hs.scorecard_id = s.id
+     JOIN holes h ON hs.hole_id = h.id
+  ORDER BY h.hole;
+  
+  CREATE OR REPLACE VIEW v_scorecards_round
+ AS
+ SELECT s.id,
     u.full_name,
-    c.course_name,
-    c.id AS course_id,
-    c.tee,
+    s.player_id,
+    co.course_name,
+    co.id AS course_id,
+    co.tee,
     s.handicap,
     s.tour_id,
     s.tour_round,
     s.round_date,
-	   ( SELECT x.strokes
+    ( SELECT x.strokes
            FROM v_scorecards_scores x
           WHERE x.id = s.id AND x.hole = 1) AS h1,
     ( SELECT x.strokes
@@ -65,7 +294,7 @@
     ( SELECT x.strokes
            FROM v_scorecards_scores x
           WHERE x.id = s.id AND x.hole = 18) AS h18,
-	( SELECT x.points
+    ( SELECT x.points
            FROM v_scorecards_scores x
           WHERE x.id = s.id AND x.hole = 1) AS p1,
     ( SELECT x.points
@@ -125,55 +354,36 @@
     ( SELECT sum(x.points) AS sum
            FROM v_scorecards_scores x
           WHERE x.id = s.id AND x.hole > 9) AS s9,
-	( SELECT sum(x.strokes) AS sum
+    ( SELECT sum(x.strokes) AS sum
            FROM v_scorecards_scores x
           WHERE x.id = s.id AND x.hole < 10) AS sf9,
     ( SELECT sum(x.strokes) AS sum
            FROM v_scorecards_scores x
           WHERE x.id = s.id AND x.hole > 9) AS ss9,
     sum(hs.points) AS points,
-	sum(hs.strokes) AS strokes
+    sum(hs.strokes) AS strokes
    FROM scorecards s
      JOIN hole_scores hs ON hs.scorecard_id = s.id
      JOIN users u ON u.id = s.player_id
-     JOIN courses c ON c.id = s.course_id
-  GROUP BY s.id, u.full_name, c.course_name, c.id, c.tee, s.round_date
+     JOIN courses co ON co.id = s.course_id
+  GROUP BY s.id, u.full_name, co.course_name, co.id, co.tee, s.round_date
   ORDER BY s.tour_round, u.full_name;
+  
+  CREATE OR REPLACE VIEW v_scorecards_sum
+ AS
+ SELECT s.player_id,
+    s.tour_id,
+    s.tour_round,
+    sum(hs.strokes) AS strokes,
+    sum(hs.points) AS points
+   FROM scorecards s
+     JOIN hole_scores hs ON hs.scorecard_id = s.id
+  WHERE s.status = 'Submitted'::text
+  GROUP BY s.id
+  ORDER BY s.player_id;
 
-------------------------------------------------------------------------------------------------
-
-
-v_holes_scores:
-select hs.hole_id, hs.scorecard_id, h.hole, hs.strokes, hs.points 
-from holes h join hole_scores hs on h.id = hs.hole_id
-
-v_tour_round_rank:
-with a as (
-select s.id as scorecard_id, s.player_id, s.tour_round, s.tour_id,
-(select sum(points) from v_hole_scores hs where hs.scorecard_id = s.id ) as sum_18,
-(select sum(points) from v_hole_scores hs where hs.scorecard_id = s.id  and hs.hole >8  ) as sum_s9,
-(select sum(points) from v_hole_scores hs where hs.scorecard_id = s.id  and hs.hole >12  ) as sum_s6,
-(select sum(points) from v_hole_scores hs where hs.scorecard_id = s.id  and hs.hole >15  ) as sum_s3,
-(select sum(points) from v_hole_scores hs where hs.scorecard_id = s.id  and hs.hole >17  ) as sum_s1
-from scorecards s
-where  s.status = 'Submitted'
-order by tour_round, player_id
-)
-select tour_id,tour_round, player_id, rank() over( PARTITION BY a.tour_round 
- ORDER BY
- a.sum_18, a.sum_s9, a.sum_s6, a.sum_s3, a.sum_s1) 
-from a 
-
-
-select 
-player_id,
-sum(rank)
-from v_tour_round_rank
-where tour_id = 1
-group by player_id
----------------------------------------------------------------------------------------------------------------------------------------------------
-
-ECLECTIC
+CREATE OR REPLACE VIEW v_eclectic
+ AS
  SELECT s.tour_id,
     s.player_id,
     u.full_name,
@@ -185,86 +395,46 @@ ECLECTIC
      JOIN users u ON s.player_id = u.id
   WHERE s.status = 'Submitted'::text
   GROUP BY s.player_id, h.hole, u.full_name, s.tour_id;
-
-
-//ROUND
-   SELECT s.id,
+  
+  CREATE OR REPLACE VIEW v_eclectic_trend_per_hole
+ AS
+ WITH x AS (
+         SELECT s_1.player_id,
+            u_1.full_name,
+            s_1.tour_id,
+            s_1.tour_round,
+            h_1.hole,
+            hs_1.strokes,
+            h_1.par
+           FROM hole_scores hs_1
+             JOIN holes h_1 ON h_1.id = hs_1.hole_id
+             JOIN scorecards s_1 ON s_1.id = hs_1.scorecard_id
+             JOIN users u_1 ON s_1.player_id = u_1.id
+          WHERE s_1.status = 'Submitted'::text
+        )
+ SELECT s.player_id,
     u.full_name,
-    c.course_name,
-    s.handicap,
     s.tour_id,
     s.tour_round,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 1) AS h1,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 2) AS h2,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 3) AS h3,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 4) AS h4,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 5) AS h5,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 6) AS h6,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 7) AS h7,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 8) AS h8,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 9) AS h9,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 10) AS h10,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 11) AS h11,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 12) AS h12,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 13) AS h13,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 14) AS h14,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 15) AS h15,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 16) AS h16,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 17) AS h17,
-    ( SELECT x.strokes
-           FROM v_scorecards_scores x
-          WHERE x.id = s.id AND x.hole = 18) AS h18,
-    sum(hs.strokes) AS strokes,
-    sum(hs.points) AS points
-   FROM scorecards s
-     JOIN hole_scores hs ON hs.scorecard_id = s.id
-     JOIN users u ON u.id = s.player_id
-     JOIN courses c ON c.id = s.course_id
-  GROUP BY s.id, u.full_name, c.course_name
-  ORDER BY s.tour_round, u.full_name;
-
-//SUM
-   SELECT s.player_id,
-    s.tour_id,
-    s.tour_round,
-    sum(hs.strokes) AS strokes,
-    sum(hs.points) AS points
-   FROM scorecards s
-     JOIN hole_scores hs ON hs.scorecard_id = s.id
+    h.hole,
+    ( SELECT min(x.strokes - x.par) AS eclectic
+           FROM x
+          WHERE x.player_id = s.player_id AND x.tour_id = s.tour_id AND x.hole = h.hole AND x.tour_round <= s.tour_round) AS eclectic
+   FROM hole_scores hs
+     JOIN holes h ON h.id = hs.hole_id
+     JOIN scorecards s ON s.id = hs.scorecard_id
+     JOIN users u ON s.player_id = u.id
   WHERE s.status = 'Submitted'::text
-  GROUP BY s.id
-  ORDER BY s.player_id;
+  GROUP BY s.player_id, h.hole, u.full_name, s.tour_id, s.tour_round
+  ORDER BY u.full_name, s.tour_id, h.hole, s.tour_round;
+  
+  CREATE OR REPLACE VIEW v_eclectic_trend_per_round
+ AS
+ SELECT v_eclectic_trend_per_hole.player_id,
+    v_eclectic_trend_per_hole.full_name,
+    v_eclectic_trend_per_hole.tour_id,
+    v_eclectic_trend_per_hole.tour_round,
+    sum(v_eclectic_trend_per_hole.eclectic) AS score
+   FROM v_eclectic_trend_per_hole
+  GROUP BY v_eclectic_trend_per_hole.player_id, v_eclectic_trend_per_hole.full_name, v_eclectic_trend_per_hole.tour_id, v_eclectic_trend_per_hole.tour_round
+  ORDER BY v_eclectic_trend_per_hole.tour_id, v_eclectic_trend_per_hole.full_name, v_eclectic_trend_per_hole.tour_round;

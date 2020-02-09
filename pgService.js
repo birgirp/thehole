@@ -201,9 +201,37 @@ module.exports = {
             })
         })
     },
+    insertTourTeam: function (tour_id, name) {
+   
+        return new Promise((resolve, reject) => {
+            pool.query('INSERT INTO tour_teams (tour_id, name) values ($1, $2) returning id', [tour_id, name]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+    insertTeamMembers: function (team_id, players) {
+        let data = players.map((val, index, arr) => { return [team_id, val] });
+        let query = format('INSERT INTO team_members (team_id, player_id) values %L', data);
+        console.log(JSON.stringify(data))
+        return new Promise((resolve, reject) => {
+            pool.query(query).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+
+
     getAllTours: function () {
         return new Promise((resolve, reject) => {
-            pool.query('select id, tour_name, tour_status, rounds as tour_rounds from tours ').then((results) => {
+            pool.query('select t.id, tour_name, tour_status, rounds, count(tt.name) as teams from tours t \
+            left join tour_teams tt on t.id = tt.tour_id \
+            group by t.id, tour_name, tour_status, rounds ').then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")

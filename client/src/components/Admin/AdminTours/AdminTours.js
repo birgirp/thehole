@@ -6,6 +6,7 @@ import axios from "axios";
 import Loading from "../../Loading/Loading";
 import CreateTour from "./CreateTour"
 import EditTour from "./EditTour"
+import TourTeams from "./TourTeams"
 
 class AdminTours extends Component {
 
@@ -16,9 +17,10 @@ class AdminTours extends Component {
             tours: [],
             isCreatingTour: false,
             isEditingTour: false,
+            isEditTourTeams: false,
             isLoading: false,
 
-            editingTour: { id: "", name: "", status: "", rounds: "" }
+            editingTour: { id: "", name: "", status: "", rounds: "", teams: "" }
 
         }
     }
@@ -30,6 +32,7 @@ class AdminTours extends Component {
                 if (res.lenght === 0) {
                     console.log("No tours found")
                 } else {
+                    console.log(res.data)
                     this.setState({ tours: res.data, isLoading: false })
 
                 }
@@ -42,6 +45,7 @@ class AdminTours extends Component {
 
     closeCreateModal = () => { this.setState({ isCreatingTour: false }) }
     closeEditModal = () => { this.setState({ isEditingTour: false }) }
+    closeEditTourTeams = () => { this.setState({ isEditTourTeams: false }) }
 
     handleAddTour = (e) => { this.setState({ isCreatingTour: true }) }
 
@@ -52,6 +56,21 @@ class AdminTours extends Component {
         editingTour.name = name;
         editingTour.status = status;
         editingTour.rounds = rounds;
+
+        this.setState({ editingTour: editingTour })
+
+
+    }
+
+    
+    handleEditTourTeams = (id, name, status, rounds, teams) => {
+        this.setState({ isEditTourTeams: true })
+        let editingTour = this.state.editingTour
+        editingTour.id = id;
+        editingTour.name = name;
+        editingTour.status = status;
+        editingTour.rounds = rounds;
+        editingTour.teams = teams;
 
         this.setState({ editingTour: editingTour })
 
@@ -93,6 +112,7 @@ class AdminTours extends Component {
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell width='1'>Edit</Table.HeaderCell>
+                                <Table.HeaderCell width='1'>Teams</Table.HeaderCell>
                                 <Table.HeaderCell width='3'>Tour Name</Table.HeaderCell>
                                 <Table.HeaderCell width='2'>Status</Table.HeaderCell>
                                 <Table.HeaderCell width='2'>Rounds</Table.HeaderCell>
@@ -102,7 +122,8 @@ class AdminTours extends Component {
                             {data.map((tour) => {
                                 return (
                                     <Table.Row key={tour.id}>
-                                        <Table.Cell ><Icon name='edit' link onClick={() => this.handleEditTour(tour.id, tour.tour_name, tour.tour_status, tour.tour_rounds)} ></Icon></Table.Cell>
+                                        <Table.Cell ><Icon name='edit' link onClick={() => this.handleEditTour(tour.id, tour.tour_name, tour.tour_status, tour.rounds)} ></Icon></Table.Cell>
+                                        <Table.Cell ><Icon name='balance scale' link onClick={() => this.handleEditTourTeams(tour.id, tour.tour_name, tour.tour_status, tour.rounds, tour.teams)} ></Icon></Table.Cell>
                                         <Table.Cell >{tour.tour_name}</Table.Cell>
                                         <Table.Cell >{tour.tour_status}</Table.Cell>
                                         <Table.Cell >{tour.tour_rounds}</Table.Cell>
@@ -124,6 +145,13 @@ class AdminTours extends Component {
                         <Modal.Header>Edit Tour: {this.state.editingTour.name} </Modal.Header>
                         <Modal.Content >
                             {<EditTour closeModal={this.closeEditModal} editingTour={this.state.editingTour} />}
+                        </Modal.Content>
+                    </Modal>
+
+                    <Modal size="fullscreen" open={this.state.isEditTourTeams} onClose={this.closeEditTourTeams} >
+                        <Modal.Header>Tour Teams: {this.state.editingTour.name} </Modal.Header>
+                        <Modal.Content >
+                            {<TourTeams closeModal={this.closeEditTourTeams} editingTour={this.state.editingTour} />}
                         </Modal.Content>
                     </Modal>
 

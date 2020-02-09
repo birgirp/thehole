@@ -1,7 +1,7 @@
 // load enviromental variables
 //let env = process.env.environment;
 //let user = process.env.user;
-let env = 'home'
+let env = 'elephant'
 
 // functions that load dbs
 function useHerokuDb() {
@@ -46,6 +46,20 @@ function useHomeDb() {
     };
 }
 
+function elephantDb() {
+    return {
+        "dbType": "pg",
+        "dbconnection": {
+            "host": "manny.db.elephantsql.com",
+            "database": "izkucyvk",
+            "user": "izkucyvk",
+            "port": 5432,
+            "password": "OkAmyW_WPPwU3__uperrNBtwedc0mr7s",
+            "ssl": true
+        }
+    };
+}
+
 function notValid() {
     console.log("not a valid environment!");
 }
@@ -59,6 +73,9 @@ else if (env === "work") {
 }
 else if (env === "home") {
     module.exports = useHomeDb();
+}
+else if (env === "elephant") {
+    module.exports = elephantDb();
 }
 else {
     module .exports.useDb = notValid;
