@@ -53,7 +53,7 @@ router.get("/api/isloggedin", isLoggedIn, (req, res) => {
 });
 
 router.post("/api/getholes", isLoggedIn, (req, res) => {
-  
+
   let courseId = req.body.courseId
   console.log("courseId")
   console.log(courseId)
@@ -395,6 +395,23 @@ router.post("/api/gettourbyid", (req, res) => {
   })
 });
 
+router.post("/api/gettourteamnames", (req, res) => {
+  dbdata.getTourTeamNames(req.body.tourId).then((data) => {
+    if (data.rows.length > 0) {
+      res.json( data.rows);
+    } else {
+      console.log("No tour names found")
+      res.json(null);
+    }
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
+
+
 
 router.post("/api/getplayertours", (req, res) => {
   let playerId = req.body.playerId
@@ -646,8 +663,8 @@ router.post("/api/insert_teams", (req, res) => {
     }).then(res3 => {
       teamB_id = res3.rows[0].id;
       return dbdata.insertTeamMembers(teamB_id, playersB);
- 
-    }).then(res4 =>{
+
+    }).then(res4 => {
       res.json("ok")
     })
     .catch((error) => {
@@ -658,14 +675,14 @@ router.post("/api/insert_teams", (req, res) => {
 });
 
 router.post("/api/gettourteams", (req, res) => {
-
-  let tourId = req.body.tourId
+ 
   dbdata.getTourTeams(tourId).then((data) => {
     if (data.rows.length === 0) {
       console.log("No teams  found")
       res.json(null);
 
     } else {
+
       res.json(data.rows)
     }
   }).catch((error) => {

@@ -6,6 +6,7 @@ import TourSummary from "./TourSummary";
 import TourEclectic from "./TourEclectic";
 import TourRound from "./TourRound";
 import "./tour.css";
+import GamesSummary from "./TeamGames/GamesSummary";
 class Tour extends Component {
 
 
@@ -20,7 +21,8 @@ class Tour extends Component {
             courses: [],
             isLoading: false,
             tourNotFound: false,
-            tabs: []
+            tabs: [],
+            hasTeams: false
         }
     }
 
@@ -30,6 +32,7 @@ class Tour extends Component {
        this.setState({ isLoading: true })
         const tourId = this.props.match.params.id
         var rounds;
+        let hasTeams = false
         this.setState({ id: tourId })
         //  this.setState({ id: t.id, name: t.name, status: t.status, rounds: parseInt(t.rounds), isLoading: true });
         axios.post("/api/gettourbyid", { tourId: tourId })
@@ -39,7 +42,11 @@ class Tour extends Component {
                     throw new Error('No tour found');
                 }
                 let t = res0.data
-                this.setState({ name: t.tour_name, status: t.tour_status, rounds: parseInt(t.tour_rounds) });
+                console.log("t")
+                console.log(t)
+                hasTeams = t.hasteams > 1 ? true : false
+
+                this.setState({ name: t.tour_name, status: t.tour_status, rounds: parseInt(t.tour_rounds), hasTeams: hasTeams });
                 rounds = parseInt(t.tour_rounds)
                 return axios.post("/api/gettourplayers", { tourId: tourId })
             }).then(res => {
@@ -61,6 +68,12 @@ class Tour extends Component {
                             tabs.push(r)
                         }
                         tabs.push({ menuItem: 'Eclectic', render: () => <Tab.Pane><TourEclectic playerId={this.props.userId}  players={this.state.players}  tourId={this.props.match.params.id} courses={res2.data}/></Tab.Pane> })
+                        if(hasTeams){
+                            tabs.push({ menuItem: 'Games', render: () => <Tab.Pane><GamesSummary playerId={this.props.userId}  
+                            tourId={this.props.match.params.id} 
+                            rounds={rounds}/></Tab.Pane> })
+
+                        }
 
                         this.setState({tabs: tabs})
 

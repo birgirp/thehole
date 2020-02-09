@@ -242,7 +242,11 @@ module.exports = {
 
     getTourById: function (tourId) {
         return new Promise((resolve, reject) => {
-            pool.query('select tour_name, tour_status, rounds as tour_rounds from tours where id = $1', [tourId]).then((results) => {
+
+
+            pool.query('select tour_name, tour_status, rounds as tour_rounds, count(tt.name) as hasteams  from tours t \
+            left join tour_teams tt on tt.tour_id = t.id where t.id = $1 \
+            group by tour_name, tour_status, rounds', [tourId]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")
@@ -466,6 +470,30 @@ module.exports = {
             })
         })
     },
+    getTourTeamNames: function (tourId) {
+           console.log("jksdlgjdfljgildg")
+        return new Promise((resolve, reject) => {
+
+            pool.query( 'select tt.id, tt.name , count(tg.id) as games \
+            from tour_teams tt \
+            left join team_games  tg on tg.tour_id = tt.tour_id \
+            where tt.tour_id = $1 \
+            group by tt.id, tt.name \
+            order by tt.id' , [tourId]).then((results) => {
+
+               
+                resolve(results);
+
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+
+
+
+   
 
 
     getRoundScorecards: function (tourId, round) {
