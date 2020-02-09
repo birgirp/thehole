@@ -628,6 +628,7 @@ router.post("/api/getranksum", (req, res) => {
   })
 });
 
+
 router.post("/api/insert_teams", (req, res) => {
   const playersA = req.body.teamA;
   const playersB = req.body.teamB;
@@ -644,7 +645,7 @@ router.post("/api/insert_teams", (req, res) => {
       return dbdata.insertTourTeam(tour_id, nameB);
     }).then(res3 => {
       teamB_id = res3.rows[0].id;
-      return dbdata.insertTeamMembers(teamB_id, playersA);
+      return dbdata.insertTeamMembers(teamB_id, playersB);
  
     }).then(res4 =>{
       res.json("ok")
@@ -656,6 +657,23 @@ router.post("/api/insert_teams", (req, res) => {
     })
 });
 
+router.post("/api/gettourteams", (req, res) => {
+
+  let tourId = req.body.tourId
+  dbdata.getTourTeams(tourId).then((data) => {
+    if (data.rows.length === 0) {
+      console.log("No teams  found")
+      res.json(null);
+
+    } else {
+      res.json(data.rows)
+    }
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
 
 //------------------------------------------------------------------
 

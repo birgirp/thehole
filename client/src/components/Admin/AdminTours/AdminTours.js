@@ -19,7 +19,7 @@ class AdminTours extends Component {
             isEditingTour: false,
             isEditTourTeams: false,
             isLoading: false,
-
+ 
             editingTour: { id: "", name: "", status: "", rounds: "", teams: "" }
 
         }
@@ -77,6 +77,15 @@ class AdminTours extends Component {
 
     }
 
+    setHasTeams = () => {
+        let editingTour = this.state.editingTour
+        let tour_id = editingTour.id
+        let tours = this.state.tours
+        let index = tours.findIndex((obj => parseInt(obj.id) === tour_id));
+        tours[index].teams = 2
+        this.setState({tours:tours})
+    }
+
 
 
     render() {
@@ -126,7 +135,7 @@ class AdminTours extends Component {
                                         <Table.Cell ><Icon name='balance scale' link onClick={() => this.handleEditTourTeams(tour.id, tour.tour_name, tour.tour_status, tour.rounds, tour.teams)} ></Icon></Table.Cell>
                                         <Table.Cell >{tour.tour_name}</Table.Cell>
                                         <Table.Cell >{tour.tour_status}</Table.Cell>
-                                        <Table.Cell >{tour.tour_rounds}</Table.Cell>
+                                        <Table.Cell >{tour.rounds}</Table.Cell>
                                     </Table.Row>
                                 );
                             })}
@@ -151,7 +160,7 @@ class AdminTours extends Component {
                     <Modal size="fullscreen" open={this.state.isEditTourTeams} onClose={this.closeEditTourTeams} >
                         <Modal.Header>Tour Teams: {this.state.editingTour.name} </Modal.Header>
                         <Modal.Content >
-                            {<TourTeams closeModal={this.closeEditTourTeams} editingTour={this.state.editingTour} />}
+                            {<TourTeams closeModal={this.closeEditTourTeams} setHasTeams={this.setHasTeams} editingTour={this.state.editingTour} />}
                         </Modal.Content>
                     </Modal>
 

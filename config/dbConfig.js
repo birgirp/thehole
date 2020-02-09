@@ -1,11 +1,7 @@
 // load enviromental variables
 //let env = process.env.environment;
 //let user = process.env.user;
-<<<<<<< HEAD
 let env = 'elephant'
-=======
-let env = 'production'
->>>>>>> f57b35aa993d75259a4bf70b274376ef61dca1e1
 
 // functions that load dbs
 function useHerokuDb() {

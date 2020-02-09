@@ -453,6 +453,19 @@ module.exports = {
             })
         })
     },
+    getTourTeams: function (tourId) {
+           
+        return new Promise((resolve, reject) => {
+
+            pool.query('select * from team_members tm join tour_teams tt on tt.id = tm.team_id \
+            where tt.tour_id = $1 order by team_id' , [tourId]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
 
 
     getRoundScorecards: function (tourId, round) {

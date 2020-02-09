@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Grid, Input, Dropdown, Label } from "semantic-ui-react";
+import { Button, Grid, Input, Dropdown } from "semantic-ui-react";
 import axios from "axios";
 import Loading from "../../Loading/Loading";
 
@@ -30,14 +30,26 @@ class TourTeams extends Component {
         let hasTeams = parseInt(t.teams) > 0 ? true : false
         console.log(hasTeams)
         this.setState({ id: t.id, name: t.name, status: t.status, rounds: parseInt(t.rounds), isLoading: true, hasTeams: hasTeams });
-       
-
 
         axios.post("/api/gettourplayers", { tourId: t.id }).then(res => {
-            this.setState({ tourPlayers: res.data, isLoading: false });
+           
             if(hasTeams){
-                axios.post("api/gettourteams" , {tourId: t.id}).then(res2 => {
-                    console.log(res.data)
+                axios.post("/api/gettourteams" , {tourId: t.id}).then(res2 => {
+      
+                    let teamId1 = parseInt(res2.data[0].team_id)
+                    let teamId2 = teamId1 + 1
+                    let team1 = res2.data.filter(team => {return team.team_id === teamId1 })
+                    let team2 = res2.data.filter(team => {return team.team_id === teamId2 })
+                    let name1 = team1[0].name
+                    let name2 = team2[0].name
+                    let team1Ids = team1.map(item => {return item.player_id})
+                    let team2Ids = team2.map(item => {return item.player_id})
+
+                    this.setState({playersA: team1Ids,playersB: team2Ids, nameA: name1,nameB: name2 })
+
+                    this.setState({ tourPlayers: res.data, isLoading: false });
+ 
+
                 })
             
             }
@@ -67,6 +79,7 @@ class TourTeams extends Component {
         }).then(response => {
 
             this.setState({ loading: false })
+            this.props.setHasTeams();
             this.props.closeModal();
         })
             .catch(error => {
@@ -134,7 +147,7 @@ class TourTeams extends Component {
                                     name='NameA'
                                     placeholder='Name A'
                                     type="Text"
-                                    value={this.state.nameA}
+                                    value={this.state.nameA  }
                                     onChange={this.handleNameAChange}
                                 />
                             </Grid.Column>
@@ -144,7 +157,7 @@ class TourTeams extends Component {
                                     name='NameB'
                                     placeholder='Name B'
                                     type="Text"
-                                    value={this.state.nameB}
+                                    value={this.state.nameB }
                                     onChange={this.handleNameBChange}
                                 />
                             </Grid.Column>
