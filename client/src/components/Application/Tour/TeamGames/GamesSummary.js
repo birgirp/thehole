@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Modal, Table, Icon } from "semantic-ui-react";
+import {   Table, Icon, Dropdown } from "semantic-ui-react";
 import axios from "axios";
 import Loading from "../../../Loading/Loading";
 
@@ -16,6 +16,9 @@ class GamesSummary extends Component {
             games: [],
             nameA: '',
             nameB: '',
+            gameTypes: [{ key: 1, value: 1, text: "Skins" },
+            { key: 2, value: 2, text: "Stableford" },
+            { key: 3, value: 3, text: "Matchplay" }]
         }
     }
 
@@ -33,7 +36,7 @@ class GamesSummary extends Component {
                     throw new Error('No team names found');
                 } else {
 
-                    console.log(res.data)
+                  
                     let nameA = res.data[0].name
                     let nameB = res.data[1].name
                     if (parseInt(res.data[0].games) === 0) {
@@ -59,18 +62,29 @@ class GamesSummary extends Component {
 
     }
 
-    handleEditGame = () => {
+    handleEditGame = (e) => {
+        console.log(e)
+    }
+
+    handleGameChange = (e, v) => {
+        let games = this.state.games
+        let game = games[v.index]
+        game.game = v.value
+
+        this.setState({games: games}, () => this.printState())
 
     }
 
-
-
+    printState = () => {
+        console.log(this.state.games)
+    }
 
     render() {
         if (this.state.isLoading) {
             return (<Loading />)
         } else {
             const games = this.state.games;
+            const gameTypes = this.state.gameTypes
             return (
                 <Table celled>
                     <Table.Header>
@@ -83,12 +97,22 @@ class GamesSummary extends Component {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {games.map((game) => {
+                        {games.map((game, index) => {
                             return (
                                 <Table.Row key={game.round}>
-                                    <Table.Cell ><Icon name='edit' link onClick={() => this.handleEditTour(game)} ></Icon></Table.Cell>
+                                    <Table.Cell ><Icon name='edit' link onClick={() => this.handleEditGame(game)} ></Icon></Table.Cell>
                                     <Table.Cell >{game.round}</Table.Cell>
-                                    <Table.Cell >{game.game || ''}</Table.Cell>
+                                    <Table.Cell >
+                                        <Dropdown
+                                            index={index}
+                                            fluid
+                                            selection
+                                            placeholder='Select game'
+                                            options={gameTypes}
+                                            onChange={this.handleGameChange}
+                                            disabled={false}
+                                        />
+                                    </Table.Cell>
                                     <Table.Cell >{game.pointsA}</Table.Cell>
                                     <Table.Cell >{game.pointsB}</Table.Cell>
                                 </Table.Row>
