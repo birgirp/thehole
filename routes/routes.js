@@ -398,7 +398,7 @@ router.post("/api/gettourbyid", (req, res) => {
 router.post("/api/gettourteamnames", (req, res) => {
   dbdata.getTourTeamNames(req.body.tourId).then((data) => {
     if (data.rows.length > 0) {
-      res.json( data.rows);
+      res.json(data.rows);
     } else {
       console.log("No tour names found")
       res.json(null);
@@ -675,7 +675,7 @@ router.post("/api/insert_teams", (req, res) => {
 });
 
 router.post("/api/gettourteams", (req, res) => {
- 
+
   dbdata.getTourTeams(tourId).then((data) => {
     if (data.rows.length === 0) {
       console.log("No teams  found")
@@ -692,6 +692,42 @@ router.post("/api/gettourteams", (req, res) => {
   })
 });
 
+router.post("/api/getgametypes", (req, res) => {
+
+  dbdata.getGameTypes().then((data) => {
+    if (data.rows.length === 0) {
+      console.log("No games found")
+      res.json(null);
+    } else {
+      res.json(data.rows)
+    }
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
+
+router.post("/api/addteamgame", (req, res) => {
+  let tourId = req.body.tourId
+  let round = req.body.round
+  let game = req.body.game
+
+
+  dbdata.insertTeamGame(tourId,round, game ).then((data) => {
+    if (data.rows.length === 0) {
+      console.log("No games found")
+      res.json(null);
+    } else {
+      res.json(data.rows)
+    }
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
 //------------------------------------------------------------------
 
 // route middleware to make sure a user is logged in

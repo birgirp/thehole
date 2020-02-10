@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {   Table, Icon, Dropdown } from "semantic-ui-react";
+import { Table, Icon, Dropdown } from "semantic-ui-react";
 import axios from "axios";
 import Loading from "../../../Loading/Loading";
 
@@ -16,9 +16,10 @@ class GamesSummary extends Component {
             games: [],
             nameA: '',
             nameB: '',
-            gameTypes: [{ key: 1, value: 1, text: "Skins" },
-            { key: 2, value: 2, text: "Stableford" },
-            { key: 3, value: 3, text: "Matchplay" }]
+            gameTypes: []
+          //  gameTypes: [{ key: 1, value: 1, text: "Skins" },
+          //  { key: 2, value: 2, text: "Stableford" },
+          //  { key: 3, value: 3, text: "Matchplay" }]
         }
     }
 
@@ -26,39 +27,42 @@ class GamesSummary extends Component {
 
     componentDidMount() {
         // this.setState({ isLoading: true })
-        const tourId = this.props.tourId
+        const tourId = parseInt(this.props.tourId)
         const rounds = this.props.rounds
         let games = this.state.games
 
-        axios.post("/api/gettourteamnames", { tourId: tourId })
-            .then(res => {
-                if (!res.data) {
-                    throw new Error('No team names found');
-                } else {
+        axios.post("/api/getgametypes").then(response => {
+            console.log(response)
 
-                  
-                    let nameA = res.data[0].name
-                    let nameB = res.data[1].name
-                    if (parseInt(res.data[0].games) === 0) {
-                        for (let i = 1; i < rounds + 1; i++) {
-                            let obj = { "round": i, "status": "open", "pointsA": 0, "pointsB": 0 };
-                            games.push(obj);
-                        }
-
-                    } else {
-                        //games = res.data
-                        //
+            let gameTypes = response.data.map((game) =>  {return {key: game.id, value: game.id, text: game.name}})
+            this.setState({gameTypes : gameTypes})
+            return axios.post("/api/gettourteamnames", { tourId: tourId })
+        }).then(res => {
+            if (!res.data) {
+                throw new Error('No team names found');
+            } else {
+                let nameA = res.data[0].name
+                let nameB = res.data[1].name
+                if (parseInt(res.data[0].games) === 0) {  // no games have been registered in db
+                    for (let i = 1; i < rounds + 1; i++) {
+                        let obj = { "tourId": tourId ,"round": i, "status": "open", "pointsA": 0, "pointsB": 0 };
+                        games.push(obj);
                     }
 
-                    this.setState({ games: games, nameA: nameA, nameB: nameB });
+                } else {
 
+                    //games = res.data
+                    //
                 }
-                this.setState({ games: games });
+                this.setState({ games: games, nameA: nameA, nameB: nameB });
 
-            }).catch(err => {
-                console.log(err);
-                this.setState({ isLoading: false })
-            })
+            }
+            this.setState({ games: games });
+
+        }).catch(err => {
+            console.log(err);
+            this.setState({ isLoading: false })
+        })
 
     }
 
@@ -71,14 +75,18 @@ class GamesSummary extends Component {
         let game = games[v.index]
         game.game = v.value
 
-        this.setState({games: games}, () => this.printState())
+        let isNew = game.id ? false : true
 
+        if(isNew){
+            axios.post('/api/addteamgame', { tourId: game.tourId, round: game.round, game: game.game}).then(res => {
+                console.log(res.data)
+                game.id = parseInt(res.data[0].id)
+            })
+        }
+        this.setState({ games: games }, () => console.log(this.state.games))
     }
 
-    printState = () => {
-        console.log(this.state.games)
-    }
-
+ 
     render() {
         if (this.state.isLoading) {
             return (<Loading />)

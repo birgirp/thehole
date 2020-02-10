@@ -471,7 +471,7 @@ module.exports = {
         })
     },
     getTourTeamNames: function (tourId) {
-           console.log("jksdlgjdfljgildg")
+           
         return new Promise((resolve, reject) => {
 
             pool.query( 'select tt.id, tt.name , count(tg.id) as games \
@@ -511,6 +511,34 @@ module.exports = {
         // console.log("fetchingf  " + tourId + "  " + round)
         return new Promise((resolve, reject) => {
             pool.query('select player_id, sum(rank) from v_tour_round_rank where tour_id =$1 group by player_id;', [tourId]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+
+    getGameTypes: function () {
+         console.log("fetching game types  ")
+        return new Promise((resolve, reject) => {
+            pool.query('SELECT id, min_players, name FROM game_types;').then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+
+    insertTeamGame: function (tour_id, round, game) {
+        let status = 'New'
+        let points = 0
+     
+        return new Promise((resolve, reject) => {
+            pool.query('INSERT INTO team_games( \
+                tour_id, round, game_type_id, status, points_a, points_b) \
+                VALUES ($1, $2, $3, $4, $5, $5) returning id; ', [tour_id, round, game,status,0]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")

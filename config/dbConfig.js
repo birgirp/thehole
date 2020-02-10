@@ -1,7 +1,7 @@
 // load enviromental variables
 //let env = process.env.environment;
 //let user = process.env.user;
-let env = 'elephant'
+let env = 'home'
 
 // functions that load dbs
 function useHerokuDb() {
@@ -56,7 +56,7 @@ function elephantDb() {
             "port": 5432,
             "password": "OkAmyW_WPPwU3__uperrNBtwedc0mr7s",
             "ssl": true,
-            "max": 3
+            "max": 2
         }
     };
 }
