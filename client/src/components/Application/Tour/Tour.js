@@ -42,8 +42,6 @@ class Tour extends Component {
                     throw new Error('No tour found');
                 }
                 let t = res0.data
-                console.log("t")
-                console.log(t)
                 hasTeams = t.hasteams > 1 ? true : false
 
                 this.setState({ name: t.tour_name, status: t.tour_status, rounds: parseInt(t.tour_rounds), hasTeams: hasTeams });

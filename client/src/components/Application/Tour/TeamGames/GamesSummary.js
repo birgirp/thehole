@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Table, Icon, Dropdown } from "semantic-ui-react";
+import { Button, Table, Icon, Dropdown, Modal } from "semantic-ui-react";
 import axios from "axios";
+import AddGame from "./AddGame";
 import Loading from "../../../Loading/Loading";
 
 
@@ -11,15 +12,16 @@ class GamesSummary extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isAddingGame: false,
             hasGames: false,
             tourId: null,
             games: [],
             nameA: '',
             nameB: '',
-            gameTypes: []
-          //  gameTypes: [{ key: 1, value: 1, text: "Skins" },
-          //  { key: 2, value: 2, text: "Stableford" },
-          //  { key: 3, value: 3, text: "Matchplay" }]
+            gameTypes: [],
+            listedRounds: [],
+            allRoundsListed: false
+
         }
     }
 
@@ -28,12 +30,10 @@ class GamesSummary extends Component {
     componentDidMount() {
         // this.setState({ isLoading: true })
         const tourId = parseInt(this.props.tourId)
-        const rounds = this.props.rounds
+       
         let games = this.state.games
 
         axios.post("/api/getgametypes").then(response => {
-            console.log(response)
-
             let gameTypes = response.data.map((game) =>  {return {key: game.id, value: game.id, text: game.name}})
             this.setState({gameTypes : gameTypes})
             return axios.post("/api/gettourteamnames", { tourId: tourId })
@@ -43,21 +43,18 @@ class GamesSummary extends Component {
             } else {
                 let nameA = res.data[0].name
                 let nameB = res.data[1].name
-                if (parseInt(res.data[0].games) === 0) {  // no games have been registered in db
-                    for (let i = 1; i < rounds + 1; i++) {
-                        let obj = { "tourId": tourId ,"round": i, "status": "open", "pointsA": 0, "pointsB": 0 };
-                        games.push(obj);
-                    }
+                if (!parseInt(res.data[0].games) === 0) {  // no games have been registered in db
 
-                } else {
+                 // axios.post('fetchteamgames')
 
-                    //games = res.data
-                    //
-                }
+                 // set listedRounds
+
+                 // if all rounds listed...
+                } 
                 this.setState({ games: games, nameA: nameA, nameB: nameB });
 
             }
-            this.setState({ games: games });
+            
 
         }).catch(err => {
             console.log(err);
@@ -70,20 +67,24 @@ class GamesSummary extends Component {
         console.log(e)
     }
 
-    handleGameChange = (e, v) => {
+
+
+
+
+    handleAddGame = (e,v) => {
+        this.setState({isAddingGame: true})
+    }
+
+    closeAddingGame = (game) => {
+
+        this.setState({isAddingGame: false})
+    }
+
+    addGame = (game) => {
         let games = this.state.games
-        let game = games[v.index]
-        game.game = v.value
-
-        let isNew = game.id ? false : true
-
-        if(isNew){
-            axios.post('/api/addteamgame', { tourId: game.tourId, round: game.round, game: game.game}).then(res => {
-                console.log(res.data)
-                game.id = parseInt(res.data[0].id)
-            })
-        }
-        this.setState({ games: games }, () => console.log(this.state.games))
+        games.push(game)
+        games.sort((a,b) => (a.round > b.round) ? 1 : -1)
+        this.setState({ games: games})
     }
 
  
@@ -94,6 +95,8 @@ class GamesSummary extends Component {
             const games = this.state.games;
             const gameTypes = this.state.gameTypes
             return (
+                <div>
+                <Button primary onClick={this.handleAddGame}>Add Game</Button>
                 <Table celled>
                     <Table.Header>
                         <Table.Row>
@@ -128,6 +131,19 @@ class GamesSummary extends Component {
                         })}
                     </Table.Body>
                 </Table>
+
+                <Modal id="addingGameModal" size="fullscreen" open={this.state.isAddingGame} onClose={this.closeAddingGame}
+                        closeOnDimmerClick={false}>
+                        <Modal.Header>Add new Game</Modal.Header>
+                        <Modal.Content >
+                            
+                            {<AddGame addGame={this.addGame} tourId={this.state.tourId} rounds={this.props.rounds} gameTypes={this.state.gameTypes} closeModal={this.closeAddingGame} />}
+
+                            
+                        </Modal.Content>
+                    </Modal>
+
+                </div>
             )
         }
     }
