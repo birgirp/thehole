@@ -137,7 +137,7 @@ class GamesSummary extends Component {
                         <Modal.Header>Add new Game</Modal.Header>
                         <Modal.Content >
                             
-                            {<AddGame addGame={this.addGame} tourId={this.state.tourId} rounds={this.props.rounds} gameTypes={this.state.gameTypes} closeModal={this.closeAddingGame} />}
+                            {<AddGame addGame={this.addGame} tourId={this.props.tourId} rounds={this.props.rounds} gameTypes={this.state.gameTypes} closeModal={this.closeAddingGame} />}
 
                             
                         </Modal.Content>

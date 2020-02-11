@@ -45,8 +45,11 @@ class AddGame extends Component {
 
         axios.post('/api/addteamgame', { tourId: this.state.tourId, round: this.state.round, game: this.state.selectedGame }).then(res => {
             console.log(res.data)
+            let gameTypes = this.state.gameTypes
+            let idx = gameTypes.findIndex(type => type.key === this.state.selectedGame)
             let id = parseInt(res.data[0].id)
-            let gameName = this.state.gameTypes[this.state.selectedGame].text
+
+            let gameName = this.state.gameTypes[idx].text
             let game = {"id": id, "tourId": this.state.tourId ,"round":this.state.round ,"gameName":gameName, "game": this.state.selectedGame, "status": "New", "pointsA": 0, "pointsB": 0}
             this.props.addGame(game)
             this.handleCancel()
