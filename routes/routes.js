@@ -696,6 +696,22 @@ router.post("/api/getgametypes", (req, res) => {
 
   dbdata.getGameTypes().then((data) => {
     if (data.rows.length === 0) {
+      console.log("No game types found")
+      res.json(null);
+    } else {
+      res.json(data.rows)
+    }
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
+router.post("/api/fetchteamgames", (req, res) => {
+  let tourId = req.body.tourId
+  dbdata.getTeamGames(tourId).then((data) => {
+    if (data.rows.length === 0) {
       console.log("No games found")
       res.json(null);
     } else {
@@ -709,13 +725,15 @@ router.post("/api/getgametypes", (req, res) => {
 });
 
 
+
 router.post("/api/addteamgame", (req, res) => {
   let tourId = req.body.tourId
   let round = req.body.round
   let game = req.body.game
+  let description = req.body.description
 
 
-  dbdata.insertTeamGame(tourId,round, game ).then((data) => {
+  dbdata.insertTeamGame(tourId,round, game, description ).then((data) => {
     if (data.rows.length === 0) {
       console.log("No games found")
       res.json(null);

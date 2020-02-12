@@ -43,7 +43,7 @@ class AddGame extends Component {
     handleSubmit = () => {
         console.log(this.state)
 
-        axios.post('/api/addteamgame', { tourId: this.state.tourId, round: this.state.round, game: this.state.selectedGame }).then(res => {
+        axios.post('/api/addteamgame', { tourId: this.state.tourId, round: this.state.round, game: this.state.selectedGame, description: this.state.description }).then(res => {
             console.log(res.data)
             let gameTypes = this.state.gameTypes
             let idx = gameTypes.findIndex(type => type.key === this.state.selectedGame)

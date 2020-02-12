@@ -114,15 +114,7 @@ class GamesSummary extends Component {
                                     <Table.Cell ><Icon name='edit' link onClick={() => this.handleEditGame(game)} ></Icon></Table.Cell>
                                     <Table.Cell >{game.round}</Table.Cell>
                                     <Table.Cell >
-                                        <Dropdown
-                                            index={index}
-                                            fluid
-                                            selection
-                                            placeholder='Select game'
-                                            options={gameTypes}
-                                            onChange={this.handleGameChange}
-                                            disabled={false}
-                                        />
+                                       {game.gameName}
                                     </Table.Cell>
                                     <Table.Cell >{game.pointsA}</Table.Cell>
                                     <Table.Cell >{game.pointsB}</Table.Cell>

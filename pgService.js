@@ -492,6 +492,23 @@ module.exports = {
     },
 
 
+    getTeamGames: function (tourId) {
+           
+        return new Promise((resolve, reject) => {
+
+            pool.query( 'select * from tour_teams tt \
+            where tt.tour_id = $1' , [tourId]).then((results) => {
+               
+                resolve(results);
+
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+
+
 
    
 
@@ -531,14 +548,15 @@ module.exports = {
         })
     },
 
-    insertTeamGame: function (tour_id, round, game) {
+    insertTeamGame: function (tour_id, round, game, description) {
         let status = 'New'
         let points = 0
      
+        console.log("insert game...")
         return new Promise((resolve, reject) => {
             pool.query('INSERT INTO team_games( \
-                tour_id, round, game_type_id, status, points_a, points_b) \
-                VALUES ($1, $2, $3, $4, $5, $5) returning id; ', [tour_id, round, game,status,0]).then((results) => {
+                tour_id, round, game_type_id, status, points_a, points_b,description) \
+                VALUES ($1, $2, $3, $4, $5, $5, $6) returning id; ', [tour_id, round, game,status,0, description]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")
