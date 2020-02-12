@@ -80,7 +80,6 @@ class AddGame extends Component {
         } else {
             return (
                 <div>
-
                     <Grid colums={2} >
                         <Grid.Row>
                             <Grid.Column width={3}>
@@ -104,9 +103,7 @@ class AddGame extends Component {
                                     onChange={this.changeGame}
                                     disabled={false}
                                 />
-
                             </Grid.Column>
-
                         </Grid.Row>
                         <Grid.Row>
                             <Grid.Column width={9}>
@@ -121,7 +118,6 @@ class AddGame extends Component {
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>
-
                     <br></br>
                     <Button
                         primary
@@ -130,7 +126,6 @@ class AddGame extends Component {
                         Submit
                     </Button>
                     <Button secondary onClick={this.handleCancel}>Cancel</Button>
-
                 </div>
             )
         }
