@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Table, Icon, Dropdown, Modal } from "semantic-ui-react";
+import { Button, Table, Icon,  Modal } from "semantic-ui-react";
 import axios from "axios";
 import AddGame from "./AddGame";
 import Loading from "../../../Loading/Loading";
@@ -41,20 +41,19 @@ class GamesSummary extends Component {
             if (!res.data) {
                 throw new Error('No team names found');
             } else {
+                
                 let nameA = res.data[0].name
                 let nameB = res.data[1].name
-                if (!parseInt(res.data[0].games) === 0) {  // no games have been registered in db
-
-                 // axios.post('fetchteamgames')
-
-                 // set listedRounds
-
+                console.log(res.data[0].games)
+                if (parseInt(res.data[0].games) > 0) {  // no games have been registered in db
+                    console.log("fetching games...")
+                   //const gamedata = await axios.post("/api/fetchteamgames", {tourId: tourId})
+                  this.getData("/api/fetchteamgames", tourId) 
                  // if all rounds listed...
                 } 
-                this.setState({ games: games, nameA: nameA, nameB: nameB });
+                this.setState({  nameA: nameA, nameB: nameB });
 
             }
-            
 
         }).catch(err => {
             console.log(err);
@@ -63,12 +62,24 @@ class GamesSummary extends Component {
 
     }
 
+     getData = async (url, tourId) => {
+        try {
+            const response = await axios.post(url,  {tourId: tourId})
+            console.log(response.data)
+            
+            let games = response.data
+            let listedRounds = games.map(game => {return parseInt(game.round)})
+            console.log(listedRounds)
+            this.setState({ games: games, listedRounds:listedRounds });
+        }catch (error){
+            console.log(error)
+        }
+
+    }
+
     handleEditGame = (e) => {
         console.log(e)
     }
-
-
-
 
 
     handleAddGame = (e,v) => {
@@ -82,6 +93,7 @@ class GamesSummary extends Component {
 
     addGame = (game) => {
         let games = this.state.games
+
         games.push(game)
         games.sort((a,b) => (a.round > b.round) ? 1 : -1)
         this.setState({ games: games})
@@ -93,8 +105,7 @@ class GamesSummary extends Component {
             return (<Loading />)
         } else {
             const games = this.state.games;
-            const gameTypes = this.state.gameTypes
-            return (
+              return (
                 <div>
                 <Button primary onClick={this.handleAddGame}>Add Game</Button>
                 <Table celled>
@@ -114,10 +125,10 @@ class GamesSummary extends Component {
                                     <Table.Cell ><Icon name='edit' link onClick={() => this.handleEditGame(game)} ></Icon></Table.Cell>
                                     <Table.Cell >{game.round}</Table.Cell>
                                     <Table.Cell >
-                                       {game.gameName}
+                                       {game.game_name}
                                     </Table.Cell>
-                                    <Table.Cell >{game.pointsA}</Table.Cell>
-                                    <Table.Cell >{game.pointsB}</Table.Cell>
+                                    <Table.Cell >{game.points_a}</Table.Cell>
+                                    <Table.Cell >{game.points_b}</Table.Cell>
                                 </Table.Row>
                             );
                         })}
@@ -129,7 +140,7 @@ class GamesSummary extends Component {
                         <Modal.Header>Add new Game</Modal.Header>
                         <Modal.Content >
                             
-                            {<AddGame addGame={this.addGame} tourId={this.props.tourId} rounds={this.props.rounds} gameTypes={this.state.gameTypes} closeModal={this.closeAddingGame} />}
+                            {<AddGame listedRounds ={this.state.listedRounds} addGame={this.addGame} tourId={this.props.tourId} rounds={this.props.rounds} gameTypes={this.state.gameTypes} closeModal={this.closeAddingGame} />}
 
                             
                         </Modal.Content>

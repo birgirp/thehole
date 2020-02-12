@@ -17,19 +17,29 @@ class AddGame extends Component {
             selectedGame: null,
             description: '',
             maxRounds: 0,
-            listedRounds: []
+            listedRounds: [],
+            disabled:false
 
 
         };
     }
 
     componentDidMount() {
-
-        this.setState({tourId: this.props.tourId, gameTypes: this.props.gameTypes, maxRounds: this.props.rounds })
+        console.log(this.props.listedRounds)
+        let disabled = this.props.listedRounds.includes(1) ? true : false
+        this.setState({ tourId: this.props.tourId, 
+            gameTypes: this.props.gameTypes, 
+            maxRounds: this.props.rounds,
+            listedRounds: this.props.listedRounds,
+            disabled: disabled })
     }
 
     changeRound = (e, v) => {
-        this.setState({ round: v.value })
+
+        let disabled = this.state.listedRounds.includes(parseInt(v.value)) ? true : false
+        console.log(this.state.listedRounds)
+        console.log(disabled)
+        this.setState({ round: v.value, disabled:disabled })
     }
 
     changeGame = (e, v) => {
@@ -50,7 +60,7 @@ class AddGame extends Component {
             let id = parseInt(res.data[0].id)
 
             let gameName = this.state.gameTypes[idx].text
-            let game = {"id": id, "tourId": this.state.tourId ,"round":this.state.round ,"gameName":gameName, "game": this.state.selectedGame, "status": "New", "pointsA": 0, "pointsB": 0}
+            let game = { "id": id, "tour_id": this.state.tourId, "round": this.state.round, "game_name": gameName, "game": this.state.selectedGame, "status": "New", "points_a": 0, "points_b": 0 }
             this.props.addGame(game)
             this.handleCancel()
         })
@@ -113,7 +123,12 @@ class AddGame extends Component {
                     </Grid>
 
                     <br></br>
-                    <Button primary onClick={this.handleSubmit}>Submit</Button>
+                    <Button
+                        primary
+                        onClick={this.handleSubmit}
+                        disabled={this.state.disabled}>
+                        Submit
+                    </Button>
                     <Button secondary onClick={this.handleCancel}>Cancel</Button>
 
                 </div>

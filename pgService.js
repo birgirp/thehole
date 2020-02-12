@@ -496,8 +496,11 @@ module.exports = {
            
         return new Promise((resolve, reject) => {
 
-            pool.query( 'select * from tour_teams tt \
-            where tt.tour_id = $1' , [tourId]).then((results) => {
+            pool.query( 'select tg.id, tour_id, round,game_type_id, \
+            status, points_a, points_b,description, gt.name as game_name, gt.min_players \
+            from team_games tg  \
+            join game_types gt on gt.id = tg.game_type_id\
+            where tg.tour_id = $1 order by round asc;' , [tourId]).then((results) => {
                
                 resolve(results);
 
