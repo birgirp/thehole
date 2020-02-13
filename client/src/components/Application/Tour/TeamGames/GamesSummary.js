@@ -3,6 +3,7 @@ import { Button, Table, Icon, Modal } from "semantic-ui-react";
 import axios from "axios";
 import AddGame from "./AddGame";
 import Loading from "../../../Loading/Loading";
+import MatchPlay from "./MatchPlay";
 
 
 //import "./tour.css";
@@ -21,7 +22,8 @@ class GamesSummary extends Component {
             gameTypes: [],
             listedRounds: [],
             allRoundsListed: false,
-            isLoading: false
+            isLoading: false,
+            isOPenMatchPlay: false
 
         }
     }
@@ -76,9 +78,7 @@ class GamesSummary extends Component {
 
     }
 
-    handleEditGame = (e) => {
-        console.log(e)
-    }
+
 
 
     handleAddGame = (e, v) => {
@@ -96,6 +96,16 @@ class GamesSummary extends Component {
         games.push(game)
         games.sort((a, b) => (a.round > b.round) ? 1 : -1)
         this.setState({ games: games })
+    }
+
+    closeEditGame = () =>{
+        this.setState({isOPenMatchPlay:false})
+    }
+
+    handleEditGame = (e) => {
+      
+        this.setState({isOPenMatchPlay:true})
+        console.log(e)
     }
 
 
@@ -140,6 +150,17 @@ class GamesSummary extends Component {
                         <Modal.Content >
 
                             {<AddGame listedRounds={this.state.listedRounds} addGame={this.addGame} tourId={this.props.tourId} rounds={this.props.rounds} gameTypes={this.state.gameTypes} closeModal={this.closeAddingGame} />}
+
+
+                        </Modal.Content>
+                    </Modal>
+
+                    <Modal id="editMatchPlay" size="fullscreen" open={this.state.isOPenMatchPlay} onClose={this.closeEditGame}
+                        closeOnDimmerClick={false}>
+                        <Modal.Header>Match Play</Modal.Header>
+                        <Modal.Content >
+
+                            {<MatchPlay  tourId={this.props.tourId}  closeModal={this.closeEditGame} />}
 
 
                         </Modal.Content>
