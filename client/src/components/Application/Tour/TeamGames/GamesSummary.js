@@ -19,11 +19,14 @@ class GamesSummary extends Component {
             games: [],
             nameA: '',
             nameB: '',
+            idA:null,
+            idB:null,
             gameTypes: [],
             listedRounds: [],
             allRoundsListed: false,
             isLoading: false,
-            isOPenMatchPlay: false
+            isOPenMatchPlay: false,
+            editingGame:null
 
         }
     }
@@ -42,18 +45,21 @@ class GamesSummary extends Component {
             if (!res.data) {
                 throw new Error('No team names found');
             } else {
+               
                 let nameA = res.data[0].name
                 let nameB = res.data[1].name
-                console.log(res.data[0].games)
+                let idA = res.data[0].id
+                let idB = res.data[1].id
+           
                 if (parseInt(res.data[0].games) > 0) {  //  games have been registered in db
-                    console.log("fetching games...")
+                 
                     //const gamedata = await axios.post("/api/fetchteamgames", {tourId: tourId})
                     this.getData("/api/fetchteamgames", tourId)
                     // if all rounds listed...
                 }else{
                     this.setState({ isLoading: false })
                 }
-                this.setState({ nameA: nameA, nameB: nameB });
+                this.setState({ nameA: nameA, nameB: nameB, idA:idA, idB: idB });
             }
         }).catch(err => {
             console.log(err);
@@ -65,11 +71,11 @@ class GamesSummary extends Component {
     getData = async (url, tourId) => {
         try {
             const response = await axios.post(url, { tourId: tourId })
-            console.log(response.data)
+         
 
             let games = response.data
             let listedRounds = games.map(game => { return parseInt(game.round) })
-            console.log(listedRounds)
+          
             this.setState({ games: games, listedRounds: listedRounds, isLoading: false });
         } catch (error) {
             console.log(error)
@@ -103,8 +109,11 @@ class GamesSummary extends Component {
     }
 
     handleEditGame = (e) => {
-      
-        this.setState({isOPenMatchPlay:true})
+     //   let editingGame = this.state.editingGame
+       let editingGame = e
+       e.teamIdA = this.state.idA
+       e.teamIdB = this.state.idB
+        this.setState({editingGame: editingGame, isOPenMatchPlay:true})
         console.log(e)
     }
 
@@ -160,7 +169,7 @@ class GamesSummary extends Component {
                         <Modal.Header>Match Play</Modal.Header>
                         <Modal.Content >
 
-                            {<MatchPlay  tourId={this.props.tourId}  closeModal={this.closeEditGame} />}
+                            {<MatchPlay  game={this.state.editingGame} tourId={this.props.tourId} idA ={this.state.idA} idB ={this.state.idB} nameA={this.state.nameA} nameB={this.state.nameB} closeModal={this.closeEditGame} />}
 
 
                         </Modal.Content>

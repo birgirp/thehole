@@ -567,5 +567,44 @@ module.exports = {
             })
         })
     },
+    getTeamMembers: function (tour_id) {
+        console.log("fetching game types  ")
+       return new Promise((resolve, reject) => {
+           pool.query('SELECT *  FROM v_team_members where tour_id = $1;', [tour_id]).then((results) => {
+               resolve(results);
+           }).catch((error) => {
+               console.log("db error...")
+               reject(error)
+           })
+       })
+   },
+   insertMatchplayPairs: function (pairs) {
+    // pairs = [[gameId, pA, pB,results, pointsA, pointsA, ],.., [3, 18, 3, 1] ]
+    console.log("inserting MatchplayPairs...")
+    let query = format('INSERT INTO match_play_pairs (game_id, player_a, player_b, results, points_a, points_b) values %L', pairs);
+    return new Promise((resolve, reject) => {
+        pool.query(query).then((results) => {
+            resolve(results);
+        }).catch((error) => {
+            console.log("db error...")
+            reject(error)
+        })
+    })
+
+},
+   
+updateTeamGame: function (gameId, sumA, sumB, description, status) {
+    return new Promise((resolve, reject) => {
+        console.log(status)
+        console.log(gameId)
+        pool.query('UPDATE team_games SET points_a=$2, points_b=$3, description=$4, status=$5	WHERE id = $1;', [gameId, sumA, sumB, description, status]).then((results) => {
+            resolve(results);
+        }).catch((error) => {
+            console.log("db error...")
+            reject(error)
+        })
+    })
+},
+    
 }
 

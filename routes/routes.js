@@ -675,8 +675,26 @@ router.post("/api/insert_teams", (req, res) => {
 });
 
 router.post("/api/gettourteams", (req, res) => {
-
+  tourId = req.body.tourId
   dbdata.getTourTeams(tourId).then((data) => {
+    if (data.rows.length === 0) {
+      console.log("No teams  found")
+      res.json(null);
+
+    } else {
+
+      res.json(data.rows)
+    }
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
+router.post("/api/getteammembers", (req, res) => {
+  tourId = req.body.tourId
+  dbdata.getTeamMembers(tourId).then((data) => {
     if (data.rows.length === 0) {
       console.log("No teams  found")
       res.json(null);
@@ -724,7 +742,43 @@ router.post("/api/fetchteamgames", (req, res) => {
   })
 });
 
+router.post("/api/getmatchplaypairs", (req, res) => {
+  let tourId = req.body.tourId
+  res.json([])
+  /* dbdata.getTeamGames(tourId).then((data) => {
+     if (data.rows.length === 0) {
+       console.log("No games found")
+       res.json(null);
+     } else {
+       res.json(data.rows)
+     }
+   }).catch((error) => {
+     console.log(error)
+     res.status(500);
+     res.json({ error: error });
+   })*/
+});
 
+router.post("/api/addmatchplaypairs", (req, res) => {
+  let pairs = req.body.pairs
+  let gameId = pairs[0][0]
+  let sumA = req.body.sumA
+  let sumB = req.body.sumB
+  let description = req.body.description
+  let status = 'Saved'
+
+  dbdata.insertMatchplayPairs(pairs).then((results) => {
+
+    return dbdata.updateTeamGame(gameId, sumA, sumB, description, status).then(res2 => {
+      res.json("ok")
+    }).catch((error) => {
+      console.log(error)
+      res.status(500);
+      res.json({ error: error });
+
+    });
+  });
+});
 
 router.post("/api/addteamgame", (req, res) => {
   let tourId = req.body.tourId
@@ -733,7 +787,7 @@ router.post("/api/addteamgame", (req, res) => {
   let description = req.body.description
 
 
-  dbdata.insertTeamGame(tourId,round, game, description ).then((data) => {
+  dbdata.insertTeamGame(tourId, round, game, description).then((data) => {
     if (data.rows.length === 0) {
       console.log("No games found")
       res.json(null);
