@@ -61,7 +61,7 @@ class AddGame extends Component {
 
             let gameName = this.state.gameTypes[idx].text
             let game = { "id": id, "tour_id": this.state.tourId, "round": this.state.round, "game_name": gameName, "game": this.state.selectedGame, "status": "New", "points_a": 0, "points_b": 0 }
-            this.props.addGame(game)
+            this.props.addGame(game,this.state.description)
             this.handleCancel()
         })
     }

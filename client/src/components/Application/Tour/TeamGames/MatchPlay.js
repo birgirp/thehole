@@ -32,14 +32,13 @@ class MatchPlay extends Component {
 
 
     componentDidMount() {
-          this.setState({ isLoading: true })
+        this.setState({ isLoading: true })
 
-        //"/api/getteammembers"
+
         let games = this.state.games
-        console.log(this.props.game)
 
         axios.post("/api/getteammembers", { tourId: this.props.tourId }).then(res => {
-           
+
             let teamA = res.data.filter(team => { return team.team_id === this.props.idA })
             let teamB = res.data.filter(team => { return team.team_id === this.props.idB })
             let playersA = teamA.map(player => {
@@ -58,48 +57,43 @@ class MatchPlay extends Component {
 
 
         }).then(res2 => {
-            console.log(res2.data);
+           
             let results = this.state.results
             let pointsA = this.state.pointsA
             let pointsB = this.state.pointsB
 
-            if (res2.data.length === 0) {
-               
-          
-
+            if (!res2.data ||res2.data.length === 0) {
                 games.forEach((game, index) => {
                     results[index] = ""
                     pointsA[index] = 0.5
                     pointsB[index] = 0.5
-
                 });
-                console.log(results)
-                this.setState({ results: results, pointsA: pointsA, pointsB: pointsB })
-            } else{
-                    let firstTime = false
-                    let selectedPlayersA = this.state.selectedPlayersA
-                    let selectedPlayersB = this.state.selectedPlayersB
-                    let description = res2.data[0].description
+                this.setState({ results: results, pointsA: pointsA, pointsB: pointsB, description: this.props.game.description })
+            } else {
+                let firstTime = false
+                let selectedPlayersA = this.state.selectedPlayersA
+                let selectedPlayersB = this.state.selectedPlayersB
+                let description = res2.data[0].description
 
-                    res2.data.forEach((row,index) => {
-                        selectedPlayersA[index] = parseInt(row.player_a)
-                        selectedPlayersB[index] = parseInt(row.player_b)
-                        results[index] = row.results
-                        pointsA[index] = row.points_a
-                        pointsB[index] = row.points_b
+                res2.data.forEach((row, index) => {
+                    selectedPlayersA[index] = parseInt(row.player_a)
+                    selectedPlayersB[index] = parseInt(row.player_b)
+                    results[index] = row.results
+                    pointsA[index] = row.points_a
+                    pointsB[index] = row.points_b
 
-                    })
+                })
 
-                    this.setState({ 
-                        results: results,
-                         pointsA: pointsA, 
-                         pointsB: pointsB,
-                         selectedPlayersA: selectedPlayersA,
-                         selectedPlayersB: selectedPlayersB,
-                         description: description,
-                        firstTime: firstTime
-                        
-                        }, () => console.log(this.state))
+                this.setState({
+                    results: results,
+                    pointsA: pointsA,
+                    pointsB: pointsB,
+                    selectedPlayersA: selectedPlayersA,
+                    selectedPlayersB: selectedPlayersB,
+                    description: description,
+                    firstTime: firstTime,
+                  
+                }, () => console.log(this.state))
 
             }
             this.setState({ isLoading: false })
@@ -187,6 +181,24 @@ class MatchPlay extends Component {
 
 
     handleSubmit = () => {
+
+
+
+        if (this.state.firstTime) {
+            //  [[gameId, pA, pB,results, pointsA, pointsB, ],.
+            this.updateMatchplay()
+        } else {
+            axios.post('/api/deletematchplaypairs', { gameId: this.props.game.id }).then(res => {
+                this.updateMatchplay()
+            }).catch(err => {
+                console.log(err);
+                this.setState({ isLoading: false })
+            })
+        }
+    }
+
+
+    updateMatchplay = () => {
         let gamesCount = this.state.games.length
         let selectedPlayersA = this.state.selectedPlayersA
         let selectedPlayersB = this.state.selectedPlayersB
@@ -196,30 +208,20 @@ class MatchPlay extends Component {
         let description = this.state.description
         let sumA = 0
         let sumB = 0
-        console.log("submitting")
-     
-        console.log(this.state.firstTime)
-        if (this.state.firstTime) {
-            //  [[gameId, pA, pB,results, pointsA, pointsB, ],.
-            
-            let data = []
-            let gameId = this.props.game.id
-            for (let i = 0; i < gamesCount; i++) {
-                sumA = sumA + pointsA[i]
-                sumB = sumB +pointsB[i]
-                data[i] = [gameId, selectedPlayersA[i], selectedPlayersB[i], results[i], pointsA[i], pointsB[i]]
-            }
-            console.log(sumB)
-            axios.post('/api/addmatchplaypairs', { pairs: data, sumA: sumA, sumB:sumB, description: description }).then(res => {
-
-                console.log(res)
-            })
-
-        }else{
-            console.log("update...")
+        let data = []
+        let gameId = this.props.game.id
+        for (let i = 0; i < gamesCount; i++) {
+            sumA = sumA + pointsA[i]
+            sumB = sumB + pointsB[i]
+            data[i] = [gameId, selectedPlayersA[i], selectedPlayersB[i], results[i], pointsA[i], pointsB[i]]
         }
-
-
+        console.log(sumB)
+        axios.post('/api/addmatchplaypairs', { pairs: data, sumA: sumA, sumB: sumB, description: description }).then(res => {
+            this.props.updatePoints(gameId, sumA, sumB)
+        }).catch(err => {
+            console.log(err);
+            this.setState({ isLoading: false })
+        })
 
     }
 

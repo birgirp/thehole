@@ -730,7 +730,7 @@ router.post("/api/getmatchplaypairs", (req, res) => {
 let gameId = req.body.gameId
   dbdata.getMatchplayPairs(gameId).then((data) => {
     if (data.rows.length === 0) {
-      console.log("No game types found")
+      console.log("no match play pairs found")
       res.json(null);
     } else {
       res.json(data.rows)
@@ -758,22 +758,7 @@ router.post("/api/fetchteamgames", (req, res) => {
   })
 });
 
-router.post("/api/getmatchplaypairs", (req, res) => {
-  let tourId = req.body.tourId
-  res.json([])
-  /* dbdata.getTeamGames(tourId).then((data) => {
-     if (data.rows.length === 0) {
-       console.log("No games found")
-       res.json(null);
-     } else {
-       res.json(data.rows)
-     }
-   }).catch((error) => {
-     console.log(error)
-     res.status(500);
-     res.json({ error: error });
-   })*/
-});
+
 
 router.post("/api/addmatchplaypairs", (req, res) => {
   let pairs = req.body.pairs
@@ -784,6 +769,27 @@ router.post("/api/addmatchplaypairs", (req, res) => {
   let status = 'Saved'
 
   dbdata.insertMatchplayPairs(pairs).then((results) => {
+
+    return dbdata.updateTeamGame(gameId, sumA, sumB, description, status).then(res2 => {
+      res.json("ok")
+    }).catch((error) => {
+      console.log(error)
+      res.status(500);
+      res.json({ error: error });
+
+    });
+  });
+});
+
+router.post("/api/deletematchplaypairs", (req, res) => {
+  
+  let gameId = req.body.gameId
+  let sumA = 0
+  let sumB = 0
+  let description = ""
+  let status = 'Saved'
+
+  dbdata.deleteMatchplay(gameId).then((results) => {
 
     return dbdata.updateTeamGame(gameId, sumA, sumB, description, status).then(res2 => {
       res.json("ok")

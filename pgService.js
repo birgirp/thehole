@@ -609,6 +609,19 @@ getMatchplayPairs: function (game_id) {
        })
    })
 },
+
+deleteMatchplay: function(gameId){
+    return new Promise((resolve, reject) =>{
+
+
+        pool.query('delete from match_play_pairs where game_id = $1', [gameId]).then((results) =>{
+            resolve(results)
+        }).catch(error => {
+            console.log("db error")
+            reject(error)
+        })
+    })
+},
    
 updateTeamGame: function (gameId, sumA, sumB, description, status) {
     return new Promise((resolve, reject) => {
