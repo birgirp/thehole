@@ -114,7 +114,7 @@ class GamesSummary extends Component {
        e.teamIdA = this.state.idA
        e.teamIdB = this.state.idB
         this.setState({editingGame: editingGame, isOPenMatchPlay:true})
-        console.log(e)
+       // console.log(e)
     }
 
 

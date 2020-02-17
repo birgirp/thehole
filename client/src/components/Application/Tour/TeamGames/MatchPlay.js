@@ -32,13 +32,14 @@ class MatchPlay extends Component {
 
 
     componentDidMount() {
-        //   this.setState({ isLoading: true })
+          this.setState({ isLoading: true })
 
         //"/api/getteammembers"
         let games = this.state.games
+        console.log(this.props.game)
 
         axios.post("/api/getteammembers", { tourId: this.props.tourId }).then(res => {
-            console.log(res.data)
+           
             let teamA = res.data.filter(team => { return team.team_id === this.props.idA })
             let teamB = res.data.filter(team => { return team.team_id === this.props.idB })
             let playersA = teamA.map(player => {
@@ -53,18 +54,18 @@ class MatchPlay extends Component {
 
             this.setState({ playersA: playersA, playersB: playersB, games: games })
 
-            return axios.post('/api/getmatchplaypairs', { tourId: this.props.tourId })
+            return axios.post('/api/getmatchplaypairs', { gameId: this.props.game.id })
 
 
         }).then(res2 => {
-            console.log(res2);
-            if (res2.data.length === 0) {
-                console.log("firstrtime")
-                let firstTime = true
+            console.log(res2.data);
+            let results = this.state.results
+            let pointsA = this.state.pointsA
+            let pointsB = this.state.pointsB
 
-                let results = this.state.results
-                let pointsA = this.state.pointsA
-                let pointsB = this.state.pointsB
+            if (res2.data.length === 0) {
+               
+          
 
                 games.forEach((game, index) => {
                     results[index] = ""
@@ -74,7 +75,34 @@ class MatchPlay extends Component {
                 });
                 console.log(results)
                 this.setState({ results: results, pointsA: pointsA, pointsB: pointsB })
+            } else{
+                    let firstTime = false
+                    let selectedPlayersA = this.state.selectedPlayersA
+                    let selectedPlayersB = this.state.selectedPlayersB
+                    let description = res2.data[0].description
+
+                    res2.data.forEach((row,index) => {
+                        selectedPlayersA[index] = parseInt(row.player_a)
+                        selectedPlayersB[index] = parseInt(row.player_b)
+                        results[index] = row.results
+                        pointsA[index] = row.points_a
+                        pointsB[index] = row.points_b
+
+                    })
+
+                    this.setState({ 
+                        results: results,
+                         pointsA: pointsA, 
+                         pointsB: pointsB,
+                         selectedPlayersA: selectedPlayersA,
+                         selectedPlayersB: selectedPlayersB,
+                         description: description,
+                        firstTime: firstTime
+                        
+                        }, () => console.log(this.state))
+
             }
+            this.setState({ isLoading: false })
         }).catch(err => {
             console.log(err);
             this.setState({ isLoading: false })
@@ -137,15 +165,12 @@ class MatchPlay extends Component {
         let pointsB = this.state.pointsB
 
         if (v.value === 'A') {
-            console.log("set A")
             pointsA[v.index] = 1
             pointsB[v.index] = 0
         } else if (v.value === 'B') {
-            console.log("set B")
             pointsA[v.index] = 0
             pointsB[v.index] = 1
         } else if (v.value === 'Draw') {
-            console.log("set Draw")
             pointsA[v.index] = 0.5
             pointsB[v.index] = 0.5
         }
@@ -160,6 +185,7 @@ class MatchPlay extends Component {
         this.setState({ description: description })
     }
 
+
     handleSubmit = () => {
         let gamesCount = this.state.games.length
         let selectedPlayersA = this.state.selectedPlayersA
@@ -171,8 +197,8 @@ class MatchPlay extends Component {
         let sumA = 0
         let sumB = 0
         console.log("submitting")
-        let ready = selectedPlayersA.length === selectedPlayersB.length === gamesCount ? true : false
-
+     
+        console.log(this.state.firstTime)
         if (this.state.firstTime) {
             //  [[gameId, pA, pB,results, pointsA, pointsB, ],.
             
@@ -189,6 +215,8 @@ class MatchPlay extends Component {
                 console.log(res)
             })
 
+        }else{
+            console.log("update...")
         }
 
 
@@ -233,6 +261,7 @@ class MatchPlay extends Component {
                                                 options={this.state.playersA}
                                                 onChange={this.changePlayerA}
                                                 disabled={false}
+                                                value={this.state.selectedPlayersA[index]}
                                             />
                                         </Table.Cell>
                                         <Table.Cell >
@@ -245,6 +274,7 @@ class MatchPlay extends Component {
                                                 options={this.state.playersB}
                                                 onChange={this.changePlayerB}
                                                 disabled={false}
+                                                value={this.state.selectedPlayersB[index]}
                                             />
 
                                         </Table.Cell>

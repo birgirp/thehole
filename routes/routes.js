@@ -726,6 +726,22 @@ router.post("/api/getgametypes", (req, res) => {
   })
 });
 
+router.post("/api/getmatchplaypairs", (req, res) => {
+let gameId = req.body.gameId
+  dbdata.getMatchplayPairs(gameId).then((data) => {
+    if (data.rows.length === 0) {
+      console.log("No game types found")
+      res.json(null);
+    } else {
+      res.json(data.rows)
+    }
+  }).catch((error) => {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  })
+});
+
 router.post("/api/fetchteamgames", (req, res) => {
   let tourId = req.body.tourId
   dbdata.getTeamGames(tourId).then((data) => {

@@ -1,6 +1,6 @@
 // External libs
 import React, { Component } from "react";
-import { Button, TextArea, Input, Dropdown, Grid } from "semantic-ui-react";
+import { Button, TextArea, Input, Dropdown, Grid, Form } from "semantic-ui-react";
 import axios from "axios";
 
 // Own components...
@@ -107,6 +107,7 @@ class AddGame extends Component {
                         </Grid.Row>
                         <Grid.Row>
                             <Grid.Column width={9}>
+                                <Form>
                                 <TextArea
                                     name='Description'
                                     placeholder='Description'
@@ -115,6 +116,7 @@ class AddGame extends Component {
                                     value={this.state.description}
                                     onChange={this.changeDescription}
                                 />
+                                </Form>
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>

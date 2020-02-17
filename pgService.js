@@ -591,6 +591,23 @@ module.exports = {
         })
     })
 
+
+},
+
+getMatchplayPairs: function (game_id) {
+    console.log("fetching matchplay pairs  ")
+   return new Promise((resolve, reject) => {
+       pool.query('select mpp.game_id, mpp.player_a,  mpp.player_b, \
+       mpp.results, mpp.points_a, mpp.points_b, tg.description \
+       from match_play_pairs mpp \
+       join team_games tg on tg.id = mpp.game_id \
+       where game_id = $1;', [game_id]).then((results) => {
+           resolve(results);
+       }).catch((error) => {
+           console.log("db error...")
+           reject(error)
+       })
+   })
 },
    
 updateTeamGame: function (gameId, sumA, sumB, description, status) {
