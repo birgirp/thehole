@@ -760,7 +760,7 @@ router.post("/api/fetchteamgames", (req, res) => {
 
 
 
-router.post("/api/addmatchplaypairs", (req, res) => {
+/*router.post("/api/addmatchplaypairs", (req, res) => {
   let pairs = req.body.pairs
   let gameId = pairs[0][0]
   let sumA = req.body.sumA
@@ -779,7 +779,32 @@ router.post("/api/addmatchplaypairs", (req, res) => {
 
     });
   });
+});*/
+
+
+router.post("/api/addmatchplaypairs", async (req, res) => {
+  console.log("async await")
+  let pairs = req.body.pairs
+  let gameId = pairs[0][0]
+  let sumA = req.body.sumA
+  let sumB = req.body.sumB
+  let description = req.body.description
+  let status = 'Saved'
+try {
+  await dbdata.insertMatchplayPairs(pairs)
+  await dbdata.updateTeamGame(gameId, sumA, sumB, description, status)
+  res.json("ok")
+} catch (error) {
+  console.log(error)
+  res.status(500);
+  res.json({ error: error });
+}
+ 
+
 });
+
+
+
 
 router.post("/api/deletematchplaypairs", (req, res) => {
   
