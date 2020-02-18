@@ -46,6 +46,7 @@ class MatchPlay extends Component {
             let playersA = teamA.map(player => {
                 return { key: player.player_id, value: player.player_id, text: player.full_name }
             })
+            console.log(playersA)
 
             let playersB = teamB.map(player => {
                 return { key: player.player_id, value: player.player_id, text: player.full_name }
@@ -58,11 +59,12 @@ class MatchPlay extends Component {
             let selB = []
 
             for (let i = 0; i < teamA.length; i++) {
-                selA[i] = playersA
-                selB[i] = playersB
+                selA[i] = JSON.parse(JSON.stringify(playersA));
+                selB[i] =  JSON.parse(JSON.stringify(playersB));
 
             }
 
+            console.log(selA)
 
 
             games = teamA.map((p, i) => { return { pair: i + 1 } })
@@ -94,6 +96,8 @@ class MatchPlay extends Component {
                     selectedPlayersA[index] = -1
                     selectedPlayersB[index] = -1
                 });
+
+
                 this.setState({
                     results: results,
                     pointsA: pointsA,
@@ -101,7 +105,7 @@ class MatchPlay extends Component {
                     description: this.props.game.description,
                     selectedPlayersA: selectedPlayersA,
                     selectedPlayersB: selectedPlayersB,
-                }, () => this.initPlayerSelection())
+                })
             } else {
                 let firstTime = false
 
@@ -115,6 +119,7 @@ class MatchPlay extends Component {
                     pointsB[index] = row.points_b
 
                 })
+
 
                 this.setState({
                     results: results,
@@ -138,83 +143,72 @@ class MatchPlay extends Component {
     initPlayerSelection = () => {
 
         let selA = this.state.selA
-
         let selB = this.state.selB
+
         let selectedPlayersA = this.state.selectedPlayersA
         let selectedPlayersB = this.state.selectedPlayersB
+
         let numPlayers = selA.length
 
+        for (let i = 0; i < numPlayers; i++) {
+
+            let playerKeyB = selectedPlayersB[i]
+            selB.forEach((set, index) => {
+                set.forEach((item) => {
+                    if (index === i) {
+                        if (item.key === playerKeyB) {
+                            item.disabled = false
+                        }
+                    } else {
+                        if (item.key === playerKeyB) {
+                            item.disabled = true
+                        }
+                    }
+                    if (item.key === -1) {
+                        item.disabled = false
+                    }
+                })
+            })
+
+        }
 
         for (let i = 0; i < numPlayers; i++) {
 
             let playerKeyA = selectedPlayersA[i]
-
-            let playerKeyB = selectedPlayersB[i]
-
-            let idxA = selA[i].findIndex(p => parseInt(p.key) === playerKeyA)
-            let idxB = selB[i].findIndex(p => parseInt(p.key) === playerKeyB)
-
-
-
-
+         
             selA.forEach((set, index) => {
-                if (index !== i) {
-                    if (playerKeyA !== -1) {
-                        selA[index][idxA].disabled = true
+                set.forEach((item) => {
+                    if (index === i) {
+                        if (item.key === playerKeyA) {
+                            item.disabled = false
+                        }
+                    } else {
+                        if (item.key === playerKeyA) {
+                            item.disabled = true
+                        }
                     }
-                } else {
-                    selA[index][idxA].disabled = false
-                }
-            })
-
-            if (playerKeyB !== -1) {
-                selB.forEach((set, index) => {
-                    if (index !== i) {
-                        selA[index][idxB].disabled = true
+                    if (item.key === -1) {
+                        item.disabled = false
                     }
                 })
-            }
+            })
+
+
         }
-
-
-
     }
 
 
 
-    /*changePlayerA = (e, v) => {
-
-        // set the selected player
-        let selectedPlayersA = this.state.selectedPlayersA
-        selectedPlayersA[v.index] = v.value;
-
-        let playersA = this.state.playersA
-
-
-        let idx = playersA[v.index].findIndex(player => { return player.key === v.value })
-
-        playersA.forEach((playerset, i) => {
-            if (v.index !== i) {
-                playerset[idx].disabled = true
-            }
-        })
-        this.setState({
-            playersA: playersA,
-            selectedPlayersA: selectedPlayersA
-        });
-
-    }*/
-
     changePlayerA = (e, v) => {
-        console.log("index " + v.index)
+
+
         let selA = this.state.selA
         let selectedPlayersA = this.state.selectedPlayersA
         let newKey = v.value
         let prevKey = selectedPlayersA[v.index]
-        let prevKeyIndex = selA[0].findIndex(p => parseInt(p.key) === prevKey)
-        let newKeyIndex = selA[0].findIndex(p => parseInt(p.key) === newKey)
-        console.log("newKey " + newKey)
-        console.log("olprevKeydKey " + prevKey)
+        let prevKeyIndex = selA[0].findIndex(p1 => parseInt(p1.key) === prevKey)
+        let newKeyIndex = selA[0].findIndex(p2 => parseInt(p2.key) === newKey)
+
         selectedPlayersA[v.index] = newKey;
 
         selA.forEach((set, i) => {
@@ -238,20 +232,18 @@ class MatchPlay extends Component {
         let prevKeyIndex = selB[0].findIndex(p1 => parseInt(p1.key) === prevKey)
         let newKeyIndex = selB[0].findIndex(p2 => parseInt(p2.key) === newKey)
 
-        if (prevKey !== newKey) {
-            selectedPlayersB[v.index] = newKey;
+        selectedPlayersB[v.index] = newKey;
 
-            selB.forEach((set, i) => {
-                if (i !== v.index) {
-                    set[prevKeyIndex].disabled = false
-                    if (newKey !== -1) {
-                        set[newKeyIndex].disabled = true
-                    }
+        selB.forEach((set, i) => {
+            if (i !== v.index) {
+                set[prevKeyIndex].disabled = false
+                if (newKey !== -1) {
+                    set[newKeyIndex].disabled = true
                 }
-            });
-            this.setState({ selectedPlayersB: selectedPlayersB, selB: selB })
-        }
+            }
 
+        });
+        this.setState({ selectedPlayersB: selectedPlayersB, selB: selB })
 
     }
 
