@@ -202,7 +202,7 @@ module.exports = {
         })
     },
     insertTourTeam: function (tour_id, name) {
-   
+
         return new Promise((resolve, reject) => {
             pool.query('INSERT INTO tour_teams (tour_id, name) values ($1, $2) returning id', [tour_id, name]).then((results) => {
                 resolve(results);
@@ -387,7 +387,7 @@ module.exports = {
             })
         })
     },
-    
+
     getTourScorecards: function (tourId) {
         return new Promise((resolve, reject) => {
             pool.query('select player_id, tour_round, strokes, points  from v_scorecards_sum where tour_id =  $1;', [tourId]).then((results) => {
@@ -446,7 +446,7 @@ module.exports = {
         })
     },
     getPlayerScorecard: function (tourId, round, playerId) {
-           
+
         return new Promise((resolve, reject) => {
 
             pool.query('select *  from v_scorecards_round where tour_id =  $1 and tour_round = $2 and player_id = $3;', [tourId, round, playerId]).then((results) => {
@@ -458,7 +458,7 @@ module.exports = {
         })
     },
     getTourTeams: function (tourId) {
-           
+
         return new Promise((resolve, reject) => {
 
             pool.query('select * from team_members tm join tour_teams tt on tt.id = tm.team_id \
@@ -471,17 +471,17 @@ module.exports = {
         })
     },
     getTourTeamNames: function (tourId) {
-           
+
         return new Promise((resolve, reject) => {
 
-            pool.query( 'select tt.id, tt.name , count(tg.id) as games \
+            pool.query('select tt.id, tt.name , count(tg.id) as games \
             from tour_teams tt \
             left join team_games  tg on tg.tour_id = tt.tour_id \
             where tt.tour_id = $1 \
             group by tt.id, tt.name \
             order by tt.id' , [tourId]).then((results) => {
 
-               
+
                 resolve(results);
 
             }).catch((error) => {
@@ -493,15 +493,15 @@ module.exports = {
 
 
     getTeamGames: function (tourId) {
-           
+
         return new Promise((resolve, reject) => {
 
-            pool.query( 'select tg.id, tour_id, round,game_type_id, \
+            pool.query('select tg.id, tour_id, round,game_type_id, \
             status, points_a, points_b,description, gt.name as game_name, gt.min_players \
             from team_games tg  \
             join game_types gt on gt.id = tg.game_type_id\
             where tg.tour_id = $1 order by round asc;' , [tourId]).then((results) => {
-               
+
                 resolve(results);
 
             }).catch((error) => {
@@ -513,11 +513,11 @@ module.exports = {
 
 
 
-   
+
 
 
     getRoundScorecards: function (tourId, round) {
-    
+
         return new Promise((resolve, reject) => {
             pool.query('select *  from v_scorecards_round where tour_id =  $1 and tour_round = $2;', [tourId, round]).then((results) => {
                 resolve(results);
@@ -540,7 +540,7 @@ module.exports = {
     },
 
     getGameTypes: function () {
-         console.log("fetching game types  ")
+        console.log("fetching game types  ")
         return new Promise((resolve, reject) => {
             pool.query('SELECT id, min_players, name FROM game_types;').then((results) => {
                 resolve(results);
@@ -554,12 +554,12 @@ module.exports = {
     insertTeamGame: function (tour_id, round, game, description) {
         let status = 'New'
         let points = 0
-     
+
         console.log("insert game...")
         return new Promise((resolve, reject) => {
             pool.query('INSERT INTO team_games( \
                 tour_id, round, game_type_id, status, points_a, points_b,description) \
-                VALUES ($1, $2, $3, $4, $5, $5, $6) returning id; ', [tour_id, round, game,status,0, description]).then((results) => {
+                VALUES ($1, $2, $3, $4, $5, $5, $6) returning id; ', [tour_id, round, game, status, 0, description]).then((results) => {
                 resolve(results);
             }).catch((error) => {
                 console.log("db error...")
@@ -569,72 +569,129 @@ module.exports = {
     },
     getTeamMembers: function (tour_id) {
         console.log("fetching game types  ")
-       return new Promise((resolve, reject) => {
-           pool.query('SELECT *  FROM v_team_members where tour_id = $1;', [tour_id]).then((results) => {
-               resolve(results);
-           }).catch((error) => {
-               console.log("db error...")
-               reject(error)
-           })
-       })
-   },
-   insertMatchplayPairs: function (pairs) {
-    // pairs = [[gameId, pA, pB,results, pointsA, pointsA, ],.., [3, 18, 3, 1] ]
-    console.log("inserting MatchplayPairs...")
-    let query = format('INSERT INTO match_play_pairs (game_id, player_a, player_b, results, points_a, points_b) values %L', pairs);
-    return new Promise((resolve, reject) => {
-        pool.query(query).then((results) => {
-            resolve(results);
-        }).catch((error) => {
-            console.log("db error...")
-            reject(error)
+        return new Promise((resolve, reject) => {
+            pool.query('SELECT *  FROM v_team_members where tour_id = $1;', [tour_id]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
         })
-    })
+    },
+    insertMatchplayPairs: function (pairs) {
+        // pairs = [[gameId, pA, pB,results, pointsA, pointsA, ],.., [3, 18, 3, 1] ]
+        console.log("inserting MatchplayPairs...")
+        let query = format('INSERT INTO match_play_pairs (game_id, player_a, player_b, results, points_a, points_b) values %L', pairs);
+        return new Promise((resolve, reject) => {
+            pool.query(query).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
 
+    insertTwosomeGame: function (pairs) {
+        // pairs = [[gameId, pA[], pB[],results, pointsA, pointsA, ],.., [3, 18, 3, 1] ]
+        console.log("inserting Twosome pairs...")
+        console.log(JSON.stringify(pairs))
+        let query = format('INSERT INTO twosome_pairs (game_id, player_a1, player_a2, player_b1, player_b2, results, points_a, points_b) values %L', pairs);
+        return new Promise((resolve, reject) => {
+            pool.query(query).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
 
-},
-
-getMatchplayPairs: function (game_id) {
-    console.log("fetching matchplay pairs  ")
-   return new Promise((resolve, reject) => {
-       pool.query('select mpp.game_id, mpp.player_a,  mpp.player_b, \
+    getMatchplayPairs: function (game_id) {
+        console.log("fetching matchplay pairs  ")
+        return new Promise((resolve, reject) => {
+            pool.query('select mpp.game_id, mpp.player_a,  mpp.player_b, \
        mpp.results, mpp.points_a, mpp.points_b, tg.description \
        from match_play_pairs mpp \
        join team_games tg on tg.id = mpp.game_id \
        where game_id = $1;', [game_id]).then((results) => {
-           resolve(results);
-       }).catch((error) => {
-           console.log("db error...")
-           reject(error)
-       })
-   })
-},
-
-deleteMatchplay: function(gameId){
-    return new Promise((resolve, reject) =>{
-
-
-        pool.query('delete from match_play_pairs where game_id = $1', [gameId]).then((results) =>{
-            resolve(results)
-        }).catch(error => {
-            console.log("db error")
-            reject(error)
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
         })
-    })
-},
-   
-updateTeamGame: function (gameId, sumA, sumB, description, status) {
-    return new Promise((resolve, reject) => {
-        console.log(status)
-        console.log(gameId)
-        pool.query('UPDATE team_games SET points_a=$2, points_b=$3, description=$4, status=$5	WHERE id = $1;', [gameId, sumA, sumB, description, status]).then((results) => {
-            resolve(results);
-        }).catch((error) => {
-            console.log("db error...")
-            reject(error)
+    },
+
+    getTwosomePairs: function (game_id) {
+        console.log("fetching matchplay pairs  ")
+        return new Promise((resolve, reject) => {
+            pool.query('select mpp.game_id, mpp.player_a1, mpp.player_a2, \
+                mpp.player_b1, mpp.player_b2,\
+       mpp.results, mpp.points_a, mpp.points_b, tg.description \
+       from twosome_pairs mpp \
+       join team_games tg on tg.id = mpp.game_id \
+       where game_id = $1;', [game_id]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
         })
-    })
-},
-    
+    },
+
+    deleteMatchplay: function (gameId) {
+        return new Promise((resolve, reject) => {
+
+
+            pool.query('delete from match_play_pairs where game_id = $1', [gameId]).then((results) => {
+                resolve(results)
+            }).catch(error => {
+                console.log("db error")
+                reject(error)
+            })
+        })
+    },
+
+    deleteTwosome: function (gameId) {
+        return new Promise((resolve, reject) => {
+
+
+            pool.query('delete from twosome_pairs where game_id = $1', [gameId]).then((results) => {
+                resolve(results)
+            }).catch(error => {
+                console.log("db error")
+                reject(error)
+            })
+        })
+    },
+
+    deleteTeamGame: function(gameId){
+        return new Promise((resolve,reject) =>{
+            pool.query('DELETE from team_games where id = $1',[gameId])
+            .then(results => {
+                resolve(results)
+            })
+            .catch(error => {
+                console.log("db error")
+                reject(error)
+            })
+        })
+    },
+
+    updateTeamGame: function (gameId, sumA, sumB, description, status) {
+        return new Promise((resolve, reject) => {
+            console.log(status)
+            console.log(gameId)
+            pool.query('UPDATE team_games SET points_a=$2, points_b=$3, description=$4, status=$5	WHERE id = $1;', [gameId, sumA, sumB, description, status])
+            .then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+
 }
 

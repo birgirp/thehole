@@ -727,7 +727,7 @@ router.post("/api/getgametypes", (req, res) => {
 });
 
 router.post("/api/getmatchplaypairs", (req, res) => {
-let gameId = req.body.gameId
+  let gameId = req.body.gameId
   dbdata.getMatchplayPairs(gameId).then((data) => {
     if (data.rows.length === 0) {
       console.log("no match play pairs found")
@@ -741,6 +741,38 @@ let gameId = req.body.gameId
     res.json({ error: error });
   })
 });
+
+router.post("/api/gettwosomepairs", async (req, res) => {
+  try {
+    let gameId = req.body.gameId
+    let data = await dbdata.getTwosomePairs(gameId)
+    if (data.rows.length === 0) {
+      console.log("no match play pairs found")
+      res.json(null);
+    } else {
+      res.json(data.rows)
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  }
+
+
+});
+
+router.post('/api/deletegame', async (req, res) => {
+  let gameId = req.body.gameId
+  try {
+    dbdata.deleteTeamGame(gameId)
+    res.json('ok')
+  } catch (error) {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  }
+
+})
 
 router.post("/api/fetchteamgames", (req, res) => {
   let tourId = req.body.tourId
@@ -790,24 +822,64 @@ router.post("/api/addmatchplaypairs", async (req, res) => {
   let sumB = req.body.sumB
   let description = req.body.description
   let status = 'Saved'
-try {
-  await dbdata.insertMatchplayPairs(pairs)
-  await dbdata.updateTeamGame(gameId, sumA, sumB, description, status)
-  res.json("ok")
-} catch (error) {
-  console.log(error)
-  res.status(500);
-  res.json({ error: error });
-}
- 
+  try {
+    await dbdata.insertMatchplayPairs(pairs)
+    await dbdata.updateTeamGame(gameId, sumA, sumB, description, status)
+    res.json("ok")
+  } catch (error) {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  }
+
+
+});
+
+router.post("/api/addtwosomepairs", async (req, res) => {
+  console.log("async await")
+  let pairs = req.body.pairs
+  let gameId = pairs[0][0]
+  let sumA = req.body.sumA
+  let sumB = req.body.sumB
+  let description = req.body.description
+  let status = 'Saved'
+  try {
+    await dbdata.insertTwosomeGame(pairs)
+    await dbdata.updateTeamGame(gameId, sumA, sumB, description, status)
+    res.json("ok")
+  } catch (error) {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  }
+
 
 });
 
 
+router.post("/api/deletetwosomepairs", (req, res) => {
 
+  let gameId = req.body.gameId
+  let sumA = 0
+  let sumB = 0
+  let description = ""
+  let status = 'Saved'
+
+  dbdata.deleteTwosome(gameId).then((results) => {
+
+    return dbdata.updateTeamGame(gameId, sumA, sumB, description, status).then(res2 => {
+      res.json("ok")
+    }).catch((error) => {
+      console.log(error)
+      res.status(500);
+      res.json({ error: error });
+
+    });
+  });
+});
 
 router.post("/api/deletematchplaypairs", (req, res) => {
-  
+
   let gameId = req.body.gameId
   let sumA = 0
   let sumB = 0

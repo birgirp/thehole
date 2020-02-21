@@ -146,6 +146,106 @@ CREATE TABLE session
     CONSTRAINT session_pkey PRIMARY KEY (sid)
 )
 
+CREATE TABLE public.game_types
+(
+    id serial NOT NULL ,
+    min_players integer NOT NULL,
+    name text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT game_types_pkey PRIMARY KEY (id)
+)
+
+CREATE TABLE team_games
+(
+    id serial NOT NULL ,
+    tour_id integer NOT NULL,
+    round integer NOT NULL,
+    game_type_id integer,
+    status text COLLATE pg_catalog."default" NOT NULL,
+    points_a real NOT NULL,
+    points_b real NOT NULL,
+    description text COLLATE pg_catalog."default",
+    CONSTRAINT "TeamGames_pkey" PRIMARY KEY (id),
+    CONSTRAINT team_games_tour_id_round_key UNIQUE (tour_id, round)
+,
+    CONSTRAINT "TeamGames_game_type_id_fkey" FOREIGN KEY (game_type_id)
+        REFERENCES game_types (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "TeamGames_tour_id_fkey" FOREIGN KEY (tour_id)
+        REFERENCES tours (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+
+CREATE TABLE tour_teams
+(
+    id serial NOT NULL ,
+    tour_id integer NOT NULL,
+    name text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT tour_teams_pkey PRIMARY KEY (id),
+    CONSTRAINT tour_teams_tour_id_fkey FOREIGN KEY (tour_id)
+        REFERENCES tours (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+CREATE TABLE team_members
+(
+    team_id integer NOT NULL,
+    player_id integer NOT NULL,
+    CONSTRAINT team_members_pkey PRIMARY KEY (team_id, player_id),
+    CONSTRAINT team_members_player_id_fkey FOREIGN KEY (player_id)
+        REFERENCES users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT team_members_team_id_fkey FOREIGN KEY (team_id)
+        REFERENCES tour_teams (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+CREATE TABLE match_play_pairs
+(
+    game_id integer NOT NULL,
+    player_a integer NOT NULL,
+    player_b integer NOT NULL,
+    results text COLLATE pg_catalog."default",
+    points_a real,
+    points_b real,
+    CONSTRAINT match_play_pairs_game_id_fkey FOREIGN KEY (game_id)
+        REFERENCES team_games (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE,
+    CONSTRAINT match_play_pairs_player_a_fkey FOREIGN KEY (player_a)
+        REFERENCES users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT match_play_pairs_player_b_fkey FOREIGN KEY (player_b)
+        REFERENCES users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+
+CREATE TABLE twosome_pairs
+(
+    game_id integer NOT NULL,
+    results text COLLATE pg_catalog."default",
+    points_a real,
+    points_b real,
+    player_a1 integer NOT NULL,
+    player_a2 integer NOT NULL,
+    player_b1 integer NOT NULL,
+    player_b2 integer NOT NULL,
+    CONSTRAINT twosome_games_game_id_fkey FOREIGN KEY (game_id)
+        REFERENCES team_games (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+WITH (
+    OIDS = FALSE
+)
 
 --- views ---
 
@@ -438,3 +538,15 @@ CREATE OR REPLACE VIEW v_eclectic
    FROM v_eclectic_trend_per_hole
   GROUP BY v_eclectic_trend_per_hole.player_id, v_eclectic_trend_per_hole.full_name, v_eclectic_trend_per_hole.tour_id, v_eclectic_trend_per_hole.tour_round
   ORDER BY v_eclectic_trend_per_hole.tour_id, v_eclectic_trend_per_hole.full_name, v_eclectic_trend_per_hole.tour_round;
+
+
+  CREATE OR REPLACE VIEW v_team_members AS
+ SELECT tm.player_id,
+    u.full_name,
+    u.handicap,
+    tm.team_id,
+    tt.name,
+    tt.tour_id
+   FROM team_members tm
+     JOIN tour_teams tt ON tt.id = tm.team_id
+     JOIN users u ON u.id = tm.player_id;

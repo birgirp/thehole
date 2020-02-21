@@ -5,7 +5,7 @@ import Loading from "../../../Loading/Loading";
 
 
 //import "./tour.css";
-class MatchPlay extends Component {
+class Twosome extends Component {
 
 
     constructor(props) {
@@ -27,8 +27,7 @@ class MatchPlay extends Component {
             games: [],
             firstTime: true,
             description: "",
-            isMissingPlayers:true
-
+            isMissingPlayers: true
 
         }
     }
@@ -36,8 +35,7 @@ class MatchPlay extends Component {
 
     componentDidMount() {
         this.setState({ isLoading: true })
-
-
+       
         let games = this.state.games
 
 
@@ -51,16 +49,18 @@ class MatchPlay extends Component {
             let playersB = teamB.map(player => {
                 return { key: player.player_id, value: player.player_id, text: player.full_name }
             })
-            playersA.push({ key: -1, value: -1, text: "" })
-            playersB.push({ key: -1, value: -1, text: "" })
+
             let selA = []
             let selB = []
-            for (let i = 0; i < teamA.length; i++) {
+            for (let i = 0; i < (teamA.length / 2); i++) {
                 selA[i] = JSON.parse(JSON.stringify(playersA));
-                selB[i] =  JSON.parse(JSON.stringify(playersB));
+                selB[i] = JSON.parse(JSON.stringify(playersB));
             }
-            games = teamA.map((p, i) => { return { pair: i + 1 } })
-
+            games = []
+            for (let i = 0; i < teamA.length / 2; i++) {
+                games.push({ pair: i + 1 })
+            }
+         
             this.setState({
                 playersA: playersA,
                 playersB: playersB,
@@ -70,24 +70,25 @@ class MatchPlay extends Component {
                 description: this.props.game.description
             })
 
-            return axios.post('/api/getmatchplaypairs', { gameId: this.props.game.id })
+            return axios.post('/api/gettwosomepairs', { gameId: this.props.game.id })
 
 
         }).then(res2 => {
-
+            console.log(res2.data)
             let results = this.state.results
             let pointsA = this.state.pointsA
             let pointsB = this.state.pointsB
             let selectedPlayersA = this.state.selectedPlayersA
             let selectedPlayersB = this.state.selectedPlayersB
-
+            // No twosome pairs found in database :
             if (!res2.data || res2.data.length === 0) {
                 games.forEach((game, index) => {
                     results[index] = ""
                     pointsA[index] = 0.5
                     pointsB[index] = 0.5
-                    selectedPlayersA[index] = -1
-                    selectedPlayersB[index] = -1
+                    selectedPlayersA[index] =[]
+                    selectedPlayersB[index] =[]
+
                 });
 
 
@@ -100,13 +101,19 @@ class MatchPlay extends Component {
                     selectedPlayersB: selectedPlayersB,
                 })
             } else {
+                // Found twosome pairs in database
+                
                 let firstTime = false
-
+                console.log(res2.data)
                 let description = res2.data[0].description
 
                 res2.data.forEach((row, index) => {
-                    selectedPlayersA[index] = parseInt(row.player_a)
-                    selectedPlayersB[index] = parseInt(row.player_b)
+                    selectedPlayersA[index] =[]
+                    selectedPlayersB[index] =[]
+                    selectedPlayersA[index][0] = parseInt(row.player_a1)
+                    selectedPlayersA[index][1] = parseInt(row.player_a2)
+                    selectedPlayersB[index][0] = parseInt(row.player_b1)
+                    selectedPlayersB[index][1] = parseInt(row.player_b2)
                     results[index] = row.results
                     pointsA[index] = row.points_a
                     pointsB[index] = row.points_b
@@ -122,9 +129,9 @@ class MatchPlay extends Component {
                     selectedPlayersB: selectedPlayersB,
                     description: description,
                     firstTime: firstTime,
-                    isMissingPlayers:false
+                    isMissingPlayers: false
 
-                }, () => this.initPlayerSelection())
+                })
 
             }
             this.setState({ isLoading: false })
@@ -169,7 +176,7 @@ class MatchPlay extends Component {
         for (let i = 0; i < numPlayers; i++) {
 
             let playerKeyA = selectedPlayersA[i]
-         
+
             selA.forEach((set, index) => {
                 set.forEach((item) => {
                     if (index === i) {
@@ -191,64 +198,77 @@ class MatchPlay extends Component {
         }
     }
 
-
-
     changePlayerA = (e, v) => {
-
-
+       // console.log(this.state.selectedPlayersA)
+        let index = v.index
         let selA = this.state.selA
         let selectedPlayersA = this.state.selectedPlayersA
-        let newKey = v.value
-        let prevKey = selectedPlayersA[v.index]
-        let prevKeyIndex = selA[0].findIndex(p1 => parseInt(p1.key) === prevKey)
-        let newKeyIndex = selA[0].findIndex(p2 => parseInt(p2.key) === newKey)
+        selectedPlayersA[index] = v.value
+        console.log(v.value)
+        if(selectedPlayersA[index].length === 2){
+            let others = this.process(v.value,selA[index])
+            console.log(others)
+            others.forEach(p => p.disabled = true)
+        }else{
+           // selA[index].forEach(p => p.disabled = false)
+        }
 
-        selectedPlayersA[v.index] = newKey;
-
-        selA.forEach((set, i) => {
-            if (i !== v.index) {
-                set[prevKeyIndex].disabled = false
-                if (newKey !== -1) {
-                    set[newKeyIndex].disabled = true
+        if(selectedPlayersA[index].length >0){
+            selA.forEach((list, idx) =>{
+                if(idx !==index){
+                    list.forEach(item => {
+                        if(v.value.includes(item.key)){
+                            item.disabled = true
+                        }
+                    })
                 }
-            }
+            })
+        }
 
-        });
-        this.setState({ selectedPlayersA: selectedPlayersA, selA: selA }, () => this.setMissingPlayers())
+
+        this.setState({ selectedPlayersA: selectedPlayersA }, () => this.setMissingPlayers())
     }
+
+    process = (keys,list) => list.filter(item => !keys.includes(item.key))
 
     changePlayerB = (e, v) => {
-
+        let index = v.index
         let selB = this.state.selB
         let selectedPlayersB = this.state.selectedPlayersB
-        let newKey = v.value
-        let prevKey = selectedPlayersB[v.index]
-        let prevKeyIndex = selB[0].findIndex(p1 => parseInt(p1.key) === prevKey)
-        let newKeyIndex = selB[0].findIndex(p2 => parseInt(p2.key) === newKey)
+        selectedPlayersB[index] = v.value
+     
+        if(selectedPlayersB[index].length === 2){
+            let others = this.process(v.value,selB[index])
+            console.log(others)
+            others.forEach(p => p.disabled = true)
+        }else{
+           // selA[index].forEach(p => p.disabled = false)
+        }
 
-        selectedPlayersB[v.index] = newKey;
-
-        selB.forEach((set, i) => {
-            if (i !== v.index) {
-                set[prevKeyIndex].disabled = false
-                if (newKey !== -1) {
-                    set[newKeyIndex].disabled = true
+        if(selectedPlayersB[index].length >0){
+            selB.forEach((list, idx) =>{
+                if(idx !==index){
+                    list.forEach(item => {
+                        if(v.value.includes(item.key)){
+                            item.disabled = true
+                        }
+                    })
                 }
-            }
+            })
+        }
 
-        });
-        this.setState({ selectedPlayersB: selectedPlayersB, selB: selB }, () => this.setMissingPlayers())
+
+        this.setState({ selectedPlayersB: selectedPlayersB }, () => this.setMissingPlayers())
 
     }
 
-    setMissingPlayers = () =>{
-        let missingA = this.state.selectedPlayersA.some(p => p === -1)
-        let missingB = this.state.selectedPlayersB.some(p => p === -1)
+    setMissingPlayers = () => {
+        let missingA = this.state.selectedPlayersA.some(p => p.length <2)
+        let missingB = this.state.selectedPlayersB.some(p => p.length <2)
 
         let isMissingPlayers = missingA || missingB
         console.log(isMissingPlayers)
-
-        this.setState({isMissingPlayers:isMissingPlayers})
+        this.setState({ isMissingPlayers: isMissingPlayers })
     }
 
 
@@ -285,11 +305,11 @@ class MatchPlay extends Component {
     handleSubmit = () => {
         this.setState({ isLoading: true })
         if (this.state.firstTime) {
-            this.updateMatchplay()
+            this.updateTwosomeplay()
         } else {
-            axios.post('/api/deletematchplaypairs', { gameId: this.props.game.id })
+            axios.post('/api/deletetwosomepairs', { gameId: this.props.game.id })
                 .then(res => {
-                    this.updateMatchplay()
+                    this.updateTwosomeplay()
                 })
                 .catch(err => {
                     console.log(err);
@@ -298,8 +318,7 @@ class MatchPlay extends Component {
         }
     }
 
-
-    updateMatchplay = () => {
+    updateTwosomeplay = () => {
         let gamesCount = this.state.games.length
         let selectedPlayersA = this.state.selectedPlayersA
         let selectedPlayersB = this.state.selectedPlayersB
@@ -314,10 +333,11 @@ class MatchPlay extends Component {
         for (let i = 0; i < gamesCount; i++) {
             sumA = sumA + pointsA[i]
             sumB = sumB + pointsB[i]
-            data[i] = [gameId, selectedPlayersA[i], selectedPlayersB[i], results[i], pointsA[i], pointsB[i]]
+            data[i] = [gameId, selectedPlayersA[i][0],selectedPlayersA[i][1], 
+            selectedPlayersB[i][0], selectedPlayersB[i][1],results[i], pointsA[i], pointsB[i]]
         }
         console.log(sumB)
-        axios.post('/api/addmatchplaypairs', { pairs: data, sumA: sumA, sumB: sumB, description: description }).then(res => {
+        axios.post('/api/addtwosomepairs', { pairs: data, sumA: sumA, sumB: sumB, description: description }).then(res => {
             this.setState({ isLoading: false }, () => this.props.updatePoints(gameId, sumA, sumB))
 
         }).catch(err => {
@@ -360,6 +380,8 @@ class MatchPlay extends Component {
                                                 label='Game'
                                                 index={index}
                                                 fluid
+                                                clearable
+                                                multiple
                                                 selection
                                                 placeholder='Select Player'
                                                 options={this.state.selA[index]}
@@ -374,6 +396,7 @@ class MatchPlay extends Component {
                                                 index={index}
                                                 fluid
                                                 selection
+                                                multiple
                                                 placeholder='Select Player'
                                                 options={this.state.selB[index]}
                                                 onChange={this.changePlayerB}
@@ -466,4 +489,4 @@ class MatchPlay extends Component {
     }
 }
 
-export default MatchPlay;
+export default Twosome;

@@ -4,6 +4,7 @@ import axios from "axios";
 import AddGame from "./AddGame";
 import Loading from "../../../Loading/Loading";
 import MatchPlay from "./MatchPlay";
+import Twosome from "./Twosome";
 
 
 //import "./tour.css";
@@ -26,7 +27,10 @@ class GamesSummary extends Component {
             allRoundsListed: false,
             isLoading: false,
             isOPenMatchPlay: false,
-            editingGame: null
+            isOPenTwosomePlay: false,
+
+            editingGame: null,
+            editingRound: ''
 
         }
     }
@@ -106,24 +110,39 @@ class GamesSummary extends Component {
 
     updatePoints = (gameId, points_a, points_b) => {
         let games = this.state.games
-        let game = games[games.findIndex(game => game.id ===gameId)]
+        let game = games[games.findIndex(game => game.id === gameId)]
         game.points_a = points_a
         game.points_b = points_b
         console.log(game)
-        this.setState({isOPenMatchPlay: false, games:games})
+        this.setState({ openGame: "", games: games })
     }
 
 
     closeEditGame = () => {
-        this.setState({ isOPenMatchPlay: false })
+        this.setState({ openGame: "" })
+    }
+
+    handleDeleteGame = async (e) => {
+        console.log(e)
+        try {
+            let newgames = this.state.games.filter(game => game.id !== e.id);
+            
+           await axios.post("/api/deletegame", { gameId: e.id })
+            this.setState({games:newgames})
+        } catch (error) {
+            console.log(error)
+        }
+       
     }
 
     handleEditGame = (e) => {
         //let editingGame = this.state.editingGame
         let editingGame = e
+        let editingRound = e.round
         e.teamIdA = this.state.idA
         e.teamIdB = this.state.idB
-        this.setState({ editingGame: editingGame, isOPenMatchPlay: true })
+
+        this.setState({ editingGame: editingGame, openGame: e.game_name, editingRound: editingRound })
 
     }
 
@@ -139,6 +158,7 @@ class GamesSummary extends Component {
                     <Table celled>
                         <Table.Header>
                             <Table.Row>
+                                <Table.HeaderCell width='1'>Delete</Table.HeaderCell>
                                 <Table.HeaderCell width='1'>Edit</Table.HeaderCell>
                                 <Table.HeaderCell width='1'>Round</Table.HeaderCell>
                                 <Table.HeaderCell width='3'>Game</Table.HeaderCell>
@@ -150,6 +170,7 @@ class GamesSummary extends Component {
                             {games.map((game, index) => {
                                 return (
                                     <Table.Row key={game.round}>
+                                        <Table.Cell ><Icon name='delete' link onClick={() => this.handleDeleteGame(game)} ></Icon></Table.Cell>
                                         <Table.Cell ><Icon name='edit' link onClick={() => this.handleEditGame(game)} ></Icon></Table.Cell>
                                         <Table.Cell >{game.round}</Table.Cell>
                                         <Table.Cell >
@@ -174,12 +195,29 @@ class GamesSummary extends Component {
                         </Modal.Content>
                     </Modal>
 
-                    <Modal id="editMatchPlay" size="fullscreen" open={this.state.isOPenMatchPlay} onClose={this.closeEditGame}
+                    <Modal id="editMatchPlay" size="fullscreen" open={this.state.openGame === "Matchplay"} onClose={this.closeEditGame}
                         closeOnDimmerClick={false}>
-                        <Modal.Header>Match Play</Modal.Header>
+                        <Modal.Header>Match Play - Round {this.state.editingRound} </Modal.Header>
                         <Modal.Content scrolling={true}>
 
                             {<MatchPlay
+                                game={this.state.editingGame}
+                                tourId={this.props.tourId} idA={this.state.idA}
+                                description={this.state.description}
+                                idB={this.state.idB}
+                                nameA={this.state.nameA}
+                                nameB={this.state.nameB}
+                                updatePoints={this.updatePoints}
+                                closeModal={this.closeEditGame} />}
+                        </Modal.Content>
+                    </Modal>
+
+                    <Modal id="editTwosomePlay" size="fullscreen" open={this.state.openGame === "Twosome"} onClose={this.closeEditGame}
+                        closeOnDimmerClick={false}>
+                        <Modal.Header>Twosome - Round {this.state.editingRound} </Modal.Header>
+                        <Modal.Content scrolling={true}>
+
+                            {<Twosome
                                 game={this.state.editingGame}
                                 tourId={this.props.tourId} idA={this.state.idA}
                                 description={this.state.description}
