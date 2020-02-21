@@ -26,10 +26,15 @@ class TourTeams extends Component {
 
     componentDidMount() {
         let t = this.props.editingTour
-        console.log(t.teams)
+        console.log(t)
         let hasTeams = parseInt(t.teams) > 0 ? true : false
         console.log(hasTeams)
-        this.setState({ id: t.id, name: t.name, status: t.status, rounds: parseInt(t.rounds), isLoading: true, hasTeams: hasTeams });
+        this.setState({ id: t.id, 
+            name: t.name, 
+            status: t.status, 
+            rounds: parseInt(t.rounds), 
+            isLoading: true, 
+            hasTeams: hasTeams });
 
         axios.post("/api/gettourplayers", { tourId: t.id }).then(res => {
            
@@ -53,6 +58,7 @@ class TourTeams extends Component {
                 })
             
             }
+            this.setState({ isLoading: false, tourPlayers: res.data })
 
         }).catch(err => {
             console.log(err);
