@@ -74,7 +74,7 @@ class Twosome extends Component {
 
 
         }).then(res2 => {
-            console.log(res2.data)
+         
             let results = this.state.results
             let pointsA = this.state.pointsA
             let pointsB = this.state.pointsB
@@ -104,7 +104,7 @@ class Twosome extends Component {
                 // Found twosome pairs in database
 
                 let firstTime = false
-                console.log(res2.data)
+    
                 let description = res2.data[0].description
 
                 res2.data.forEach((row, index) => {
@@ -149,117 +149,147 @@ class Twosome extends Component {
         let selectedPlayersA = this.state.selectedPlayersA
         let selectedPlayersB = this.state.selectedPlayersB
 
-        let numPlayers = selA.length
+  
 
         selA.forEach((set, index) => {
             let selected = set.filter(item => { return !(selectedPlayersA[index].includes(item.key)) })
             selected.forEach(player => player.disabled = true)
 
-            console.log(selA)
         });
 
         selB.forEach((set, index) => {
             let selected = set.filter(item => { return !(selectedPlayersB[index].includes(item.key)) })
             selected.forEach(player => player.disabled = true)
-
-            console.log(selA)
         });
 
 
     }
 
-    changePlayerA = (e, v) => {
-        // console.log(this.state.selectedPlayersA)
+  /*   changePlayerA = (e, v) => {
+        console.log(v)
         let index = v.index
         let selA = this.state.selA
         let selectedPlayersA = this.state.selectedPlayersA
         selectedPlayersA[index] = v.value
-        console.log(v.value)
-        if (selectedPlayersA[index].length === 2) {
-            let others = selA[index].filter(item => !v.value.includes(item.key))
-            others.forEach(p => p.disabled = true)
-        } else {
-            let otherSets = selA.filter((s,i) => i !=index)
-            selA[index].forEach(player =>{
-                if(this.isKeyInArrayofArrays(otherSets, player.key)){
-                    player.disabled = true
-                }else{
-                    player.disabled = false
-                }
-            })
 
 
-        }
-
-
-        selA.forEach((list, idx) => {
+        selA.forEach((set, idx) => {
             if (idx !== index) {
-                list.forEach((item, i) => {
-                    if (v.value.includes(item.key)) {
-                        item.disabled = true
-                    } else {
-                        if (selectedPlayersA[idx].includes(item.key) || selectedPlayersA[idx].length === 2) {
-                            item.disabled = true
+
+
+                if (selectedPlayersA[idx].length !== 2) {
+                    for (let p of set) {
+                        if (selectedPlayersA[idx].includes(p.key)) {
+                            p.disabled = false
+                        } else if (selectedPlayersA[index].includes(p.key)) {
+                            p.disabled = true
                         } else {
-                            item.disabled = false
+                            p.disabled = false
                         }
                     }
-                })
-            } else {
-
+                }
+            } else if (idx === index) {
+                if (selectedPlayersA[idx].length === 2) {
+                    let others = this.process(v.value, selA[index])
+                    others.forEach(p => p.disabled = true)
+                } else {
+                    set.forEach((p, i) => {
+                        console.log(p)
+                        if ((selectedPlayersA[index].includes(p.key))) {
+                            p.disabled = false
+                        } else if (selectedPlayersA[Math.abs(index - 1)].includes(p.key)) {
+                            p.disabled = true
+                        } else {
+                            p.disabled = false
+                        }
+                    })
+                }
             }
+
         })
+
 
 
 
         this.setState({ selectedPlayersA: selectedPlayersA }, () => this.setMissingPlayers())
     }
+ */
 
-    isKeyInArrayofArrays = (array, key) =>{
+    changePlayer = (e, v) => {
+        let sel = []
+        let selectedPlayers = []
+        
+        let index = v.index
+        if (v.label === 'A') {
+            sel = this.state.selA
+            selectedPlayers = this.state.selectedPlayersA
+
+        } else if (v.label === 'B') {
+            sel = this.state.selB
+            selectedPlayers = this.state.selectedPlayersB
+        }
+        selectedPlayers[index] = v.value
+        sel.forEach((set, idx) => {
+            if (idx !== index) {
+
+
+                if (selectedPlayers[idx].length !== 2) {
+                    for (let p of set) {
+                        if (selectedPlayers[idx].includes(p.key)) {
+                            p.disabled = false
+                        } else if (selectedPlayers[index].includes(p.key)) {
+                            p.disabled = true
+                        } else {
+                            p.disabled = false
+                        }
+                    }
+                }
+            } else if (idx === index) {
+                if (selectedPlayers[idx].length === 2) {
+                    let others = this.process(v.value, sel[index])
+                    others.forEach(p => p.disabled = true)
+                } else {
+                    set.forEach((p, i) => {
+                     
+                        if ((selectedPlayers[index].includes(p.key))) {
+                            p.disabled = false
+                        } else if (selectedPlayers[Math.abs(index - 1)].includes(p.key)) {
+                            p.disabled = true
+                        } else {
+                            p.disabled = false
+                        }
+                    })
+                }
+            }
+
+        })
+
+        if (v.label === 'A') {
+            this.setState({ selectedPlayersA: selectedPlayers }, () => this.setMissingPlayers())
+
+        } else if (v.label === 'B') {
+            this.setState({ selectedPlayersB: selectedPlayers }, () => this.setMissingPlayers())
+        }
+
+
+        // this.setState({ selectedPlayersA: selectedPlayersA }, () => this.setMissingPlayers())
+    }
+
+  /*   isKeyInArrayofArrays = (array, key) => {
         let x = 0
-        for(let s in array){
-            if(s.includes(key)){
+        for (let s in array) {
+            if (s.includes(key)) {
                 x++
             }
         }
         return x > 0 ? true : false
 
-    }
+    } */
 
 
     process = (keys, list) => list.filter(item => !keys.includes(item.key))
 
-    changePlayerB = (e, v) => {
-        let index = v.index
-        let selB = this.state.selB
-        let selectedPlayersB = this.state.selectedPlayersB
-        selectedPlayersB[index] = v.value
-
-        if (selectedPlayersB[index].length === 2) {
-            let others = this.process(v.value, selB[index])
-            console.log(others)
-            others.forEach(p => p.disabled = true)
-        } else {
-            // selA[index].forEach(p => p.disabled = false)
-        }
-
-        if (selectedPlayersB[index].length > 0) {
-            selB.forEach((list, idx) => {
-                if (idx !== index) {
-                    list.forEach(item => {
-                        if (v.value.includes(item.key)) {
-                            item.disabled = true
-                        }
-                    })
-                }
-            })
-        }
-
-
-        this.setState({ selectedPlayersB: selectedPlayersB }, () => this.setMissingPlayers())
-
-    }
-
+ 
     setMissingPlayers = () => {
         let missingA = this.state.selectedPlayersA.some(p => p.length < 2)
         let missingB = this.state.selectedPlayersB.some(p => p.length < 2)
@@ -363,8 +393,8 @@ class Twosome extends Component {
                     <Table celled>
                         <Table.Header>
                             <Table.Row>
-                                <Table.HeaderCell width='1'>{this.props.nameA}</Table.HeaderCell>
-                                <Table.HeaderCell width='1'>{this.props.nameB}</Table.HeaderCell>
+                                <Table.HeaderCell width='1'>A: {this.props.nameA}</Table.HeaderCell>
+                                <Table.HeaderCell width='1'>B: {this.props.nameB}</Table.HeaderCell>
                                 <Table.HeaderCell width='1'>Results</Table.HeaderCell>
                                 <Table.HeaderCell width='3'>winner</Table.HeaderCell>
                             </Table.Row>
@@ -375,7 +405,7 @@ class Twosome extends Component {
                                     <Table.Row key={game.pair}>
                                         <Table.Cell >
                                             <Dropdown
-                                                label='Game'
+                                                label='A'
                                                 index={index}
                                                 fluid
                                                 clearable
@@ -383,21 +413,21 @@ class Twosome extends Component {
                                                 selection
                                                 placeholder='Select Player'
                                                 options={this.state.selA[index]}
-                                                onChange={this.changePlayerA}
+                                                onChange={this.changePlayer}
                                                 disabled={false}
                                                 value={this.state.selectedPlayersA[index]}
                                             />
                                         </Table.Cell>
                                         <Table.Cell >
                                             <Dropdown
-                                                label='Game'
+                                                label='B'
                                                 index={index}
                                                 fluid
                                                 selection
                                                 multiple
                                                 placeholder='Select Player'
                                                 options={this.state.selB[index]}
-                                                onChange={this.changePlayerB}
+                                                onChange={this.changePlayer}
                                                 disabled={false}
                                                 value={this.state.selectedPlayersB[index]}
                                             />

@@ -5,7 +5,7 @@ import Loading from "../../../Loading/Loading";
 
 
 //import "./tour.css";
-class MatchPlay extends Component {
+class Stableford extends Component {
 
 
     constructor(props) {
@@ -27,8 +27,7 @@ class MatchPlay extends Component {
             games: [],
             firstTime: true,
             description: "",
-            isMissingPlayers:true
-
+            isMissingPlayers: true
 
         }
     }
@@ -36,7 +35,6 @@ class MatchPlay extends Component {
 
     componentDidMount() {
         this.setState({ isLoading: true })
-
 
         let games = this.state.games
 
@@ -51,15 +49,12 @@ class MatchPlay extends Component {
             let playersB = teamB.map(player => {
                 return { key: player.player_id, value: player.player_id, text: player.full_name }
             })
-            playersA.push({ key: -1, value: -1, text: "" })
-            playersB.push({ key: -1, value: -1, text: "" })
-            let selA = []
-            let selB = []
-            for (let i = 0; i < teamA.length; i++) {
-                selA[i] = JSON.parse(JSON.stringify(playersA));
-                selB[i] =  JSON.parse(JSON.stringify(playersB));
+
+        
+            games = []
+            for (let i = 0; i < teamA.length / 2; i++) {
+                games.push({ pair: i + 1 })
             }
-            games = teamA.map((p, i) => { return { pair: i + 1 } })
 
             this.setState({
                 playersA: playersA,
@@ -70,186 +65,20 @@ class MatchPlay extends Component {
                 description: this.props.game.description
             })
 
-            return axios.post('/api/getmatchplaypairs', { gameId: this.props.game.id })
+            return axios.post('/api/getstablefordgame', { gameId: this.props.game.id })
 
 
         }).then(res2 => {
-
-            let results = this.state.results
-            let pointsA = this.state.pointsA
-            let pointsB = this.state.pointsB
-            let selectedPlayersA = this.state.selectedPlayersA
-            let selectedPlayersB = this.state.selectedPlayersB
-
-            if (!res2.data || res2.data.length === 0) {
-                games.forEach((game, index) => {
-                    results[index] = ""
-                    pointsA[index] = 0.5
-                    pointsB[index] = 0.5
-                    selectedPlayersA[index] = -1
-                    selectedPlayersB[index] = -1
-                });
-
-
-                this.setState({
-                    results: results,
-                    pointsA: pointsA,
-                    pointsB: pointsB,
-                    description: this.props.game.description,
-                    selectedPlayersA: selectedPlayersA,
-                    selectedPlayersB: selectedPlayersB,
-                })
-            } else {
-                let firstTime = false
-
-                let description = res2.data[0].description
-
-                res2.data.forEach((row, index) => {
-                    selectedPlayersA[index] = parseInt(row.player_a)
-                    selectedPlayersB[index] = parseInt(row.player_b)
-                    results[index] = row.results
-                    pointsA[index] = row.points_a
-                    pointsB[index] = row.points_b
-
-                })
-
-
-                this.setState({
-                    results: results,
-                    pointsA: pointsA,
-                    pointsB: pointsB,
-                    selectedPlayersA: selectedPlayersA,
-                    selectedPlayersB: selectedPlayersB,
-                    description: description,
-                    firstTime: firstTime,
-                    isMissingPlayers:false
-
-                }, () => this.initPlayerSelection())
-
-            }
-            this.setState({ isLoading: false })
+         
+    
         }).catch(err => {
             console.log(err);
             this.setState({ isLoading: false })
         })
     }
 
-    initPlayerSelection = () => {
-
-        let selA = this.state.selA
-        let selB = this.state.selB
-
-        let selectedPlayersA = this.state.selectedPlayersA
-        let selectedPlayersB = this.state.selectedPlayersB
-
-        let numPlayers = selA.length
-
-        for (let i = 0; i < numPlayers; i++) {
-
-            let playerKeyB = selectedPlayersB[i]
-            selB.forEach((set, index) => {
-                set.forEach((item) => {
-                    if (index === i) {
-                        if (item.key === playerKeyB) {
-                            item.disabled = false
-                        }
-                    } else {
-                        if (item.key === playerKeyB) {
-                            item.disabled = true
-                        }
-                    }
-                    if (item.key === -1) {
-                        item.disabled = false
-                    }
-                })
-            })
-
-        }
-
-        for (let i = 0; i < numPlayers; i++) {
-
-            let playerKeyA = selectedPlayersA[i]
-         
-            selA.forEach((set, index) => {
-                set.forEach((item) => {
-                    if (index === i) {
-                        if (item.key === playerKeyA) {
-                            item.disabled = false
-                        }
-                    } else {
-                        if (item.key === playerKeyA) {
-                            item.disabled = true
-                        }
-                    }
-                    if (item.key === -1) {
-                        item.disabled = false
-                    }
-                })
-            })
 
 
-        }
-    }
-
-
-
-    changePlayerA = (e, v) => {
-
-
-        let selA = this.state.selA
-        let selectedPlayersA = this.state.selectedPlayersA
-        let newKey = v.value
-        let prevKey = selectedPlayersA[v.index]
-        let prevKeyIndex = selA[0].findIndex(p1 => parseInt(p1.key) === prevKey)
-        let newKeyIndex = selA[0].findIndex(p2 => parseInt(p2.key) === newKey)
-
-        selectedPlayersA[v.index] = newKey;
-
-        selA.forEach((set, i) => {
-            if (i !== v.index) {
-                set[prevKeyIndex].disabled = false
-                if (newKey !== -1) {
-                    set[newKeyIndex].disabled = true
-                }
-            }
-
-        });
-        this.setState({ selectedPlayersA: selectedPlayersA, selA: selA }, () => this.setMissingPlayers())
-    }
-
-    changePlayerB = (e, v) => {
-
-        let selB = this.state.selB
-        let selectedPlayersB = this.state.selectedPlayersB
-        let newKey = v.value
-        let prevKey = selectedPlayersB[v.index]
-        let prevKeyIndex = selB[0].findIndex(p1 => parseInt(p1.key) === prevKey)
-        let newKeyIndex = selB[0].findIndex(p2 => parseInt(p2.key) === newKey)
-
-        selectedPlayersB[v.index] = newKey;
-
-        selB.forEach((set, i) => {
-            if (i !== v.index) {
-                set[prevKeyIndex].disabled = false
-                if (newKey !== -1) {
-                    set[newKeyIndex].disabled = true
-                }
-            }
-
-        });
-        this.setState({ selectedPlayersB: selectedPlayersB, selB: selB }, () => this.setMissingPlayers())
-
-    }
-
-    setMissingPlayers = () =>{
-        let missingA = this.state.selectedPlayersA.some(p => p === -1)
-        let missingB = this.state.selectedPlayersB.some(p => p === -1)
-
-        let isMissingPlayers = missingA || missingB
-        console.log(isMissingPlayers)
-
-        this.setState({isMissingPlayers:isMissingPlayers})
-    }
 
 
     changeResult = (e, v) => {
@@ -285,11 +114,11 @@ class MatchPlay extends Component {
     handleSubmit = () => {
         this.setState({ isLoading: true })
         if (this.state.firstTime) {
-            this.updateMatchplay()
+            this.updateTwosomeplay()
         } else {
-            axios.post('/api/deletematchplaypairs', { gameId: this.props.game.id })
+            axios.post('/api/deletetwosomepairs', { gameId: this.props.game.id })
                 .then(res => {
-                    this.updateMatchplay()
+                    this.updateTwosomeplay()
                 })
                 .catch(err => {
                     console.log(err);
@@ -298,34 +127,7 @@ class MatchPlay extends Component {
         }
     }
 
-
-    updateMatchplay = () => {
-        let gamesCount = this.state.games.length
-        let selectedPlayersA = this.state.selectedPlayersA
-        let selectedPlayersB = this.state.selectedPlayersB
-        let pointsA = this.state.pointsA
-        let pointsB = this.state.pointsB
-        let results = this.state.results
-        let description = this.state.description
-        let sumA = 0
-        let sumB = 0
-        let data = []
-        let gameId = this.props.game.id
-        for (let i = 0; i < gamesCount; i++) {
-            sumA = sumA + pointsA[i]
-            sumB = sumB + pointsB[i]
-            data[i] = [gameId, selectedPlayersA[i], selectedPlayersB[i], results[i], pointsA[i], pointsB[i]]
-        }
-        console.log(sumB)
-        axios.post('/api/addmatchplaypairs', { pairs: data, sumA: sumA, sumB: sumB, description: description }).then(res => {
-            this.setState({ isLoading: false }, () => this.props.updatePoints(gameId, sumA, sumB))
-
-        }).catch(err => {
-            console.log(err);
-            this.setState({ isLoading: false })
-        })
-
-    }
+    
 
 
     handleCancel = (e) => {
@@ -357,26 +159,29 @@ class MatchPlay extends Component {
                                     <Table.Row key={game.pair}>
                                         <Table.Cell >
                                             <Dropdown
-                                                label='Game'
+                                                label='A'
                                                 index={index}
                                                 fluid
+                                                clearable
+                                                multiple
                                                 selection
                                                 placeholder='Select Player'
                                                 options={this.state.selA[index]}
-                                                onChange={this.changePlayerA}
+                                                onChange={this.changePlayer}
                                                 disabled={false}
                                                 value={this.state.selectedPlayersA[index]}
                                             />
                                         </Table.Cell>
                                         <Table.Cell >
                                             <Dropdown
-                                                label='Game'
+                                                label='B'
                                                 index={index}
                                                 fluid
                                                 selection
+                                                multiple
                                                 placeholder='Select Player'
                                                 options={this.state.selB[index]}
-                                                onChange={this.changePlayerB}
+                                                onChange={this.changePlayer}
                                                 disabled={false}
                                                 value={this.state.selectedPlayersB[index]}
                                             />
@@ -466,4 +271,4 @@ class MatchPlay extends Component {
     }
 }
 
-export default MatchPlay;
+export default Stableford;
