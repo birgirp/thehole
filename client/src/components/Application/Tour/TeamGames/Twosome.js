@@ -35,7 +35,7 @@ class Twosome extends Component {
 
     componentDidMount() {
         this.setState({ isLoading: true })
-       
+
         let games = this.state.games
 
 
@@ -60,7 +60,7 @@ class Twosome extends Component {
             for (let i = 0; i < teamA.length / 2; i++) {
                 games.push({ pair: i + 1 })
             }
-         
+
             this.setState({
                 playersA: playersA,
                 playersB: playersB,
@@ -86,8 +86,8 @@ class Twosome extends Component {
                     results[index] = ""
                     pointsA[index] = 0.5
                     pointsB[index] = 0.5
-                    selectedPlayersA[index] =[]
-                    selectedPlayersB[index] =[]
+                    selectedPlayersA[index] = []
+                    selectedPlayersB[index] = []
 
                 });
 
@@ -102,14 +102,14 @@ class Twosome extends Component {
                 })
             } else {
                 // Found twosome pairs in database
-                
+
                 let firstTime = false
                 console.log(res2.data)
                 let description = res2.data[0].description
 
                 res2.data.forEach((row, index) => {
-                    selectedPlayersA[index] =[]
-                    selectedPlayersB[index] =[]
+                    selectedPlayersA[index] = []
+                    selectedPlayersB[index] = []
                     selectedPlayersA[index][0] = parseInt(row.player_a1)
                     selectedPlayersA[index][1] = parseInt(row.player_a2)
                     selectedPlayersB[index][0] = parseInt(row.player_b1)
@@ -131,7 +131,7 @@ class Twosome extends Component {
                     firstTime: firstTime,
                     isMissingPlayers: false
 
-                })
+                }, () => this.initPlayerSelection())
 
             }
             this.setState({ isLoading: false })
@@ -151,105 +151,103 @@ class Twosome extends Component {
 
         let numPlayers = selA.length
 
-        for (let i = 0; i < numPlayers; i++) {
+        selA.forEach((set, index) => {
+            let selected = set.filter(item => { return !(selectedPlayersA[index].includes(item.key)) })
+            selected.forEach(player => player.disabled = true)
 
-            let playerKeyB = selectedPlayersB[i]
-            selB.forEach((set, index) => {
-                set.forEach((item) => {
-                    if (index === i) {
-                        if (item.key === playerKeyB) {
-                            item.disabled = false
-                        }
-                    } else {
-                        if (item.key === playerKeyB) {
-                            item.disabled = true
-                        }
-                    }
-                    if (item.key === -1) {
-                        item.disabled = false
-                    }
-                })
-            })
+            console.log(selA)
+        });
 
-        }
+        selB.forEach((set, index) => {
+            let selected = set.filter(item => { return !(selectedPlayersB[index].includes(item.key)) })
+            selected.forEach(player => player.disabled = true)
 
-        for (let i = 0; i < numPlayers; i++) {
-
-            let playerKeyA = selectedPlayersA[i]
-
-            selA.forEach((set, index) => {
-                set.forEach((item) => {
-                    if (index === i) {
-                        if (item.key === playerKeyA) {
-                            item.disabled = false
-                        }
-                    } else {
-                        if (item.key === playerKeyA) {
-                            item.disabled = true
-                        }
-                    }
-                    if (item.key === -1) {
-                        item.disabled = false
-                    }
-                })
-            })
+            console.log(selA)
+        });
 
 
-        }
     }
 
     changePlayerA = (e, v) => {
-       // console.log(this.state.selectedPlayersA)
+        // console.log(this.state.selectedPlayersA)
         let index = v.index
         let selA = this.state.selA
         let selectedPlayersA = this.state.selectedPlayersA
         selectedPlayersA[index] = v.value
         console.log(v.value)
-        if(selectedPlayersA[index].length === 2){
-            let others = this.process(v.value,selA[index])
-            console.log(others)
+        if (selectedPlayersA[index].length === 2) {
+            let others = selA[index].filter(item => !v.value.includes(item.key))
             others.forEach(p => p.disabled = true)
-        }else{
-           // selA[index].forEach(p => p.disabled = false)
-        }
-
-        if(selectedPlayersA[index].length >0){
-            selA.forEach((list, idx) =>{
-                if(idx !==index){
-                    list.forEach(item => {
-                        if(v.value.includes(item.key)){
-                            item.disabled = true
-                        }
-                    })
+        } else {
+            let otherSets = selA.filter((s,i) => i !=index)
+            selA[index].forEach(player =>{
+                if(this.isKeyInArrayofArrays(otherSets, player.key)){
+                    player.disabled = true
+                }else{
+                    player.disabled = false
                 }
             })
+
+
         }
+
+
+        selA.forEach((list, idx) => {
+            if (idx !== index) {
+                list.forEach((item, i) => {
+                    if (v.value.includes(item.key)) {
+                        item.disabled = true
+                    } else {
+                        if (selectedPlayersA[idx].includes(item.key) || selectedPlayersA[idx].length === 2) {
+                            item.disabled = true
+                        } else {
+                            item.disabled = false
+                        }
+                    }
+                })
+            } else {
+
+            }
+        })
+
 
 
         this.setState({ selectedPlayersA: selectedPlayersA }, () => this.setMissingPlayers())
     }
 
-    process = (keys,list) => list.filter(item => !keys.includes(item.key))
+    isKeyInArrayofArrays = (array, key) =>{
+        let x = 0
+        for(let s in array){
+            if(s.includes(key)){
+                x++
+            }
+        }
+        return x > 0 ? true : false
+
+    }
+
+
+    process = (keys, list) => list.filter(item => !keys.includes(item.key))
 
     changePlayerB = (e, v) => {
         let index = v.index
         let selB = this.state.selB
         let selectedPlayersB = this.state.selectedPlayersB
         selectedPlayersB[index] = v.value
-     
-        if(selectedPlayersB[index].length === 2){
-            let others = this.process(v.value,selB[index])
+
+        if (selectedPlayersB[index].length === 2) {
+            let others = this.process(v.value, selB[index])
             console.log(others)
             others.forEach(p => p.disabled = true)
-        }else{
-           // selA[index].forEach(p => p.disabled = false)
+        } else {
+            // selA[index].forEach(p => p.disabled = false)
         }
 
-        if(selectedPlayersB[index].length >0){
-            selB.forEach((list, idx) =>{
-                if(idx !==index){
+        if (selectedPlayersB[index].length > 0) {
+            selB.forEach((list, idx) => {
+                if (idx !== index) {
                     list.forEach(item => {
-                        if(v.value.includes(item.key)){
+                        if (v.value.includes(item.key)) {
                             item.disabled = true
                         }
                     })
@@ -263,8 +261,8 @@ class Twosome extends Component {
     }
 
     setMissingPlayers = () => {
-        let missingA = this.state.selectedPlayersA.some(p => p.length <2)
-        let missingB = this.state.selectedPlayersB.some(p => p.length <2)
+        let missingA = this.state.selectedPlayersA.some(p => p.length < 2)
+        let missingB = this.state.selectedPlayersB.some(p => p.length < 2)
 
         let isMissingPlayers = missingA || missingB
         console.log(isMissingPlayers)
@@ -333,8 +331,8 @@ class Twosome extends Component {
         for (let i = 0; i < gamesCount; i++) {
             sumA = sumA + pointsA[i]
             sumB = sumB + pointsB[i]
-            data[i] = [gameId, selectedPlayersA[i][0],selectedPlayersA[i][1], 
-            selectedPlayersB[i][0], selectedPlayersB[i][1],results[i], pointsA[i], pointsB[i]]
+            data[i] = [gameId, selectedPlayersA[i][0], selectedPlayersA[i][1],
+                selectedPlayersB[i][0], selectedPlayersB[i][1], results[i], pointsA[i], pointsB[i]]
         }
         console.log(sumB)
         axios.post('/api/addtwosomepairs', { pairs: data, sumA: sumA, sumB: sumB, description: description }).then(res => {
