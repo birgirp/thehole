@@ -5,6 +5,7 @@ import AddGame from "./AddGame";
 import Loading from "../../../Loading/Loading";
 import MatchPlay from "./MatchPlay";
 import Twosome from "./Twosome";
+import Stableford from "./Stableford";
 
 
 //import "./tour.css";
@@ -30,7 +31,9 @@ class GamesSummary extends Component {
             isOPenTwosomePlay: false,
 
             editingGame: null,
-            editingRound: ''
+            editingRound: '',
+            sumA :0,
+            sumB :0,
 
         }
     }
@@ -80,7 +83,9 @@ class GamesSummary extends Component {
             let games = response.data
             let listedRounds = games.map(game => { return parseInt(game.round) })
 
-            this.setState({ games: games, listedRounds: listedRounds, isLoading: false });
+            this.setState({ games: games, 
+                listedRounds: listedRounds, 
+                isLoading: false }, () => this.sumPoints());
         } catch (error) {
             console.log(error)
             this.setState({ isLoading: false })
@@ -88,8 +93,20 @@ class GamesSummary extends Component {
 
     }
 
+    sumPoints =() => {
+       let games = this.state.games
+        let sumA = 0
+        let sumB = 0
+        console.log(games)
+        games.forEach(game => {
+            sumA = sumA + game.points_a
+            sumB = sumB + game.points_b
+        });
 
 
+        this.setState({sumA:sumA, sumB:sumB})
+
+    }
 
     handleAddGame = (e, v) => {
         this.setState({ isAddingGame: true })
@@ -100,12 +117,12 @@ class GamesSummary extends Component {
         this.setState({ isAddingGame: false })
     }
 
-    addGame = (game, description) => {
+    addGame = (game) => {
         let games = this.state.games
 
         games.push(game)
         games.sort((a, b) => (a.round > b.round) ? 1 : -1)
-        this.setState({ games: games, description: description })
+        this.setState({ games: games })
     }
 
     updatePoints = (gameId, points_a, points_b) => {
@@ -114,7 +131,7 @@ class GamesSummary extends Component {
         game.points_a = points_a
         game.points_b = points_b
         console.log(game)
-        this.setState({ openGame: "", games: games })
+        this.setState({ openGame: "", games: games }, () => this.sumPoints())
     }
 
 
@@ -124,11 +141,13 @@ class GamesSummary extends Component {
 
     handleDeleteGame = async (e) => {
         console.log(e)
+        console.log(this.state.selectedRounds)
         try {
             let newgames = this.state.games.filter(game => game.id !== e.id);
+            let newlistedRounds = this.state.listedRounds.filter(item => item !== parseInt(e.round))
             
            await axios.post("/api/deletegame", { gameId: e.id })
-            this.setState({games:newgames})
+            this.setState({games:newgames,listedRounds:newlistedRounds })
         } catch (error) {
             console.log(error)
         }
@@ -151,7 +170,7 @@ class GamesSummary extends Component {
         if (this.state.isLoading) {
             return (<Loading />)
         } else {
-            const games = this.state.games;
+            let games = this.state.games;
             return (
                 <div>
                     <Button primary onClick={this.handleAddGame}>Add Game</Button>
@@ -181,13 +200,27 @@ class GamesSummary extends Component {
                                     </Table.Row>
                                 );
                             })}
+                       
+                    
+                          
                         </Table.Body>
+
+                        <Table.Footer>
+                                    <Table.Row >
+                                   <Table.HeaderCell></Table.HeaderCell>
+                                   <Table.HeaderCell></Table.HeaderCell>
+                                   <Table.HeaderCell></Table.HeaderCell>
+                                   <Table.HeaderCell></Table.HeaderCell>
+                                   <Table.HeaderCell><b>{this.state.sumA}</b></Table.HeaderCell>
+                                   <Table.HeaderCell><b>{this.state.sumB}</b></Table.HeaderCell>
+                                   </Table.Row>
+                                </Table.Footer>
                     </Table>
 
                     <Modal id="addingGameModal" size="fullscreen" open={this.state.isAddingGame} onClose={this.closeAddingGame}
                         closeOnDimmerClick={false}>
                         <Modal.Header>Add new Game</Modal.Header>
-                        <Modal.Content >
+                        <Modal.Content scrolling={true} >
 
                             {<AddGame listedRounds={this.state.listedRounds} addGame={this.addGame} tourId={this.props.tourId} rounds={this.props.rounds} gameTypes={this.state.gameTypes} closeModal={this.closeAddingGame} />}
 
@@ -222,6 +255,24 @@ class GamesSummary extends Component {
                                 tourId={this.props.tourId} idA={this.state.idA}
                                 description={this.state.description}
                                 idB={this.state.idB}
+                                nameA={this.state.nameA}
+                                nameB={this.state.nameB}
+                                updatePoints={this.updatePoints}
+                                closeModal={this.closeEditGame} />}
+                        </Modal.Content>
+                    </Modal>
+
+                    <Modal id="editStablefordPlay" size="fullscreen" open={this.state.openGame === "Stableford"} onClose={this.closeEditGame}
+                        closeOnDimmerClick={false}>
+                        <Modal.Header>Stableford - Round {this.state.editingRound} </Modal.Header>
+                        <Modal.Content scrolling={true}>
+
+                            {<Stableford
+                                game={this.state.editingGame}
+                                tourId={this.props.tourId} 
+                                idA={this.state.idA}
+                                idB={this.state.idB}
+                                description={this.state.description}
                                 nameA={this.state.nameA}
                                 nameB={this.state.nameB}
                                 updatePoints={this.updatePoints}

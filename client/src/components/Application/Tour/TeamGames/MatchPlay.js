@@ -37,7 +37,7 @@ class MatchPlay extends Component {
     componentDidMount() {
         this.setState({ isLoading: true })
 
-
+        console.log(this.props.game)
         let games = this.state.games
 
 
@@ -446,7 +446,7 @@ class MatchPlay extends Component {
                             placeholder='Description'
                             style={{ minHeight: 100 }}
                             type="Text"
-                            value={this.state.description}
+                            value={this.state.description || ''}
                             onChange={this.changeDescription}
                         />
                     </Form>

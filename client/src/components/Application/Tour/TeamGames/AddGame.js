@@ -37,8 +37,7 @@ class AddGame extends Component {
     changeRound = (e, v) => {
 
         let disabled = this.state.listedRounds.includes(parseInt(v.value)) ? true : false
-        console.log(this.state.listedRounds)
-        console.log(disabled)
+
         this.setState({ round: v.value, disabled:disabled })
     }
 
@@ -60,8 +59,8 @@ class AddGame extends Component {
             let id = parseInt(res.data[0].id)
 
             let gameName = this.state.gameTypes[idx].text
-            let game = { "id": id, "tour_id": this.state.tourId, "round": this.state.round, "game_name": gameName, "game": this.state.selectedGame, "status": "New", "points_a": 0, "points_b": 0 }
-            this.props.addGame(game,this.state.description)
+            let game = { "id": id, "tour_id": this.state.tourId, description: this.state.description,"round": this.state.round, "game_name": gameName, "game": this.state.selectedGame, "status": "New", "points_a": 0, "points_b": 0 }
+            this.props.addGame(game)
             this.handleCancel()
         })
     }

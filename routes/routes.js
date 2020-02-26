@@ -761,6 +761,21 @@ router.post("/api/gettwosomepairs", async (req, res) => {
 
 });
 
+
+router.post("/api/getstablefordgame", async (req, res) => {
+  try {
+    let gameId = req.body.tourId
+    let round = req.body.round
+    res.json(null)
+  } catch (error) {
+    console.log(error)
+    res.status(500);
+    res.json({ error: error });
+  }
+
+
+});
+
 router.post('/api/deletegame', async (req, res) => {
   let gameId = req.body.gameId
   try {
