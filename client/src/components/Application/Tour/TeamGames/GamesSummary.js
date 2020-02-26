@@ -32,8 +32,8 @@ class GamesSummary extends Component {
 
             editingGame: null,
             editingRound: '',
-            sumA :0,
-            sumB :0,
+            sumA: 0,
+            sumB: 0,
 
         }
     }
@@ -83,9 +83,11 @@ class GamesSummary extends Component {
             let games = response.data
             let listedRounds = games.map(game => { return parseInt(game.round) })
 
-            this.setState({ games: games, 
-                listedRounds: listedRounds, 
-                isLoading: false }, () => this.sumPoints());
+            this.setState({
+                games: games,
+                listedRounds: listedRounds,
+                isLoading: false
+            }, () => this.sumPoints());
         } catch (error) {
             console.log(error)
             this.setState({ isLoading: false })
@@ -93,18 +95,18 @@ class GamesSummary extends Component {
 
     }
 
-    sumPoints =() => {
-       let games = this.state.games
+    sumPoints = () => {
+        let games = this.state.games
         let sumA = 0
         let sumB = 0
-        console.log(games)
+
         games.forEach(game => {
             sumA = sumA + game.points_a
             sumB = sumB + game.points_b
         });
 
 
-        this.setState({sumA:sumA, sumB:sumB})
+        this.setState({ sumA: sumA, sumB: sumB })
 
     }
 
@@ -145,13 +147,13 @@ class GamesSummary extends Component {
         try {
             let newgames = this.state.games.filter(game => game.id !== e.id);
             let newlistedRounds = this.state.listedRounds.filter(item => item !== parseInt(e.round))
-            
-           await axios.post("/api/deletegame", { gameId: e.id })
-            this.setState({games:newgames,listedRounds:newlistedRounds })
+
+            await axios.post("/api/deletegame", { gameId: e.id })
+            this.setState({ games: newgames, listedRounds: newlistedRounds })
         } catch (error) {
             console.log(error)
         }
-       
+
     }
 
     handleEditGame = (e) => {
@@ -200,21 +202,21 @@ class GamesSummary extends Component {
                                     </Table.Row>
                                 );
                             })}
-                       
-                    
-                          
+
+
+
                         </Table.Body>
 
                         <Table.Footer>
-                                    <Table.Row >
-                                   <Table.HeaderCell></Table.HeaderCell>
-                                   <Table.HeaderCell></Table.HeaderCell>
-                                   <Table.HeaderCell></Table.HeaderCell>
-                                   <Table.HeaderCell></Table.HeaderCell>
-                                   <Table.HeaderCell><b>{this.state.sumA}</b></Table.HeaderCell>
-                                   <Table.HeaderCell><b>{this.state.sumB}</b></Table.HeaderCell>
-                                   </Table.Row>
-                                </Table.Footer>
+                            <Table.Row >
+                                <Table.HeaderCell></Table.HeaderCell>
+                                <Table.HeaderCell></Table.HeaderCell>
+                                <Table.HeaderCell></Table.HeaderCell>
+                                <Table.HeaderCell></Table.HeaderCell>
+                                <Table.HeaderCell><b>{this.state.sumA}</b></Table.HeaderCell>
+                                <Table.HeaderCell><b>{this.state.sumB}</b></Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Footer>
                     </Table>
 
                     <Modal id="addingGameModal" size="fullscreen" open={this.state.isAddingGame} onClose={this.closeAddingGame}
@@ -269,7 +271,7 @@ class GamesSummary extends Component {
 
                             {<Stableford
                                 game={this.state.editingGame}
-                                tourId={this.props.tourId} 
+                                tourId={this.props.tourId}
                                 idA={this.state.idA}
                                 idB={this.state.idB}
                                 description={this.state.description}

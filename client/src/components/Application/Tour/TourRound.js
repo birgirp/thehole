@@ -97,7 +97,7 @@ class TourRound extends Component {
                     this.setState({ rowData: rowData,  isLoading: false  })
                    
                 }else{
-                  
+                  console.log(res.data)
                 this.setState({ rowData: res.data })
                 if (this.state.isLoading) {
 

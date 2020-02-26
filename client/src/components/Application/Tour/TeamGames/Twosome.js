@@ -364,7 +364,7 @@ class Twosome extends Component {
             data[i] = [gameId, selectedPlayersA[i][0], selectedPlayersA[i][1],
                 selectedPlayersB[i][0], selectedPlayersB[i][1], results[i], pointsA[i], pointsB[i]]
         }
-        console.log(sumB)
+      
         axios.post('/api/addtwosomepairs', { pairs: data, sumA: sumA, sumB: sumB, description: description }).then(res => {
             this.setState({ isLoading: false }, () => this.props.updatePoints(gameId, sumA, sumB))
 

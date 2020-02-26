@@ -764,9 +764,15 @@ router.post("/api/gettwosomepairs", async (req, res) => {
 
 router.post("/api/getstablefordgame", async (req, res) => {
   try {
-    let gameId = req.body.tourId
+    let tourId = req.body.tourId
     let round = req.body.round
-    res.json(null)
+    let data = await dbdata.getStablefordGameScorecards(tourId, round)
+    if (data.rows.length === 0) {
+      res.json(null);
+    } else {
+   
+     res.json(data.rows)
+    }
   } catch (error) {
     console.log(error)
     res.status(500);

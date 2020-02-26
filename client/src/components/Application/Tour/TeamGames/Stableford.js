@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Table, Input, Dropdown, Radio, TextArea, Form } from "semantic-ui-react";
+import { Button, Table, TextArea, Form } from "semantic-ui-react";
 import axios from "axios";
 import Loading from "../../../Loading/Loading";
 
@@ -11,8 +11,8 @@ class Stableford extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            pointsA: [],
-            pointsB: [],
+            sumPointsA: 0 ,
+            sumPointsB: 0,
             nameA: "",
             nameB: "",
             teamA: [],
@@ -28,9 +28,10 @@ class Stableford extends Component {
 
     componentDidMount() {
         this.setState({ isLoading: true })
+        let teamA =[]
+        let teamB =[]
 
-        let games = this.state.games
-
+      
 
         axios.post("/api/getteammembers", { tourId: this.props.tourId }).then(res => {
 
@@ -40,23 +41,46 @@ class Stableford extends Component {
                 element.points = 0
             });
 
-            let teamA = res.data.filter(team => { return team.team_id === this.props.idA })
-            let teamB = res.data.filter(team => { return team.team_id === this.props.idB })
+            teamA = res.data.filter(team => { return team.team_id === this.props.idA })
+            teamB = res.data.filter(team => { return team.team_id === this.props.idB })
+  
 
-            console.log(teamB)
-
-            this.setState({
-                teamA: teamA,
-                teamB: teamB,
-                description: this.props.game.description
-            })
-
-            return axios.post('/api/getstablefordgame', { gameId: this.props.game.id })
+            return axios.post('/api/getstablefordgame', { tourId: this.props.game.tour_id, round: this.props.game.round })
 
 
         }).then(res2 => {
+            if (res2.data) {
+                let scores = res2.data
+                console.log(scores)
+                let sumPointsA = 0
+                let sumPointsB = 0
+                let isAllSubmitted = true
+                for(let i = 0; i< teamA.length; i++){
+                    let playerA = teamA[i]
+                    let playerB = teamB[i]
+                    playerA.points = parseInt(scores.filter(p => p.player_id === playerA.player_id)[0].points)
+                    playerA.status = scores.filter(p => p.player_id === playerA.player_id)[0].status
+                    sumPointsA +=playerA.points
+                    playerB.points = parseInt(scores.filter(p => p.player_id === playerB.player_id)[0].points)
+                    playerB.status = scores.filter(p => p.player_id === playerB.player_id)[0].status
+                    sumPointsB +=playerB.points
+                    isAllSubmitted = ( playerA.status !== 'Submitted' || playerB.status !== 'Submitted')? false :true
 
-            this.setState({ isLoading: false})
+                }
+                
+                console.log(teamA)
+
+                this.setState({
+                    teamA: teamA,
+                    teamB: teamB,
+                    description: this.props.game.description,
+                    sumPointsA: sumPointsA,
+                    sumPointsB: sumPointsB,
+                    isLoading: false,
+                    isAllSubmitted: isAllSubmitted
+                })
+            }
+
 
         }).catch(err => {
             console.log(err);
@@ -85,7 +109,24 @@ class Stableford extends Component {
 
 
     handleSubmit = () => {
+        let gameId = this.props.game.id
+        let a =this.state.sumPointsA
+        let b =this.state.sumPointsB
+        let sumA, sumB
+        let delta = a-b
+       if(delta === 0){
+        sumA = 0.5
+        sumB = 0.5
+       }else if(delta >0){
+        sumA = 1
+        sumB = 0
+       }else{
+        sumA = 0
+        sumB = 1
+       }
 
+
+        this.props.updatePoints(gameId, sumA, sumB)
     }
 
 
@@ -121,30 +162,38 @@ class Stableford extends Component {
                             {teamA.map((player, index) => {
                                 return (
                                     <Table.Row key={index}>
-                                        <Table.Cell >
+                                        <Table.Cell negative ={player.status !== 'Submitted'} >
                                             {player.full_name}
                                         </Table.Cell>
-                                        <Table.Cell >
+                                        <Table.Cell  negative ={player.status !== 'Submitted'} >
                                             {player.handicap}
-
                                         </Table.Cell>
-                                        <Table.Cell >
-                                        {player.points || 0 }
+                                        <Table.Cell  negative ={player.status !== 'Submitted'}>
+                                            {player.points || 0}
                                         </Table.Cell>
-                                        <Table.Cell >
+                                        <Table.Cell   negative ={teamB[index].status !== 'Submitted'}>
                                             {teamB[index].full_name}
                                         </Table.Cell>
-                                        <Table.Cell >
-                                        {teamB[index].handicap}
+                                        <Table.Cell  negative ={teamB[index].status !== 'Submitted'} >
+                                            {teamB[index].handicap}
                                         </Table.Cell>
-                                        <Table.Cell >
-                                        {teamB[index].points || 0}
+                                        <Table.Cell  negative ={teamB[index].status !== 'Submitted'} >
+                                            {teamB[index].points || 0}
                                         </Table.Cell>
-
                                     </Table.Row>
                                 );
                             })}
                         </Table.Body>
+                        <Table.Footer>
+                            <Table.Row >
+                                <Table.HeaderCell></Table.HeaderCell>
+                                <Table.HeaderCell></Table.HeaderCell>
+                                <Table.HeaderCell><b>{this.state.sumPointsA}</b></Table.HeaderCell>
+                                <Table.HeaderCell></Table.HeaderCell>
+                                <Table.HeaderCell></Table.HeaderCell>
+                                <Table.HeaderCell><b>{this.state.sumPointsB}</b></Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Footer>
                     </Table>
                     <br></br>
                     <Form>
@@ -161,7 +210,7 @@ class Stableford extends Component {
                     <Button
                         primary
                         onClick={this.handleSubmit}
-                        disabled={this.state.isMissingPlayers}>
+                        disabled={!this.state.isAllSubmitted}>
                         Save
                     </Button>
                     <Button secondary onClick={this.handleCancel}>Cancel</Button>

@@ -399,6 +399,18 @@ module.exports = {
         })
     },
 
+    getStablefordGameScorecards: function (tourId, round) {
+        return new Promise((resolve, reject) => {
+            pool.query('select player_id,  points, status  from v_stablefordgame_scorecards where tour_id =  $1 and tour_round = $2;', [tourId, round]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+
+
     getTourPars: function (tourId) {
         return new Promise((resolve, reject) => {
             pool.query('select player_id, full_name, pars, birdies, eagles  from v_countpars where tour_id =  $1;', [tourId]).then((results) => {
@@ -511,11 +523,6 @@ module.exports = {
         })
     },
 
-
-
-
-
-
     getRoundScorecards: function (tourId, round) {
 
         return new Promise((resolve, reject) => {
@@ -527,6 +534,8 @@ module.exports = {
             })
         })
     },
+
+
     getTourRankSum: function (tourId) {
         // console.log("fetchingf  " + tourId + "  " + round)
         return new Promise((resolve, reject) => {
