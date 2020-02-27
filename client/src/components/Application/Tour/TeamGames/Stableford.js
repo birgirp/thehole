@@ -11,7 +11,7 @@ class Stableford extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            sumPointsA: 0 ,
+            sumPointsA: 0,
             sumPointsB: 0,
             nameA: "",
             nameB: "",
@@ -28,10 +28,11 @@ class Stableford extends Component {
 
     componentDidMount() {
         this.setState({ isLoading: true })
-        let teamA =[]
-        let teamB =[]
-
-      
+        let teamA = []
+        let teamB = []
+        let sumPointsA = 0
+        let sumPointsB = 0
+        let isAllSubmitted = false
 
         axios.post("/api/getteammembers", { tourId: this.props.tourId }).then(res => {
 
@@ -43,7 +44,7 @@ class Stableford extends Component {
 
             teamA = res.data.filter(team => { return team.team_id === this.props.idA })
             teamB = res.data.filter(team => { return team.team_id === this.props.idB })
-  
+
 
             return axios.post('/api/getstablefordgame', { tourId: this.props.game.tour_id, round: this.props.game.round })
 
@@ -52,22 +53,34 @@ class Stableford extends Component {
             if (res2.data) {
                 let scores = res2.data
                 console.log(scores)
-                let sumPointsA = 0
-                let sumPointsB = 0
-                let isAllSubmitted = true
-                for(let i = 0; i< teamA.length; i++){
+
+                isAllSubmitted = true
+
+                for (let i = 0; i < teamA.length; i++) {
                     let playerA = teamA[i]
                     let playerB = teamB[i]
-                    playerA.points = parseInt(scores.filter(p => p.player_id === playerA.player_id)[0].points)
-                    playerA.status = scores.filter(p => p.player_id === playerA.player_id)[0].status
-                    sumPointsA +=playerA.points
-                    playerB.points = parseInt(scores.filter(p => p.player_id === playerB.player_id)[0].points)
-                    playerB.status = scores.filter(p => p.player_id === playerB.player_id)[0].status
-                    sumPointsB +=playerB.points
-                    isAllSubmitted = ( playerA.status !== 'Submitted' || playerB.status !== 'Submitted')? false :true
+                    if (scores.some(p => p.player_id === playerA.player_id)) {
+                        playerA.points = parseInt(scores.filter(p => p.player_id === playerA.player_id)[0].points)
+                        playerA.status = scores.filter(p => p.player_id === playerA.player_id)[0].status
+                    } else {
+                        playerA.points = 0
+                        playerA.status = ""
+                    }
+                    sumPointsA += playerA.points
+                    if (scores.some(p => p.player_id === playerB.player_id)) {
+                        playerB.points = parseInt(scores.filter(p => p.player_id === playerB.player_id)[0].points)
+                        playerB.status = scores.filter(p => p.player_id === playerB.player_id)[0].status
+                    } else {
+                        playerB.points = 0
+                        playerB.status = ""
+                    }
+
+                    sumPointsB += playerB.points
+
+                    isAllSubmitted = (playerA.status !== 'Submitted' || playerB.status !== 'Submitted') ? false : true
 
                 }
-                
+
                 console.log(teamA)
 
                 this.setState({
@@ -79,6 +92,18 @@ class Stableford extends Component {
                     isLoading: false,
                     isAllSubmitted: isAllSubmitted
                 })
+            } else {
+
+                this.setState({
+                    teamA: teamA,
+                    teamB: teamB,
+                    description: this.props.game.description,
+                    sumPointsA: sumPointsA,
+                    sumPointsB: sumPointsB,
+                    isLoading: false,
+                    isAllSubmitted: isAllSubmitted
+                })
+
             }
 
 
@@ -110,20 +135,20 @@ class Stableford extends Component {
 
     handleSubmit = () => {
         let gameId = this.props.game.id
-        let a =this.state.sumPointsA
-        let b =this.state.sumPointsB
+        let a = this.state.sumPointsA
+        let b = this.state.sumPointsB
         let sumA, sumB
-        let delta = a-b
-       if(delta === 0){
-        sumA = 0.5
-        sumB = 0.5
-       }else if(delta >0){
-        sumA = 1
-        sumB = 0
-       }else{
-        sumA = 0
-        sumB = 1
-       }
+        let delta = a - b
+        if (delta === 0) {
+            sumA = 0.5
+            sumB = 0.5
+        } else if (delta > 0) {
+            sumA = 1
+            sumB = 0
+        } else {
+            sumA = 0
+            sumB = 1
+        }
 
 
         this.props.updatePoints(gameId, sumA, sumB)
@@ -162,22 +187,22 @@ class Stableford extends Component {
                             {teamA.map((player, index) => {
                                 return (
                                     <Table.Row key={index}>
-                                        <Table.Cell negative ={player.status !== 'Submitted'} >
+                                        <Table.Cell negative={player.status !== 'Submitted'} >
                                             {player.full_name}
                                         </Table.Cell>
-                                        <Table.Cell  negative ={player.status !== 'Submitted'} >
+                                        <Table.Cell negative={player.status !== 'Submitted'} >
                                             {player.handicap}
                                         </Table.Cell>
-                                        <Table.Cell  negative ={player.status !== 'Submitted'}>
+                                        <Table.Cell negative={player.status !== 'Submitted'}>
                                             {player.points || 0}
                                         </Table.Cell>
-                                        <Table.Cell   negative ={teamB[index].status !== 'Submitted'}>
+                                        <Table.Cell negative={teamB[index].status !== 'Submitted'}>
                                             {teamB[index].full_name}
                                         </Table.Cell>
-                                        <Table.Cell  negative ={teamB[index].status !== 'Submitted'} >
+                                        <Table.Cell negative={teamB[index].status !== 'Submitted'} >
                                             {teamB[index].handicap}
                                         </Table.Cell>
-                                        <Table.Cell  negative ={teamB[index].status !== 'Submitted'} >
+                                        <Table.Cell negative={teamB[index].status !== 'Submitted'} >
                                             {teamB[index].points || 0}
                                         </Table.Cell>
                                     </Table.Row>
