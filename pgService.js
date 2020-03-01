@@ -616,6 +616,21 @@ module.exports = {
         })
     },
 
+    insertLonesomeScores: function (scores) {
+      
+        console.log("inserting Lonesome scores...")
+     
+        let query = format('INSERT INTO lonesome_scores (game_id, player_id, score) values %L', scores);
+        return new Promise((resolve, reject) => {
+            pool.query(query).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+
     getMatchplayPairs: function (game_id) {
         console.log("fetching matchplay pairs  ")
         return new Promise((resolve, reject) => {
@@ -649,6 +664,22 @@ module.exports = {
         })
     },
 
+
+    getLonesomeGame:function (game_id) {
+        console.log("fetching Lonesome scores  ")
+        return new Promise((resolve, reject) => {
+            pool.query('select  ls.player_id, ls.score,  tg.description \
+       from lonesome_scores ls \
+       join team_games tg on tg.id = ls.game_id \
+       where game_id = $1;', [game_id]).then((results) => {
+                resolve(results);
+            }).catch((error) => {
+                console.log("db error...")
+                reject(error)
+            })
+        })
+    },
+
     deleteMatchplay: function (gameId) {
         return new Promise((resolve, reject) => {
 
@@ -667,6 +698,20 @@ module.exports = {
 
 
             pool.query('delete from twosome_pairs where game_id = $1', [gameId]).then((results) => {
+                resolve(results)
+            }).catch(error => {
+                console.log("db error")
+                reject(error)
+            })
+        })
+    },
+
+    
+    deleteLonesomeScores: function (gameId) {
+        return new Promise((resolve, reject) => {
+
+
+            pool.query('delete from lonesome_scores where game_id = $1', [gameId]).then((results) => {
                 resolve(results)
             }).catch(error => {
                 console.log("db error")

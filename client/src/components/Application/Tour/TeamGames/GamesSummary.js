@@ -6,6 +6,7 @@ import Loading from "../../../Loading/Loading";
 import MatchPlay from "./MatchPlay";
 import Twosome from "./Twosome";
 import Stableford from "./Stableford";
+import Lonesome from "./Lonesome";
 
 
 //import "./tour.css";
@@ -270,6 +271,24 @@ class GamesSummary extends Component {
                         <Modal.Content scrolling={true}>
 
                             {<Stableford
+                                game={this.state.editingGame}
+                                tourId={this.props.tourId}
+                                idA={this.state.idA}
+                                idB={this.state.idB}
+                                description={this.state.description}
+                                nameA={this.state.nameA}
+                                nameB={this.state.nameB}
+                                updatePoints={this.updatePoints}
+                                closeModal={this.closeEditGame} />}
+                        </Modal.Content>
+                    </Modal>
+
+                    <Modal id="editLonesomeGame" size="fullscreen" open={this.state.openGame === "Lonesome"} onClose={this.closeEditGame}
+                        closeOnDimmerClick={false}>
+                        <Modal.Header>Lonesome - Round {this.state.editingRound} </Modal.Header>
+                        <Modal.Content scrolling={true}>
+
+                            {<Lonesome
                                 game={this.state.editingGame}
                                 tourId={this.props.tourId}
                                 idA={this.state.idA}

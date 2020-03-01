@@ -134,10 +134,12 @@ class Stableford extends Component {
 
 
     handleSubmit = () => {
+        this.setState({ isLoading: true })
         let gameId = this.props.game.id
         let a = this.state.sumPointsA
         let b = this.state.sumPointsB
         let sumA, sumB
+        let status = 'Saved'
         let delta = a - b
         if (delta === 0) {
             sumA = 0.5
@@ -151,7 +153,13 @@ class Stableford extends Component {
         }
 
 
-        this.props.updatePoints(gameId, sumA, sumB)
+        axios.post('/api/updateteamgamepoints', { gameId: gameId, sumA: sumA, sumB: sumB, description: this.state.description, status: status }).then(res => {
+            this.setState({ isLoading: false }, () => this.props.updatePoints(gameId, sumA, sumB))
+
+        }).catch(err => {
+            console.log(err);
+            this.setState({ isLoading: false })
+        })
     }
 
 
