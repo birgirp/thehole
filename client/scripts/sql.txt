@@ -247,6 +247,18 @@ WITH (
     OIDS = FALSE
 )
 
+CREATE TABLE public.lonesome_scores
+(
+    game_id integer NOT NULL,
+	player_id integer NOT NULL,
+    results text COLLATE pg_catalog."default",
+    score integer,
+    CONSTRAINT lonesome_scores_game_id_fkey FOREIGN KEY (game_id)
+        REFERENCES public.team_games (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+
 --- views ---
 
 CREATE OR REPLACE VIEW v_birdies
