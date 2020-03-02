@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 //import ReactDOM from "react-dom";
 //import { BrowserRouter as Router, Route } from "react-router-dom";
-import "semantic-ui-css/semantic.min.css";
+import 'semantic-ui-css/semantic.min.css'
 import {
   Button,
   Form,
@@ -11,70 +11,67 @@ import {
   Segment,
   Modal,
   Message
-} from "semantic-ui-react";
-import axios from "axios";
-import { withRouter } from "react-router-dom";
-import "../index.css";
+} from 'semantic-ui-react'
+import axios from 'axios'
+import { withRouter } from 'react-router-dom'
+import '../index.css'
 
 class Login extends Component {
   state = {
-    email: "",
-    password: "",
+    email: '',
+    password: '',
     submitting: false,
     unknownuser: false,
     success: false
-  };
+  }
 
   close = () => {
-    this.setState({ unknownuser: false, password: "" });
-  };
+    this.setState({ unknownuser: false, password: '' })
+  }
 
   handleEmailChange = event => {
-    this.setState({ email: event.target.value });
-  };
+    this.setState({ email: event.target.value })
+  }
 
   handlePasswordChange = event => {
-    this.setState({ password: event.target.value });
-  };
+    this.setState({ password: event.target.value })
+  }
 
   handleSubmit = () => {
-    // this.setState({ submitting: true });
-
     axios
-      .post("/users/login/", {
+      .post('/users/login/', {
         email: this.state.email,
         password: this.state.password
       })
       .then(response => {
-        console.log(JSON.stringify(response.data.user.id));
         if (response.data.user === false) {
-          this.setState({ unknownuser: true });
+          this.setState({ unknownuser: true })
         } else {
-          this.setState({ success: true });
+          this.setState({ success: true })
           this.props.changeLoggedIn(
             response.data.user.is_admin,
             response.data.user.id
-          );
+          )
         }
       })
       .catch(error => {
-        console.log(error);
-      });
+        console.log(error)
+      })
 
     // this.setState({ submitting: false });
-  };
+  }
 
   render() {
     /* if (this.state.success === true) {
       return <Redirect to='/home' />
     } else */ {
-      let imgUrl = "./hole.png";
+      let imgUrl = './hole.png'
       const divStyle = {
-        color: "black",
-        backgroundImage: "url(" + imgUrl + ")",
-        backgroundSize: "cover",
-        height: "100vh"
-      };
+        color: 'black',
+        backgroundImage: 'url(' + imgUrl + ')',
+        backgroundSize: 'cover',
+        height: '100vh'
+      }
 
       return (
         <div style={divStyle}>
@@ -82,33 +79,33 @@ class Login extends Component {
           <br />
           <br />
           <br />
-          <Grid id="loginForm" centered columns={2}>
-            <Grid.Column id="loginBox">
-              <Header as="h2" textAlign="center" color="violet"></Header>
+          <Grid id='loginForm' centered columns={2}>
+            <Grid.Column id='loginBox'>
+              <Header as='h2' textAlign='center' color='violet'></Header>
               <Segment>
-                <Form size="large">
+                <Form size='large'>
                   <Form.Input
                     fluid
-                    icon="user"
-                    iconPosition="left"
-                    placeholder="Email address"
+                    icon='user'
+                    iconPosition='left'
+                    placeholder='Email address'
                     value={this.state.email}
                     //pattern=""
                     onChange={this.handleEmailChange}
                   />
                   <Form.Input
                     fluid
-                    icon="lock"
-                    iconPosition="left"
-                    placeholder="Password"
-                    type="password"
+                    icon='lock'
+                    iconPosition='left'
+                    placeholder='Password'
+                    type='password'
                     value={this.state.password}
                     onChange={this.handlePasswordChange}
                   />
                   <Button
-                    color="blue"
+                    color='blue'
                     fluid
-                    size="large"
+                    size='large'
                     onClick={this.handleSubmit}
                   >
                     Login
@@ -118,7 +115,7 @@ class Login extends Component {
                     <div>
                       <h3>Unknown username or password</h3>
                       <p>You can only log in with valid account.</p>
-                      <Button as={Link} to="/resetpassword">
+                      <Button as={Link} to='/resetpassword'>
                         Reset password
                       </Button>
                     </div>
@@ -129,23 +126,23 @@ class Login extends Component {
           </Grid>
 
           <Modal
-            id="loginErrorModal"
-            size="tiny"
+            id='loginErrorModal'
+            size='tiny'
             open={this.state.f}
             onClose={this.close}
           >
             <Modal.Content>
               <Message
                 error
-                header="Unknown username or password"
-                content="You can only log in with valid account."
+                header='Unknown username or password'
+                content='You can only log in with valid account.'
               />
             </Modal.Content>
           </Modal>
         </div>
-      );
+      )
     }
   }
 }
 
-export default withRouter(Login);
+export default withRouter(Login)

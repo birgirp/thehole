@@ -1,123 +1,109 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
+import { Button, Form, Grid, Header, Segment } from 'semantic-ui-react'
+import axios from 'axios'
+import Loading from '../../Loading/Loading'
 
-import {
-  Button,
-  Form,
-  Grid,
-  Header,
-  Segment,
-  Modal,
-  Message
-} from "semantic-ui-react";
-import axios from "axios";
-import Loading from "../../Loading/Loading"
-
-const title = {
-  pageTitle: "Forgot Password Screen"
-};
+const emailRegex = RegExp(
+  /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+)
 
 class ForgotPassword extends Component {
   constructor() {
-    super();
+    super()
 
     this.state = {
-      email: "",
+      email: '',
       showError: false,
-      messageFromServer: "",
+      messageFromServer: '',
       showNullError: false
-    };
+    }
   }
 
   handleChange = name => event => {
-    console.log(name);
     this.setState({
       [name]: event.target.value
-    });
-  };
-
-  cancel = () => {};
+    })
+  }
 
   sendEmail = async e => {
-    e.preventDefault();
-    const { email } = this.state;
-    if (email === "") {
+    e.preventDefault()
+    const { email } = this.state
+    if (email === '') {
       this.setState({
         showError: false,
-        messageFromServer: "",
+        messageFromServer: '',
         showNullError: true
-      });
+      })
     } else {
       try {
-        const response = await axios.post(
-          "http://localhost:3003/forgotPassword",
-          {
-            email
-          }
-        );
-        console.log(response.data);
-        if (response.data === "recovery email sent") {
+        const response = await axios.post('/users/sendresetemail', {
+          email
+        })
+        console.log(response.data)
+        if (response.data === 'recovery email sent') {
           this.setState({
             showError: false,
-            messageFromServer: "recovery email sent",
+            messageFromServer: 'recovery email sent',
             showNullError: false
-          });
+          })
         }
       } catch (error) {
-        console.error(error.response.data);
-        if (error.response.data === "email not in db") {
+        console.error(error.response.data)
+        if (error.response.data === 'email not in db') {
           this.setState({
             showError: true,
-            messageFromServer: "",
+            messageFromServer: '',
             showNullError: false
-          });
+          })
         }
       }
     }
-  };
+  }
 
   render() {
-    const { email, messageFromServer, showNullError, showError } = this.state;
+    const { email, messageFromServer, showNullError, showError } = this.state
     if (this.state.isLoading) {
-      return <Loading />;
+      return <Loading />
     } else {
       return (
         <div>
+          <br></br>
+          <br></br>
+          <br></br>
           <div>
-            <Grid id="ChangePasswordForm" centered columns={1}>
-              <Grid.Column id="changepsw">
-                <Header as="h2" textAlign="center" color="violet">
+            <Grid id='ChangePasswordForm' columns='equal'>
+              <Grid.Column></Grid.Column>
+              <Grid.Column id='changepsw'>
+                <Header as='h2' textAlign='center' color='violet'>
                   Change Password
                 </Header>
                 <Segment>
-                  <Form size="large">
+                  <Form size='mini'>
                     <Form.Input
                       fluid
-                      icon="user"
-                      iconPosition="left"
-                      placeholder="Email address"
+                      icon='user'
+                      iconPosition='left'
+                      placeholder='Email address'
                       value={this.state.email}
-                      onChange={this.handleChange("email")}
+                      onChange={this.handleChange('email')}
                     />
-
                     <Button
-                      color="blue"
-                      fluid
-                     
+                      color='blue'
                       onClick={this.sendEmail}
+                      disabled={!emailRegex.test(this.state.email)}
                     >
-                      Send request
+                      Send password reset email
                     </Button>
-                    <Button
-                      negative={true}
-                      fluid
-                     
-                      onClick={this.cancel}
-                    >
+                    <br />
+                    <br />
+                    <Button as={Link} to='/' negative>
                       Cancel
                     </Button>
                   </Form>
                 </Segment>
               </Grid.Column>
+              <Grid.Column></Grid.Column>
             </Grid>
           </div>
           {showNullError && (
@@ -127,19 +113,17 @@ class ForgotPassword extends Component {
           )}
           {showError && (
             <div>
-              <p>
-                That email address isn&apos;t recognized. Please try again.
-              </p>
+              <p>That email address isn&apos;t recognized. Please try again.</p>
             </div>
           )}
-          {messageFromServer === "recovery email sent" && (
+          {messageFromServer === 'recovery email sent' && (
             <div>
               <h3>Password Reset Email Successfully Sent!</h3>
             </div>
           )}
         </div>
-      );
+      )
     }
   }
 }
-export default ForgotPassword;
+export default ForgotPassword

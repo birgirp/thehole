@@ -225,7 +225,7 @@ CREATE TABLE match_play_pairs
         REFERENCES users (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-)
+);
 
 
 CREATE TABLE twosome_pairs
@@ -242,10 +242,7 @@ CREATE TABLE twosome_pairs
         REFERENCES team_games (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE
-)
-WITH (
-    OIDS = FALSE
-)
+);
 
 CREATE TABLE public.lonesome_scores
 (
@@ -257,7 +254,7 @@ CREATE TABLE public.lonesome_scores
         REFERENCES public.team_games (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE
-)
+);
 
 --- views ---
 
