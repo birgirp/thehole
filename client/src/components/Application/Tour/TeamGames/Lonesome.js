@@ -50,10 +50,7 @@ class Lonessome extends Component {
               
                 if (res2.data) {
                     let scores =res2.data
-                    console.log(scores)
-
-                
-
+                  
                     for (let i = 0; i < teamA.length; i++) {
                         let playerA = teamA[i]
                         let playerB = teamB[i]
@@ -62,7 +59,6 @@ class Lonessome extends Component {
 
                         } else {
                             playerA.score = 0
-
                         }
                         sumScoresA += playerA.score
 
@@ -71,13 +67,9 @@ class Lonessome extends Component {
 
                         } else {
                             playerB.score = 0
-
                         }
-
                         sumScoresB += playerB.score
                     }
-
-                    console.log(teamA)
 
                     this.setState({
                         teamA: teamA,
@@ -99,7 +91,6 @@ class Lonessome extends Component {
                         sumScoresB: sumScoresB,
                         isLoading: false,
                         firstTime: true
-
                     });
                 }
             })
@@ -108,10 +99,6 @@ class Lonessome extends Component {
                 this.setState({ isLoading: false })
             })
     }
-
-
-
-
 
     changeScoreA = (e, v) => {
  
@@ -132,14 +119,11 @@ class Lonessome extends Component {
         let teamB = this.state.teamB
         let player =teamB[v.index]
         player.score = parseInt(v.value)
-
-
         let sumScoresB = 0
         for(let p of teamB){
             sumScoresB +=p.score
         }
         this.setState({teamB: teamB, sumScoresB: sumScoresB})
-      
     }
 
 
@@ -209,9 +193,6 @@ class Lonessome extends Component {
         })
 
     }
-
-
-
 
     handleCancel = (e) => {
         this.props.closeModal()
