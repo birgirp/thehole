@@ -1,80 +1,83 @@
-import React, { Component } from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import "semantic-ui-css/semantic.min.css";
-import axios from "axios";
-import MenuBar from "./MenuBar/MenuBar";
-import Login from "./Login";
-import Home from "./Application/Home";
-import Tour from "./Application/Tour/Tour";
-import AdminUsers from "./Admin/AdminUsers/AdminUsers";
-import AdminCourses from "./Admin/AdminCourses/AdminCourses";
-import AdminTours from "./Admin/AdminTours/AdminTours";
-import Loading from "./Loading/Loading";
-import ForgotPassword from "./Application/LoginComponents/ForgotPassword"
+import React, { Component } from 'react'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import 'semantic-ui-css/semantic.min.css'
+import axios from 'axios'
+import MenuBar from './MenuBar/MenuBar'
+import Login from './Login'
+import Home from './Application/Home'
+import Tour from './Application/Tour/Tour'
+import AdminUsers from './Admin/AdminUsers/AdminUsers'
+import AdminCourses from './Admin/AdminCourses/AdminCourses'
+import AdminTours from './Admin/AdminTours/AdminTours'
+import Loading from './Loading/Loading'
+import ForgotPassword from './Application/LoginComponents/ForgotPassword'
+import ResetPassword from './Application/LoginComponents/ResetPassword'
 
 class App extends Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       isLoggedIn: false,
       isAdmin: false,
       userId: null,
       isLoading: false
-    };
+    }
   }
 
   changeLoggedIn = (isadmin, userId) => {
     this.setState({ userId: userId, isLoggedIn: true, isAdmin: isadmin }, () =>
       this.changePath()
-    );
-  };
+    )
+  }
 
   changePath = () => {
-    if (window.location.pathname === "/") {
-      window.location = "/home";
+    if (window.location.pathname === '/') {
+      window.location = '/home'
     }
-  };
+  }
 
   logout = () => {
-
-    axios.get("/users/logout").then(() => {
+    axios.get('/users/logout').then(() => {
       this.setState(
         { userId: null, isLoggedIn: false, isAdmin: false },
-        () => (window.location = "/")
-      );
-    });
-  };
+        () => (window.location = '/')
+      )
+    })
+  }
 
   componentDidMount() {
-    this.setState({ isLoading: true });
+    this.setState({ isLoading: true })
 
     axios
-      .get("/api/isloggedin")
+      .get('/api/isloggedin')
       .then(res => {
         if (res.data.loggedIn) {
           this.setState({
             isLoggedIn: res.data.loggedIn,
             isAdmin: res.data.isAdmin,
             userId: res.data.userId
-          });
-          if (window.location.pathname === "/") {
-            window.location = "/home";
+          })
+          if (window.location.pathname === '/') {
+            window.location = '/home'
           }
         } else {
-          if (window.location.pathname !== "/") {
-            window.location = "/";
+          if (
+            window.location.pathname !== '/' &&
+            !window.location.pathname.includes('/reset/')
+          ) {
+            window.location = '/'
           }
         }
-        this.setState({ isLoading: false });
+        this.setState({ isLoading: false })
       })
       .catch(err => {
-        console.log(err);
-      });
+        console.log(err)
+      })
   }
 
   render() {
     if (this.state.isLoading) {
-      return <Loading />;
+      return <Loading />
     } else {
       if (!this.state.isLoggedIn) {
         return (
@@ -82,16 +85,16 @@ class App extends Component {
             <div>
               <Route
                 exact
-                path="/"
+                path='/'
                 render={props => (
                   <Login {...props} changeLoggedIn={this.changeLoggedIn} />
                 )}
               />
-                 <Route exact path="/resetpassword" component={ForgotPassword} />
-
+              <Route exact path='/forgotpassword' component={ForgotPassword} />
+              <Route exact path='/reset/:token' component={ResetPassword} />
             </div>
           </Router>
-        );
+        )
       } else if (this.state.isLoggedIn && this.state.isAdmin) {
         return (
           <Router>
@@ -100,21 +103,21 @@ class App extends Component {
                 getIsAdmin={this.state.isAdmin}
                 logout={this.logout}
               ></MenuBar>
-              <div id="mainView">
+              <div id='mainView'>
                 <Route
                   exact
-                  path="/home"
+                  path='/home'
                   render={props => (
                     <Home {...props} userId={this.state.userId} />
                   )}
                 />
-                <Route exact path="/admin/users" component={AdminUsers} />
-                <Route exact path="/admin/courses" component={AdminCourses} />
-                <Route exact path="/admin/tours" component={AdminTours} />
+                <Route exact path='/admin/users' component={AdminUsers} />
+                <Route exact path='/admin/courses' component={AdminCourses} />
+                <Route exact path='/admin/tours' component={AdminTours} />
               </div>
             </div>
           </Router>
-        );
+        )
       } else if (this.state.isLoggedIn) {
         return (
           <Router>
@@ -123,17 +126,17 @@ class App extends Component {
                 getIsAdmin={this.state.isAdmin}
                 logout={this.logout}
               ></MenuBar>
-              <div id="mainView">
+              <div id='mainView'>
                 <Route
                   exact
-                  path="/home"
+                  path='/home'
                   render={props => (
                     <Home {...props} userId={this.state.userId} />
                   )}
                 />
                 <Route
                   exact
-                  path="/tour/:id"
+                  path='/tour/:id'
                   render={props => (
                     <Tour {...props} userId={this.state.userId} />
                   )}
@@ -141,10 +144,10 @@ class App extends Component {
               </div>
             </div>
           </Router>
-        );
+        )
       }
     }
   }
 }
 
-export default App;
+export default App

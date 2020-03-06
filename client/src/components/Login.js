@@ -114,8 +114,7 @@ class Login extends Component {
                   {this.state.unknownuser && (
                     <div>
                       <h3>Unknown username or password</h3>
-                      <p>You can only log in with valid account.</p>
-                      <Button as={Link} to='/resetpassword'>
+                      <Button as={Link} to='/forgotpassword'>
                         Reset password
                       </Button>
                     </div>

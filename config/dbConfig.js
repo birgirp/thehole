@@ -2,9 +2,9 @@
 //let env = process.env.environment;
 //let user = process.env.user;
 
-let env = 'home'
-//let env = 'elephant'
-//let env = 'elephant'
+//let env = 'home'
+let env = 'elephant'
+//let env = 'production'
 
 // functions that load dbs
 
