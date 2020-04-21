@@ -159,7 +159,7 @@ module.exports = {
         })
     })
   },
-  getAllCourses: function() {
+  getAllCourses: function(token) {
     return new Promise((resolve, reject) => {
       pool
         .query('SELECT id, course_name, tee, country FROM courses')
@@ -172,6 +172,46 @@ module.exports = {
         })
     })
   },
+
+  getUserByToken: function(token) {
+    let now = new Date(Date.now())
+      .toISOString()
+      .replace(/T/, ' ')
+      .replace(/\..+/, '')
+
+    return new Promise((resolve, reject) => {
+      pool
+        .query(
+          'select id from users where resetpasswordtoken = $1 and resetpasswordexpires > now()',
+          [token]
+        )
+        .then(results => {
+          resolve(results)
+        })
+        .catch(error => {
+          console.log('db error...')
+          reject(error)
+        })
+    })
+  },
+
+  changePassword: function(userId, password) {
+    return new Promise((resolve, reject) => {
+      pool
+        .query('update users set password = $1 where id = $2', [
+          password,
+          userId
+        ])
+        .then(results => {
+          resolve(results)
+        })
+        .catch(error => {
+          console.log('db error...')
+          reject(error)
+        })
+    })
+  },
+
   getHoles: function(courseId) {
     return new Promise((resolve, reject) => {
       pool

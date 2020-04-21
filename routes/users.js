@@ -1,9 +1,12 @@
 var crypto = require('crypto')
+var bcrypt = require('bcrypt')
 var express = require('express')
 var router = express.Router()
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
 const nodemailer = require('nodemailer')
+
+const BCRYPT_SALT_ROUNDS = 12
 
 const dbdata = require('../pgService')
 
@@ -93,7 +96,6 @@ router.post('/getuser', function(req, res) {
     .then(data => {
       if (data.rows.length > 0) {
         user = data.rows[0]
-        console.log('dfdfd ' + JSON.stringify(user))
         res.json(user)
       } else {
         console.log('No user found with id ' + req.body.userId)
@@ -223,6 +225,51 @@ router.post('/sendresetemail', async (req, res) => {
           console.log('here is the res: ', response)
           res.status(200).json('recovery email sent')
         }
+      })
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500)
+    res.json({ error: error })
+  }
+})
+
+router.post('/changepassword', async (req, res) => {
+  let userId = parseInt(req.body.userId)
+  let password = req.body.password
+
+  console.log('change password route....')
+  try {
+    let results = await dbdata.changePassword(userId, password)
+    console.log(JSON.stringify(results))
+
+    res.json({
+      message: 'password updated'
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500)
+    res.json({ error: error })
+  }
+})
+
+router.post('/reset', async (req, res) => {
+  console.log('reset password route....')
+
+  try {
+    let token = req.body.token
+    let results = await dbdata.getUserByToken(token)
+    console.log(JSON.stringify(results.rows))
+    if (results.rows && results.rows.length > 0) {
+      let o = {
+        userId: results.rows[0].id,
+        message: 'password reset link ok'
+      }
+      res.json(o)
+    } else {
+      res.json({
+        userId: -1,
+        message: 'token not found or expired'
       })
     }
   } catch (error) {

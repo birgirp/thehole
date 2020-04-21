@@ -6,50 +6,57 @@ import axios from 'axios'
 import Loading from '../../Loading/Loading'
 
 class ResetPassword extends Component {
-  constructor() {
-    super()
-
-    this.state = {
-      username: '',
-      password: '',
-      updated: false,
-      isLoading: true,
-      error: false
-    }
+  state = {
+    userId: '',
+    password1: '',
+    password2: '',
+    updated: false,
+    isLoading: false,
+    error: false,
+    passwordOk: false
   }
 
-  async componentDidMount() {
-    console.log('heyyyyy')
+  componentDidMount() {
+    console.log('hey!')
+
     const {
       match: {
         params: { token }
       }
     } = this.props
 
-    console.log(token)
-    try {
-      const response = await axios.get('http://localhost:3003/reset', {
-        params: {
-          resetPasswordToken: token
+    axios
+      .post('/users/reset', {
+        token: token
+      })
+      .then(response => {
+        console.log('response.data')
+        console.log(response.data)
+
+        if (response.data.message === 'password reset link ok') {
+          this.setState({
+            userId: response.data.userId,
+            updated: false,
+            isLoading: false,
+            error: false
+          })
+        } else {
+          this.setState({
+            updated: false,
+            isLoading: false,
+            error: true
+          })
         }
       })
-      // console.log(response);
-      if (response.data.message === 'password reset link a-ok') {
+      .catch(error => {
+        console.log('errrrrr')
+        console.log(error.response.data)
         this.setState({
-          username: response.data.username,
           updated: false,
           isLoading: false,
-          error: false
+          error: true
         })
-      }
-    } catch (error) {
-      console.log(error.response.data)
-      this.setState({
-        updated: false,
-        isLoading: false,
-        error: true
       })
-    }
   }
 
   handleChange = name => event => {
@@ -57,27 +64,30 @@ class ResetPassword extends Component {
       {
         [name]: event.target.value
       },
-      () => console.log(this.state)
+      () => this.validatePassword()
     )
+  }
+
+  validatePassword = () => {
+    let p1 = this.state.password1
+    let p2 = this.state.password2
+    let okLength = p1.length > 5 ? true : false
+    let okEqual = p1 === p2 ? true : false
+    let ok = okLength & okEqual
+    this.setState({ passwordOk: ok })
   }
 
   updatePassword = async e => {
     e.preventDefault()
-    const { username, password } = this.state
-    const {
-      match: {
-        params: { token }
-      }
-    } = this.props
+    const { userId, password1 } = this.state
+    console.log('changing passwwww')
     try {
-      const response = await axios.put(
-        'http://localhost:3003/updatePasswordViaEmail',
-        {
-          username,
-          password,
-          resetPasswordToken: token
-        }
-      )
+      const response = await axios.post('/users/changepassword', {
+        userId: userId,
+        password: password1
+      })
+
+      console.log('response.data')
       console.log(response.data)
       if (response.data.message === 'password updated') {
         this.setState({
@@ -91,18 +101,22 @@ class ResetPassword extends Component {
         })
       }
     } catch (error) {
+      console.log(error)
       console.log(error.response.data)
     }
   }
 
   render() {
-    const { error, isLoading, updated } = this.state
+    let { error, isLoading, updated } = this.state
 
     if (isLoading) {
       return <Loading />
     } else if (error) {
       return (
         <div>
+          <br></br>
+          <br></br>
+          <br></br>
           <Grid id='ResetError' columns='equal'>
             <Grid.Column></Grid.Column>
             <Grid.Column>
@@ -123,6 +137,9 @@ class ResetPassword extends Component {
     } else {
       return (
         <div>
+          <br></br>
+          <br></br>
+          <br></br>
           <Grid id='ResetForm' columns='equal'>
             <Grid.Column></Grid.Column>
             <Grid.Column>
@@ -133,7 +150,7 @@ class ResetPassword extends Component {
                 <Form size='mini'>
                   <Form.Input
                     fluid
-                    icon='password'
+                    type='password'
                     iconPosition='left'
                     placeholder='Password'
                     value={this.state.password1}
@@ -141,23 +158,23 @@ class ResetPassword extends Component {
                   />
                   <Form.Input
                     fluid
-                    icon='password2'
+                    type='password'
                     iconPosition='left'
-                    placeholder='Repeat password2'
-                    value={this.state.email}
+                    placeholder='Repeat password'
+                    value={this.state.password2}
                     onChange={this.handleChange('password2')}
                   />
                   <Button
                     color='blue'
-                    onClick={this.changePAssword}
-                    disabled={false}
+                    onClick={this.updatePassword}
+                    disabled={!this.state.passwordOk}
                   >
                     Change Password
                   </Button>
                   <br />
                   <br />
                   <Button as={Link} to='/' negative>
-                    Home
+                    Cancel
                   </Button>
                 </Form>
                 {updated && (
