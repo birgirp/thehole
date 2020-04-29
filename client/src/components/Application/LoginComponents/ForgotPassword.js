@@ -16,36 +16,36 @@ class ForgotPassword extends Component {
       email: '',
       showError: false,
       messageFromServer: '',
-      showNullError: false,
+      showNullError: false
     }
   }
 
-  handleChange = (name) => (event) => {
+  handleChange = name => event => {
     this.setState({
-      [name]: event.target.value,
+      [name]: event.target.value
     })
   }
 
-  sendEmail = async (e) => {
+  sendEmail = async e => {
     e.preventDefault()
     const { email } = this.state
     if (email === '') {
       this.setState({
         showError: false,
         messageFromServer: '',
-        showNullError: true,
+        showNullError: true
       })
     } else {
       try {
         const response = await axios.post('/users/sendresetemail', {
-          email,
+          email
         })
         console.log(response.data)
         if (response.data === 'recovery email sent') {
           this.setState({
             showError: false,
             messageFromServer: 'recovery email sent',
-            showNullError: false,
+            showNullError: false
           })
         }
       } catch (error) {
@@ -54,7 +54,7 @@ class ForgotPassword extends Component {
           this.setState({
             showError: true,
             messageFromServer: '',
-            showNullError: false,
+            showNullError: false
           })
         }
       }
@@ -100,7 +100,7 @@ class ForgotPassword extends Component {
                     <Button as={Link} to='/' negative>
                       {
                         (this.state,
-                        messageFromServer == 'recovery email sent'
+                        messageFromServer === 'recovery email sent'
                           ? 'Close'
                           : 'Cancel')
                       }
