@@ -122,7 +122,7 @@ router.post('/createUser', async (req, res) => {
       req.body.email,
       req.body.handicap,
       req.body.isadmin,
-      paswordhashed
+      passwordhashed
     )
     .then((data) => {
       console.log(JSON.stringify(data))
