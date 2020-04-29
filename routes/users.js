@@ -10,18 +10,18 @@ const BCRYPT_SALT_ROUNDS = 12
 
 const dbdata = require('../pgService')
 
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   console.log('in users router')
   res.send('coming from users router...')
 })
 
-router.post('/login', function(req, res, next) {
-  passport.authenticate('local-login', function(err, user) {
+router.post('/login', function (req, res, next) {
+  passport.authenticate('local-login', function (err, user) {
     if (err) {
       res.status(err.statusCode).send(err)
       return
     }
-    req.logIn(user, function() {
+    req.logIn(user, function () {
       req.session.cookie.maxAge = 365 * 24 * 60 * 60 * 1000
       res.status(200).send({ user })
     })
@@ -34,47 +34,49 @@ passport.use(
     {
       usernameField: 'email',
       passwordField: 'password',
-      passReqToCallback: true
+      passReqToCallback: true,
     },
-    function(req, username, password, done) {
-      dbdata
-        .getUserbyEmail(username.toLowerCase().trim(), password)
-        .then(data => {
-          if (data.rows.length > 0) {
-            user = data.rows[0]
-            return done(null, user)
-          }
-          console.log('unknown user')
-          return done(null, false)
-        })
-        .catch(err => {
-          console.log('fail', err)
-          //if (err) {
-          //    return done(err);
-          //}
-          return done(null, false)
-        })
+    async function (req, username, password, done) {
+      data = await dbdata.getUserbyEmailOnly(username.toLowerCase().trim())
+
+      if (data.rows.length > 0) {
+        user = data.rows[0]
+        hash = user.password
+        //const match = hash === password ? true : false
+        const match = await bcrypt.compare(password, hash)
+        if (match) {
+          return done(null, user)
+        }
+      }
+      console.log('unknown user')
+      return done(null, false).catch((err) => {
+        console.log('fail', err)
+        //if (err) {
+        //    return done(err);
+        //}
+        return done(null, false)
+      })
     }
   )
 )
 
-router.get('/logout', function(req, res) {
+router.get('/logout', function (req, res) {
   req.logout()
   res.redirect('/')
 })
 
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
   done(null, user)
 })
 
-passport.deserializeUser(function(user, done) {
+passport.deserializeUser(function (user, done) {
   done(null, user)
 })
 
-router.get('/getAllUsers', function(req, res) {
+router.get('/getAllUsers', function (req, res) {
   dbdata
     .getAllUsers()
-    .then(data => {
+    .then((data) => {
       if (data.rows.length > 0) {
         users = data.rows
         res.json(users)
@@ -83,17 +85,17 @@ router.get('/getAllUsers', function(req, res) {
         res.json(null)
       }
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error)
       res.status(500)
       res.json({ error: error })
     })
 })
 
-router.post('/getuser', function(req, res) {
+router.post('/getuser', function (req, res) {
   dbdata
     .getUserById(req.body.userId)
-    .then(data => {
+    .then((data) => {
       if (data.rows.length > 0) {
         user = data.rows[0]
         res.json(user)
@@ -102,52 +104,57 @@ router.post('/getuser', function(req, res) {
         res.json(null)
       }
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error)
       res.status(500)
       res.json({ error: error })
     })
 })
 
-router.post('/createUser', (req, res) => {
+router.post('/createUser', async (req, res) => {
   //-----------------------------------------------------------------------------------
   console.log('about to insert user...')
+  passwordhashed = await bcrypt.hash(req.body.password, BCRYPT_SALT_ROUNDS)
+
   dbdata
     .insertUser(
       req.body.fullName,
       req.body.email,
       req.body.handicap,
       req.body.isadmin,
-      req.body.password
+      paswordhashed
     )
-    .then(data => {
+    .then((data) => {
       console.log(JSON.stringify(data))
       res.json(data.rows[0])
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error)
       res.status(500)
       res.json({ error: error })
     })
 })
 
-router.post('/edituser', (req, res) => {
+router.post('/edituser', async (req, res) => {
   //-----------------------------------------------------------------------------------
   console.log('about to edit user...')
+
+  passwordhashed = await bcrypt.hash(req.body.password, BCRYPT_SALT_ROUNDS)
+
   dbdata
     .editUser(
       req.body.fullName,
       req.body.email,
       req.body.handicap,
       req.body.isadmin,
-      req.body.password,
+      passwordhashed,
       req.body.userId
     )
-    .then(data => {
+    .then((data) => {
       console.log(JSON.stringify(data))
       res.json('true')
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error)
       res.status(500)
       res.json({ error: error })
@@ -159,11 +166,11 @@ router.post('/deleteuser', (req, res) => {
   console.log(JSON.stringify(req.body.userId))
   dbdata
     .deleteUser(req.body.userId)
-    .then(response => {
+    .then((response) => {
       console.log(JSON.stringify(response))
       res.json('ok')
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error)
       res.status(500)
       res.json({ error: error })
@@ -199,10 +206,10 @@ router.post('/sendresetemail', async (req, res) => {
         service: 'gmail',
         auth: {
           user: 'servicethehole@gmail.com',
-          pass: 'LaManga.2020'
+          pass: 'LaManga.2020',
           //user: `${process.env.EMAIL_ADDRESS}`,
           //pass: `${process.env.EMAIL_PASSWORD}`
-        }
+        },
       })
 
       const mailOptions = {
@@ -213,7 +220,7 @@ router.post('/sendresetemail', async (req, res) => {
           'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
           'Please click on the following link, or paste this into your browser to complete the process within one hour of receiving it:\n\n' +
           `http://localhost:3066/reset/${token}\n\n` +
-          'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+          'If you did not request this, please ignore this email and your password will remain unchanged.\n',
       }
 
       console.log('sending mail')
@@ -235,16 +242,17 @@ router.post('/sendresetemail', async (req, res) => {
 })
 
 router.post('/changepassword', async (req, res) => {
-  let userId = parseInt(req.body.userId)
-  let password = req.body.password
-
-  console.log('change password route....')
   try {
-    let results = await dbdata.changePassword(userId, password)
+    let userId = parseInt(req.body.userId)
+    let password = req.body.password
+
+    passwordhashed = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS)
+
+    let results = await dbdata.changePassword(userId, passwordhashed)
     console.log(JSON.stringify(results))
 
     res.json({
-      message: 'password updated'
+      message: 'password updated',
     })
   } catch (error) {
     console.log(error)
@@ -263,13 +271,13 @@ router.post('/reset', async (req, res) => {
     if (results.rows && results.rows.length > 0) {
       let o = {
         userId: results.rows[0].id,
-        message: 'password reset link ok'
+        message: 'password reset link ok',
       }
       res.json(o)
     } else {
       res.json({
         userId: -1,
-        message: 'token not found or expired'
+        message: 'token not found or expired',
       })
     }
   } catch (error) {

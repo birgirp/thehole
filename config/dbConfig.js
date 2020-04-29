@@ -3,7 +3,7 @@
 //let user = process.env.user;
 
 //let env = 'home'
-let env = 'elephant'
+let env = 'production'
 //let env = 'production'
 
 // functions that load dbs
@@ -18,8 +18,8 @@ function useHerokuDb() {
       port: 5432,
       password:
         '80f4480939e4da993143ffb126e48a15a5555f40fb595a4e5ae4c9941e727908',
-      ssl: true
-    }
+      ssl: true,
+    },
   }
 }
 
@@ -32,8 +32,8 @@ function useWorkDb() {
       user: 'golfapp',
       port: 5432,
       password: 'golf',
-      ssl: false
-    }
+      ssl: false,
+    },
   }
 }
 
@@ -46,8 +46,8 @@ function useHomeDb() {
       user: 'thehole',
       port: 5432,
       password: 'beta3',
-      ssl: false
-    }
+      ssl: false,
+    },
   }
 }
 
@@ -61,8 +61,8 @@ function elephantDb() {
       port: 5432,
       password: 'OkAmyW_WPPwU3__uperrNBtwedc0mr7s',
       ssl: true,
-      max: 2
-    }
+      max: 2,
+    },
   }
 }
 

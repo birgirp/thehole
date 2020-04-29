@@ -13,7 +13,7 @@ class ResetPassword extends Component {
     updated: false,
     isLoading: false,
     error: false,
-    passwordOk: false
+    passwordOk: false,
   }
 
   componentDidMount() {
@@ -21,15 +21,15 @@ class ResetPassword extends Component {
 
     const {
       match: {
-        params: { token }
-      }
+        params: { token },
+      },
     } = this.props
 
     axios
       .post('/users/reset', {
-        token: token
+        token: token,
       })
-      .then(response => {
+      .then((response) => {
         console.log('response.data')
         console.log(response.data)
 
@@ -38,31 +38,31 @@ class ResetPassword extends Component {
             userId: response.data.userId,
             updated: false,
             isLoading: false,
-            error: false
+            error: false,
           })
         } else {
           this.setState({
             updated: false,
             isLoading: false,
-            error: true
+            error: true,
           })
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.log('errrrrr')
         console.log(error.response.data)
         this.setState({
           updated: false,
           isLoading: false,
-          error: true
+          error: true,
         })
       })
   }
 
-  handleChange = name => event => {
+  handleChange = (name) => (event) => {
     this.setState(
       {
-        [name]: event.target.value
+        [name]: event.target.value,
       },
       () => this.validatePassword()
     )
@@ -77,14 +77,14 @@ class ResetPassword extends Component {
     this.setState({ passwordOk: ok })
   }
 
-  updatePassword = async e => {
+  updatePassword = async (e) => {
     e.preventDefault()
     const { userId, password1 } = this.state
     console.log('changing passwwww')
     try {
       const response = await axios.post('/users/changepassword', {
         userId: userId,
-        password: password1
+        password: password1,
       })
 
       console.log('response.data')
@@ -92,12 +92,12 @@ class ResetPassword extends Component {
       if (response.data.message === 'password updated') {
         this.setState({
           updated: true,
-          error: false
+          error: false,
         })
       } else {
         this.setState({
           updated: false,
-          error: true
+          error: true,
         })
       }
     } catch (error) {
@@ -114,11 +114,11 @@ class ResetPassword extends Component {
     } else if (error) {
       return (
         <div>
-          <br></br>
-          <br></br>
-          <br></br>
+          <br />
+          <br />
+          <br />
           <Grid id='ResetError' columns='equal'>
-            <Grid.Column></Grid.Column>
+            <Grid.Column />
             <Grid.Column>
               <h4>
                 Problem resetting password. Please send another reset link.
@@ -130,18 +130,18 @@ class ResetPassword extends Component {
                 Home
               </Button>
             </Grid.Column>
-            <Grid.Column></Grid.Column>
+            <Grid.Column />
           </Grid>
         </div>
       )
     } else {
       return (
         <div>
-          <br></br>
-          <br></br>
-          <br></br>
+          <br />
+          <br />
+          <br />
           <Grid id='ResetForm' columns='equal'>
-            <Grid.Column></Grid.Column>
+            <Grid.Column />
             <Grid.Column>
               <Header as='h2' textAlign='center' color='violet'>
                 Change Password
@@ -187,7 +187,7 @@ class ResetPassword extends Component {
                 )}
               </Segment>
             </Grid.Column>
-            <Grid.Column></Grid.Column>
+            <Grid.Column />
           </Grid>
         </div>
       )

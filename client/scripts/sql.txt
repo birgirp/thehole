@@ -8,6 +8,11 @@ CREATE TABLE users
     is_admin boolean NOT NULL,
     CONSTRAINT pk_users PRIMARY KEY (id)
 )
+
+ALTER TABLE users
+ADD CONSTRAINT constraint_name UNIQUE (email);
+
+
 CREATE TABLE courses
 (
     id serial NOT NULL ,

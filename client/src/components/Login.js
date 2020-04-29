@@ -10,7 +10,7 @@ import {
   Header,
   Segment,
   Modal,
-  Message
+  Message,
 } from 'semantic-ui-react'
 import axios from 'axios'
 import { withRouter } from 'react-router-dom'
@@ -22,18 +22,18 @@ class Login extends Component {
     password: '',
     submitting: false,
     unknownuser: false,
-    success: false
+    success: false,
   }
 
   close = () => {
     this.setState({ unknownuser: false, password: '' })
   }
 
-  handleEmailChange = event => {
+  handleEmailChange = (event) => {
     this.setState({ email: event.target.value })
   }
 
-  handlePasswordChange = event => {
+  handlePasswordChange = (event) => {
     this.setState({ password: event.target.value })
   }
 
@@ -41,9 +41,9 @@ class Login extends Component {
     axios
       .post('/users/login/', {
         email: this.state.email,
-        password: this.state.password
+        password: this.state.password,
       })
-      .then(response => {
+      .then((response) => {
         if (response.data.user === false) {
           this.setState({ unknownuser: true })
         } else {
@@ -54,7 +54,7 @@ class Login extends Component {
           )
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error)
       })
 
@@ -70,7 +70,7 @@ class Login extends Component {
         color: 'black',
         backgroundImage: 'url(' + imgUrl + ')',
         backgroundSize: 'cover',
-        height: '100vh'
+        height: '100vh',
       }
 
       return (
@@ -81,7 +81,7 @@ class Login extends Component {
           <br />
           <Grid id='loginForm' centered columns={2}>
             <Grid.Column id='loginBox'>
-              <Header as='h2' textAlign='center' color='violet'></Header>
+              <Header as='h2' textAlign='center' color='violet' />
               <Segment>
                 <Form size='large'>
                   <Form.Input
@@ -110,13 +110,18 @@ class Login extends Component {
                   >
                     Login
                   </Button>
-
+                  <div>
+                    <Link to='/forgotpassword'>Forgot your password?</Link>
+                  </div>
+                  <br />
                   {this.state.unknownuser && (
                     <div>
                       <h3>Unknown username or password</h3>
-                      <Button as={Link} to='/forgotpassword'>
-                        Reset password
-                      </Button>
+                      {(
+                        <Button as={Link} to='/forgotpassword'>
+                          Reset password
+                        </Button>
+                      ) && false}
                     </div>
                   )}
                 </Form>
