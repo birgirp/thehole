@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Grid, Input, Dropdown } from 'semantic-ui-react'
+import { Button, Grid, Input, Dropdown, Checkbox } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 import axios from 'axios'
 import Loading from '../../Loading/Loading'
@@ -8,7 +8,7 @@ import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-balham.css'
 import './scorecard.css'
-import { ScoreCellRenderer } from './ScoreCellRenderer'
+//import { ScoreCellRenderer } from './ScoreCellRenderer'
 import NumericEditor from './NumericEditor.js'
 
 class Scorecard extends Component {
@@ -27,6 +27,7 @@ class Scorecard extends Component {
     today = yyyy + '-' + mm + '-' + dd
     super(props)
     this.state = {
+      isOneClick: true,
       scorecardId: '',
       courses: [],
       isLoading: false,
@@ -258,6 +259,7 @@ class Scorecard extends Component {
           h16: '',
           h17: '',
           h18: '',
+          isSingle: true,
         },
         {
           rowname: 'Points',
@@ -287,20 +289,33 @@ class Scorecard extends Component {
         width: 70,
         suppressMovable: true,
         onCellValueChanged: this.onCellValueChanged,
+        //  suppressKeyboardEvent: this.suppressKeyboardEvent
       },
-      frameworkComponents: { scoreCellRenderer: ScoreCellRenderer },
+      // frameworkComponents: { scoreCellRenderer: ScoreCellRenderer },
     }
   }
 
+  isOneclick = () => {
+    return this.state.isOneClick
+  }
+  /*suppressKeyboardEvent = (params) => {
+    console.log("suppress??")
+    console.log(params)
+    let rowname = params.data.rowname
+    console.log(rowname)
+    return true
+ 
+  }*/
+
   cellEditing = (params) => {
-    return <input type='number' />
+    //   return <input type='number' />
   }
 
-  cellRendering = (params) => {
-    // return {inputType: 'number'}
-    // return params.value.toString()
-    return <input type='number'>{params.value}</input>
-  }
+  /* cellRendering = (params) => {
+     // return {inputType: 'number'}
+     // return params.value.toString()
+     return <input type='number'>{params.value}</input>
+   } */
 
   cellStyling = (params) => {
     // let background = { background: 'white', textAlign: 'center' }
@@ -334,9 +349,10 @@ class Scorecard extends Component {
 
   onCellFocused = (e) => {}
 
-  onCellKeyPress = (e) => {
-    var keyPressed = e.event.key
+  onCellKeyPress = (e) => {}
 
+  onKeyDown = (e) => {
+    var keyPressed = e.event.key
     if (keyPressed === 'Enter') {
       this.gridApi.tabToNextCell()
       let gridCell = this.gridApi.getFocusedCell()
@@ -358,12 +374,16 @@ class Scorecard extends Component {
       let hcp = rowData[1][e.column.colId]
       let handicap = this.state.handicap
       let score = e.newValue
-      let points = this.calculatePointsPerHole(
-        parseInt(par),
-        parseInt(hcp),
-        parseInt(score),
-        parseInt(handicap)
-      )
+      let points = ''
+      if (score) {
+        points = this.calculatePointsPerHole(
+          parseInt(par),
+          parseInt(hcp),
+          parseInt(score),
+          parseInt(handicap)
+        )
+      }
+
       rowData[3][e.column.colId] = points
 
       this.setState({ rowData: rowData }, () => this.sumScores())
@@ -414,7 +434,12 @@ class Scorecard extends Component {
   checkEditFunction = (params) => {
     //params.node - for row identity
     //params.column - for column identity
-    return params.column.colId !== 'rowname' && params.node.rowIndex === 2
+
+    let cols = ['rowname', 'sumf9', 'sums9']
+    let n = cols.includes(params.column.colId)
+
+    return !n && params.node.rowIndex === 2
+    // return params.column.colId !== 'rowname' && params.node.rowIndex === 2
   }
 
   componentDidMount() {
@@ -738,6 +763,13 @@ class Scorecard extends Component {
     )
   }
 
+  setSingleClickStatus = (e, v) => {
+    let rowData = this.state.rowData
+    rowData[2].isSingle = v.checked
+
+    this.setState({ isOneClick: v.checked, rowData: rowData })
+  }
+
   render() {
     let isSubmitted = this.state.status === 'Submitted' ? true : false
     if (this.state.isLoading) {
@@ -753,6 +785,11 @@ class Scorecard extends Component {
       })
       return (
         <div>
+          <Checkbox
+            label='Enter score moves to next cell'
+            onChange={this.setSingleClickStatus}
+            checked={this.state.isOneClick}
+          />
           <Grid colums={3}>
             <Grid.Row>
               <Grid.Column width={2}>
@@ -797,11 +834,13 @@ class Scorecard extends Component {
             rowData={this.state.rowData}
             enterMovesDownAfterEdit={false}
             singleClickEdit={true}
+            // stopEditingWhenGridLosesFocus={true}
             enterMovesDown={false}
             onGridReady={this.onGridReady}
             frameworkComponents={this.state.frameworkComponents}
-            onCellKeyPress={this.onCellKeyPress}
-            onCellFocused={this.onCellFocused}
+            //onCellKeyPress={this.onCellKeyPress}
+            onCellKeyDown={this.onKeyDown}
+            //  onCellFocused={this.onCellFocused}
           />
           <br />
 

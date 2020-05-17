@@ -76,7 +76,7 @@ class EditTour extends Component {
         console.log('i need to update tour name or status or rounds')
         this.setState({ loading: true })
 
-        let response = await axios.post('/api/updatetour', {
+        await axios.post('/api/updatetour', {
           tourId: this.state.id,
           tourStatus: this.state.status,
           tourName: this.state.name,
