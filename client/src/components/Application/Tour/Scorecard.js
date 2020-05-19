@@ -361,8 +361,7 @@ class Scorecard extends Component {
   }
 
   onCellValueChanged = (e) => {
-    console.log(e.newValue)
-
+   
     let isSubmitted = this.state.status === 'Submitted' ? true : false
     let rowData = this.state.rowData
     if (!Number.isInteger(Number(e.newValue)) || isSubmitted) {

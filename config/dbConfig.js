@@ -3,7 +3,7 @@
 //let user = process.env.user;
 
 //let env = 'home'
-let env = 'production'
+let env = 'work'
 //let env = 'production'
 
 // functions that load dbs
