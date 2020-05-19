@@ -66,20 +66,26 @@ export default class NumericEditor extends Component {
 
     if (this.state.isSingle) {
       if (!!/\d/.test(event.key)) {
-        gridApi.tabToNextCell()
-        let gridCell = gridApi.getFocusedCell()
-        gridApi.rowRenderer.startEditingCell(gridCell, null, null)
+        try {
+          gridApi.tabToNextCell()
+          let gridCell = gridApi.getFocusedCell()
+          gridApi.rowRenderer.startEditingCell(gridCell, null, null)
+        } catch (error) {
+          console.log(error)
+        }
       }
     }
   }
 
   onKeyDown(event) {
+    console.log(event)
+    let key = event.key
     if (this.isLeftOrRight(event)) {
       event.stopPropagation()
       return
     }
 
-    if (!this.isKeyPressedNumeric(event)) {
+    if (!this.isKeyPressedNumeric(event) && !key === 'Backspace') {
       if (event.preventDefault) event.preventDefault()
     }
   }
