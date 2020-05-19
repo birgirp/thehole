@@ -10,6 +10,7 @@ import 'ag-grid-community/dist/styles/ag-theme-balham.css'
 import './scorecard.css'
 //import { ScoreCellRenderer } from './ScoreCellRenderer'
 import NumericEditor from './NumericEditor.js'
+import { CellNavigationService } from 'ag-grid-community'
 
 class Scorecard extends Component {
   constructor(props) {
@@ -361,8 +362,7 @@ class Scorecard extends Component {
   }
 
   onCellValueChanged = (e) => {
-    console.log(e.newValue)
-
+   
     let isSubmitted = this.state.status === 'Submitted' ? true : false
     let rowData = this.state.rowData
     if (!Number.isInteger(Number(e.newValue)) || isSubmitted) {
@@ -434,8 +434,8 @@ class Scorecard extends Component {
   checkEditFunction = (params) => {
     //params.node - for row identity
     //params.column - for column identity
-
-    let cols = ['rowname', 'sumf9', 'sums9']
+    console.log(params.column.colId)
+    let cols = ['rowname', 'sumf9', 'sums9', 'sum18']
     let n = cols.includes(params.column.colId)
 
     return !n && params.node.rowIndex === 2

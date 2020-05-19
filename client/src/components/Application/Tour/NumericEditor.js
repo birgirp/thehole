@@ -63,29 +63,30 @@ export default class NumericEditor extends Component {
 
   onKeyUp = (event) => {
     let gridApi = this.props.api
+    let colId = this.props.column.colId
 
     if (this.state.isSingle) {
       if (!!/\d/.test(event.key)) {
-        try {
+        if (colId === 'h18') {
+          gridApi.stopEditing(false)
+        } else {
           gridApi.tabToNextCell()
           let gridCell = gridApi.getFocusedCell()
           gridApi.rowRenderer.startEditingCell(gridCell, null, null)
-        } catch (error) {
-          console.log(error)
         }
       }
     }
   }
 
   onKeyDown(event) {
-    console.log(event)
     let key = event.key
     if (this.isLeftOrRight(event)) {
       event.stopPropagation()
       return
     }
+    let notIsBack = !(key === 'Backspace')
 
-    if (!this.isKeyPressedNumeric(event) && !key === 'Backspace') {
+    if (!this.isKeyPressedNumeric(event) && notIsBack) {
       if (event.preventDefault) event.preventDefault()
     }
   }
