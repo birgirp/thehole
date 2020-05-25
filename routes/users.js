@@ -206,7 +206,8 @@ router.post('/sendresetemail', async (req, res) => {
         service: 'gmail',
         auth: {
           user: 'servicethehole@gmail.com',
-          pass: 'LaManga.2020',
+          pass: 'mgtxctxlbkmrxpgk',
+
           //user: `${process.env.EMAIL_ADDRESS}`,
           //pass: `${process.env.EMAIL_PASSWORD}`
         },
