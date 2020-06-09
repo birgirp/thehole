@@ -10,7 +10,7 @@ import 'ag-grid-community/dist/styles/ag-theme-balham.css'
 import './scorecard.css'
 //import { ScoreCellRenderer } from './ScoreCellRenderer'
 import NumericEditor from './NumericEditor.js'
-import { CellNavigationService } from 'ag-grid-community'
+//import { CellNavigationService } from 'ag-grid-community'
 
 class Scorecard extends Component {
   constructor(props) {
@@ -362,7 +362,6 @@ class Scorecard extends Component {
   }
 
   onCellValueChanged = (e) => {
-   
     let isSubmitted = this.state.status === 'Submitted' ? true : false
     let rowData = this.state.rowData
     if (!Number.isInteger(Number(e.newValue)) || isSubmitted) {
