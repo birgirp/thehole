@@ -302,7 +302,7 @@ class TourSummary extends Component {
             <Modal.Header>
               {this.state.scoreCardPlayer}: Round {this.state.viewRoundNumber}
             </Modal.Header>
-            <Modal.Content>
+            <Modal.Content scrolling={true}>
               {
                 <ViewScorecard
                   scorecardData={this.state.scorecardData}

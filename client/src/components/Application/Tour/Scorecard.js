@@ -793,6 +793,7 @@ class Scorecard extends Component {
             <Grid.Row>
               <Grid.Column width={2}>
                 <Input
+                  fluid
                   name='Handicap'
                   placeholder='Handicap'
                   max='54'
