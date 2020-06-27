@@ -804,7 +804,7 @@ class Scorecard extends Component {
                 {this.state.isMissingCourse && <span>Select course!</span>}
               </Grid.Column>
 
-              <Grid.Column width={2}>
+              <Grid.Column width={4}>
                 <Input
                   fluid
                   name='Handicap'
@@ -816,7 +816,7 @@ class Scorecard extends Component {
                   onChange={this.handleHandicapChange}
                 />
               </Grid.Column>
-              <Grid.Column width={6}>
+              <Grid.Column width={4}>
                 <DateInput
                   name='date'
                   placeholder='Date'
