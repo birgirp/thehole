@@ -791,18 +791,6 @@ class Scorecard extends Component {
           />
           <Grid colums={3}>
             <Grid.Row>
-              <Grid.Column width={2}>
-                <Input
-                  fluid
-                  name='Handicap'
-                  placeholder='Handicap'
-                  max='54'
-                  min='0'
-                  type='Number'
-                  value={this.state.handicap}
-                  onChange={this.handleHandicapChange}
-                />
-              </Grid.Column>
               <Grid.Column width={8}>
                 <Dropdown
                   fluid
@@ -814,6 +802,19 @@ class Scorecard extends Component {
                   onChange={this.handleCourseChange}
                 />
                 {this.state.isMissingCourse && <span>Select course!</span>}
+              </Grid.Column>
+
+              <Grid.Column width={2}>
+                <Input
+                  fluid
+                  name='Handicap'
+                  placeholder='Handicap'
+                  max='54'
+                  min='0'
+                  type='Number'
+                  value={this.state.handicap}
+                  onChange={this.handleHandicapChange}
+                />
               </Grid.Column>
               <Grid.Column width={6}>
                 <DateInput
