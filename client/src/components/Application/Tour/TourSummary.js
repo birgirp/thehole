@@ -50,6 +50,7 @@ class TourSummary extends Component {
   componentDidMount() {
     let tourId = this.props.tourId
     let rounds = this.props.rounds
+    let is_ranking = this.props.is_ranking
     this.setState({ isLoading: true })
     let columnDefs = [
       { headerName: 'Player', field: 'player', width: 100, pinned: 'left' },
@@ -82,7 +83,12 @@ class TourSummary extends Component {
         }
         //console.log(res.data)
         this.setState({ scoreData: res.data }, () => this.createRowData())
-        //  this.setState({ isLoading: false })
+        if (is_ranking) {
+          this.setState({ isRankingCompetion: is_ranking }, () =>
+            this.fetchRankData()
+          )
+        }
+        //this.setState({ isLoading: false })
       })
       .catch((err) => {
         console.log(err)
@@ -148,7 +154,8 @@ class TourSummary extends Component {
         })
         rowData.sort((a, b) => (a.sum < b.sum ? 1 : -1))
         rowData.sort((a, b) => (a.sum < b.sum ? 1 : -1))
-        this.setState({ rowData: rowData, isLoading: false })
+
+        this.setState({ rowData: rowData, isLoading: this.props.is_ranking })
       })
       .catch((err) => {
         console.log(err)
@@ -184,6 +191,25 @@ class TourSummary extends Component {
     }
   }
 
+  fetchRankData = async () => {
+    let tourId = this.props.tourId
+
+    try {
+      let res = await axios.post('/api/getranksum', { tourId: tourId })
+
+      if (!res.data) {
+        throw new Error('No rankdata found')
+      }
+
+      this.setState({ rankData: res.data }, () =>
+        this.toggleRowData(true, true)
+      )
+    } catch (error) {
+      console.log(error)
+      this.setState({ isLoading: false })
+    }
+  }
+
   toggleRowData = (isFirstTime, checked) => {
     let sumData = []
     let rankData = this.state.rankData
@@ -215,10 +241,9 @@ class TourSummary extends Component {
       }
     } else {
       sumData = this.state.sumData
-      console.log('set sumdata')
       sumData.forEach((sum) => {
         let index = rowData.findIndex((row) => row.player_id === sum.player_id)
-        console.log(sum.sum)
+        // console.log(sum.sum)
         rowData[index]['sum'] = parseInt(sum.sum)
       })
       rowData.sort((a, b) => (a.sum < b.sum ? 1 : -1))
@@ -226,7 +251,6 @@ class TourSummary extends Component {
       this.setState({ rowData: rowData, isLoading: false }, () => {
         this.gridApi.setRowData(this.state.rowData)
       })
-      console.log(this.state)
     }
   }
 

@@ -139,26 +139,25 @@ router.post('/edituser', async (req, res) => {
   //-----------------------------------------------------------------------------------
   console.log('about to edit user...')
 
-  passwordhashed = await bcrypt.hash(req.body.password, BCRYPT_SALT_ROUNDS)
-
-  dbdata
-    .editUser(
+  try {
+    if (req.body.password) {
+      passwordhashed = await bcrypt.hash(req.body.password, BCRYPT_SALT_ROUNDS)
+      await dbdata.changePassword(req.body.userId, passwordhashed)
+    }
+    response = await dbdata.editUser(
       req.body.fullName,
       req.body.email,
       req.body.handicap,
       req.body.isadmin,
-      passwordhashed,
       req.body.userId
     )
-    .then((data) => {
-      console.log(JSON.stringify(data))
-      res.json('true')
-    })
-    .catch((error) => {
-      console.log(error)
-      res.status(500)
-      res.json({ error: error })
-    })
+
+    res.json('true')
+  } catch (error) {
+    console.log(error)
+    res.status(500)
+    res.json({ error: error })
+  }
 })
 
 router.post('/deleteuser', (req, res) => {

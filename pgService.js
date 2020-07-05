@@ -111,12 +111,29 @@ module.exports = {
     })
   },
 
-  editUser: function (username, email, hcp, isadmin, passw, userId) {
+  editUser: function (username, email, hcp, isadmin, userId) {
     return new Promise((resolve, reject) => {
       pool
         .query(
-          'UPDATE users SET full_name=$1,  email=$2, handicap=$3,is_admin=$4, password=$5 WHERE id=$6',
-          [username, email, hcp, isadmin, passw, userId]
+          'UPDATE users SET full_name=$1,  email=$2, handicap=$3,is_admin=$4 WHERE id=$5',
+          [username, email, hcp, isadmin, userId]
+        )
+        .then((results) => {
+          resolve(results)
+        })
+        .catch((error) => {
+          console.log('db error...')
+          reject(error)
+        })
+    })
+  },
+
+  editUserProfile: function (username, email, hcp, passw, userId) {
+    return new Promise((resolve, reject) => {
+      pool
+        .query(
+          'UPDATE users SET full_name=$1,  email=$2, handicap=$3, password=$4 WHERE id=$5',
+          [username, email, hcp, passw, userId]
         )
         .then((results) => {
           resolve(results)
@@ -403,9 +420,9 @@ module.exports = {
     return new Promise((resolve, reject) => {
       pool
         .query(
-          'select tour_name, tour_status, rounds as tour_rounds, count(tt.name) as hasteams  from tours t \
+          'select tour_name, tour_status, rounds as tour_rounds, is_ranking, count(tt.name) as hasteams  from tours t \
             left join tour_teams tt on tt.tour_id = t.id where t.id = $1 \
-            group by tour_name, tour_status, rounds',
+            group by tour_name, tour_status, rounds, is_ranking',
           [tourId]
         )
         .then((results) => {
