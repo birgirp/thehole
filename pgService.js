@@ -1105,4 +1105,19 @@ module.exports = {
         })
     })
   },
+
+  getTeeTimes: function (user_id) {
+    console.log('fetching teetimes   ')
+    return new Promise((resolve, reject) => {
+      pool
+        .query('SELECT *  FROM teetime_requests where user_id = $1;', [user_id])
+        .then((results) => {
+          resolve(results)
+        })
+        .catch((error) => {
+          console.log('db error...')
+          reject(error)
+        })
+    })
+  },
 }

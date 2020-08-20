@@ -1,49 +1,40 @@
-import React, { Component } from "react";
-import axios from "axios";
-import { Table } from "semantic-ui-react";
-import { Link } from "react-router-dom";
-import Loading from "../Loading/Loading";
+import React, { Component } from 'react'
+import axios from 'axios'
+import { Table } from 'semantic-ui-react'
+import { Link } from 'react-router-dom'
+import Loading from '../Loading/Loading'
 
 class Home extends Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       tours: [],
       isLoading: false,
-      playerId:  this.props.userId
-
-    };
-
+      playerId: this.props.userId,
+    }
   }
 
-
-  componentDidMount = () =>{
+  componentDidMount = () => {
     this.setState({ isLoading: true })
     let id = this.props.userId
 
- 
-    axios.post("/api/getplayertours", { playerId: id })
-      .then(res => {
+    axios
+      .post('/api/getplayertours', { playerId: id })
+      .then((res) => {
         this.setState({ tours: res.data })
         this.setState({ isLoading: false })
-
       })
-      .catch(err => {
-        console.log(err);
+      .catch((err) => {
+        console.log(err)
         this.setState({ isLoading: false })
       })
-
   }
 
-
-
   render() {
-
-
-    const data = this.state.tours;
+    const data = this.state.tours
 
     if (this.state.isLoading) {
-      return (<Loading />)
+      return <Loading />
     } else if (data) {
       return (
         <div>
@@ -59,10 +50,12 @@ class Home extends Component {
               {data.map((tour) => {
                 return (
                   <Table.Row key={tour.id}>
-                    <Table.Cell ><Link to={`/tour/${tour.id}`}>{tour.tour_name}</Link></Table.Cell>
-                    <Table.Cell >{tour.tour_status}</Table.Cell>
+                    <Table.Cell>
+                      <Link to={`/tour/${tour.id}`}>{tour.tour_name}</Link>
+                    </Table.Cell>
+                    <Table.Cell>{tour.tour_status}</Table.Cell>
                   </Table.Row>
-                );
+                )
               })}
             </Table.Body>
           </Table>
@@ -78,4 +71,4 @@ class Home extends Component {
   }
 }
 
-export default Home;
+export default Home

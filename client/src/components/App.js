@@ -12,6 +12,7 @@ import AdminTours from './Admin/AdminTours/AdminTours'
 import Loading from './Loading/Loading'
 import ForgotPassword from './Application/LoginComponents/ForgotPassword'
 import ResetPassword from './Application/LoginComponents/ResetPassword'
+import TeeTimes from './TeeTimes/TeeTimes'
 
 class App extends Component {
   constructor(props) {
@@ -20,7 +21,7 @@ class App extends Component {
       isLoggedIn: false,
       isAdmin: false,
       userId: null,
-      isLoading: false
+      isLoading: false,
     }
   }
 
@@ -50,12 +51,12 @@ class App extends Component {
 
     axios
       .get('/api/isloggedin')
-      .then(res => {
+      .then((res) => {
         if (res.data.loggedIn) {
           this.setState({
             isLoggedIn: res.data.loggedIn,
             isAdmin: res.data.isAdmin,
-            userId: res.data.userId
+            userId: res.data.userId,
           })
           if (window.location.pathname === '/') {
             window.location = '/home'
@@ -70,7 +71,7 @@ class App extends Component {
         }
         this.setState({ isLoading: false })
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err)
       })
   }
@@ -86,7 +87,7 @@ class App extends Component {
               <Route
                 exact
                 path='/'
-                render={props => (
+                render={(props) => (
                   <Login {...props} changeLoggedIn={this.changeLoggedIn} />
                 )}
               />
@@ -99,15 +100,12 @@ class App extends Component {
         return (
           <Router>
             <div>
-              <MenuBar
-                getIsAdmin={this.state.isAdmin}
-                logout={this.logout}
-              ></MenuBar>
+              <MenuBar getIsAdmin={this.state.isAdmin} logout={this.logout} />
               <div id='mainView'>
                 <Route
                   exact
                   path='/home'
-                  render={props => (
+                  render={(props) => (
                     <Home {...props} userId={this.state.userId} />
                   )}
                 />
@@ -122,22 +120,27 @@ class App extends Component {
         return (
           <Router>
             <div>
-              <MenuBar
-                getIsAdmin={this.state.isAdmin}
-                logout={this.logout}
-              ></MenuBar>
+              <MenuBar getIsAdmin={this.state.isAdmin} logout={this.logout} />
               <div id='mainView'>
                 <Route
                   exact
                   path='/home'
-                  render={props => (
+                  render={(props) => (
                     <Home {...props} userId={this.state.userId} />
+                  )}
+                />
+
+                <Route
+                  exact
+                  path='/teetimes'
+                  render={(props) => (
+                    <TeeTimes {...props} userId={this.state.userId} />
                   )}
                 />
                 <Route
                   exact
                   path='/tour/:id'
-                  render={props => (
+                  render={(props) => (
                     <Tour {...props} userId={this.state.userId} />
                   )}
                 />

@@ -99,6 +99,14 @@ class MenuBar extends Component {
               active={activePage === 'home'}
               onClick={this.handleItemClick}
             />
+            <Menu.Item
+              as={Link}
+              to='/teetimes'
+              name='teetimes'
+              content='Tee Times'
+              active={activePage === 'home'}
+              onClick={this.handleItemClick}
+            />
             {this.props.getIsAdmin && this.adminMenu()}
 
             <Menu.Item className='right menu'>
