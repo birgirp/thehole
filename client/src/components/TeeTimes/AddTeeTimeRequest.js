@@ -1,91 +1,53 @@
 // External libs
 import React, { Component } from 'react'
-import { Button, Form, Input } from 'semantic-ui-react'
+import { Button, Form, Input, Dropdown } from 'semantic-ui-react'
 import axios from 'axios'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-balham.css'
+import { DateInput } from 'semantic-ui-calendar-react'
 
 class AddTeeTimeRequest extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      country: '',
-      courseName: '',
-      tee: '',
-      rowData: [],
+      play_date: '',
+      course: '',
+      from: '',
+      to: '',
+      slots: 2,
+      courseSelection: [
+        { key: 'korpa18', text: 'Korpa 18h', value: 'Korpa 18h' },
+        { key: 'grafarholt', text: 'Grafarholt', value: 'Grafarholt' },
+        { key: 'korpa9', text: 'Korpa 9h', value: 'Korpa 9h' },
+        { key: 'skaginn', text: 'Garðavöllur', value: 'Garðavöllur' },
+      ],
     }
   }
 
-  handleSubmit = () => {
-    if (this.validateHoles()) {
-      this.setState({ loading: true })
-      axios
-        .post('/api/addcourse', {
-          courseName: this.state.courseName,
-          tee: this.state.tee,
-          country: this.state.country,
-          holes: this.state.rowData,
-        })
-        .then((response) => {
-          console.log(response.data)
-          let course = {
-            id: response.data,
-            course_name: this.state.courseName,
-            tee: this.state.tee,
-            country: this.state.country,
-          }
-          this.props.addNewCourse(course)
-          this.setState({ loading: false })
-          this.props.closeModal()
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    }
-  }
+  handleSubmit = () => {}
 
   handleCancel = () => {
-    this.props.closeModal()
+    this.props.cancel()
   }
 
-  handleNameChange = (event) => {
-    this.setState({ courseName: event.target.value })
+  handleCourseChange = (event) => {
+    this.setState({ course: event.target.value })
   }
 
-  handleTeeChange = (event) => {
-    this.setState({ tee: event.target.value })
+  handleDateChange = (event, { name, value }) => {
+    this.setState({ play_date: value })
   }
 
-  handleCountryChange = (event) => {
-    this.setState({ country: event.target.value })
+  handleFromChange = (event) => {
+    this.setState({ from: event.target.value })
   }
 
-  handler = (holes) => {
-    this.setState({ rowData: holes }, () => console.log(this.state.rowData))
+  handleToChange = (event) => {
+    this.setState({ to: event.target.value })
   }
 
-  validateHoles = () => {
-    let isValid = true
-
-    let pars = this.state.rowData[0]
-    let handicaps = this.state.rowData[1]
-
-    if (this.objectContains(pars, '') || this.objectContains(handicaps, '')) {
-      isValid = false
-    }
-    console.log('isValid:')
-    console.log(isValid)
-    return isValid
-  }
-
-  objectContains = (myObj, value) => {
-    let contains = false
-    Object.keys(myObj).forEach((key) => {
-      if (myObj[key] === value) {
-        contains = true
-      }
-    })
-    return contains
+  handleSlotsChange = (event) => {
+    this.setState({ slots: event.target.value })
   }
 
   render() {
@@ -97,28 +59,42 @@ class AddTeeTimeRequest extends Component {
         <Form>
           <Form.Group>
             <Form.Field
+              width={4}
               required
-              control={Input}
+              control={DateInput}
+              label='Date'
+              placeholder='Date'
+              value={this.state.play_date}
+              onChange={this.handleDateChange}
+            />
+            <Form.Select
+              required
+              width={4}
               label='Course'
               placeholder='Course'
+              options={this.state.courseSelection}
               value={this.state.course}
-              onChange={this.handleNameChange}
+              onChange={this.handleCourseChange}
             />
+          </Form.Group>
+          <Form.Group>
             <Form.Field
+              width={3}
               required
               control={Input}
-              label='Tee'
-              placeholder='Tee'
-              value={this.state.tee}
-              onChange={this.handleTeeChange}
+              label='From'
+              placeholder='From'
+              value={this.state.from}
+              onChange={this.handleFromChange}
             />
             <Form.Field
+              width={3}
               required
               control={Input}
-              label='Country'
-              placeholder='Country'
-              value={this.state.country}
-              onChange={this.handleCountryChange}
+              label='To'
+              placeholder='To'
+              value={this.state.to}
+              onChange={this.handleToChange}
             />
           </Form.Group>
         </Form>

@@ -36,7 +36,7 @@ class TeeTimes extends Component {
   }
 
   handleAddRequest = () => {
-    this.setState({ addinRequest: true })
+    this.setState({ addingRequest: true })
   }
 
   close = () => {
@@ -50,7 +50,8 @@ class TeeTimes extends Component {
   }
 
   cancel = () => {
-    if (this.state.addinRequest) {
+    if (this.state.addingRequest) {
+      console.log('closososo')
       this.setState({ addingRequest: false })
     }
   }
@@ -59,8 +60,8 @@ class TeeTimes extends Component {
     if (this.state.loading) {
       return <Loading />
     } else {
-      //const data = this.state.teetimes
-      const data = []
+      let data = this.state.teetimes
+      // let data = []
       return (
         <div>
           <h1>Monitoring tee times</h1>
@@ -68,16 +69,19 @@ class TeeTimes extends Component {
           <Button primary onClick={this.handleAddRequest}>
             Add new Request
           </Button>
+
           <br />
-          <br />
+          <h3>My Requests</h3>
           <Table celled>
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell width='1'>Delete</Table.HeaderCell>
                 <Table.HeaderCell>Course</Table.HeaderCell>
-                <Table.HeaderCell>eMail</Table.HeaderCell>
                 <Table.HeaderCell>Date</Table.HeaderCell>
-                <Table.HeaderCell>Start time</Table.HeaderCell>
+                <Table.HeaderCell>From</Table.HeaderCell>
+                <Table.HeaderCell>To</Table.HeaderCell>
+                <Table.HeaderCell>Slots</Table.HeaderCell>
+                <Table.HeaderCell>Status</Table.HeaderCell>
               </Table.Row>
             </Table.Header>
 
@@ -94,9 +98,20 @@ class TeeTimes extends Component {
                     </Table.Cell>
 
                     <Table.Cell>{request.course}</Table.Cell>
-                    <Table.Cell>{request.email}</Table.Cell>
-                    <Table.Cell>{request.play_date}</Table.Cell>
+                    <Table.Cell>
+                      {request.play_date
+                        .substring(0, 4)
+                        .concat(
+                          '-',
+                          request.play_date.substring(4, 6),
+                          '-',
+                          request.play_date.substring(6)
+                        )}
+                    </Table.Cell>
                     <Table.Cell>{request.start_time}</Table.Cell>
+                    <Table.Cell>{request.end_time}</Table.Cell>
+                    <Table.Cell>{request.slots}</Table.Cell>
+                    <Table.Cell>{request.status}</Table.Cell>
                   </Table.Row>
                 )
               })}
@@ -105,7 +120,7 @@ class TeeTimes extends Component {
 
           <Modal
             id='addTeeTimeModal'
-            open={this.state.addinRequest}
+            open={this.state.addingRequest}
             onClose={this.close}
           >
             <Modal.Header>Add a new tee time request</Modal.Header>

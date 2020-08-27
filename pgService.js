@@ -1110,7 +1110,10 @@ module.exports = {
     console.log('fetching teetimes   ')
     return new Promise((resolve, reject) => {
       pool
-        .query('SELECT *  FROM teetime_requests where user_id = $1;', [user_id])
+        .query(
+          'SELECT *  FROM teetime_requests where user_id = $1 order by id desc;',
+          [user_id]
+        )
         .then((results) => {
           resolve(results)
         })
