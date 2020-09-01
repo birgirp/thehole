@@ -1123,4 +1123,24 @@ module.exports = {
         })
     })
   },
+  insertTeeTimeRequest: function (userId, dags, courseKey, start, stop, slots) {
+    let status = 'New'
+    console.log(courseKey)
+    console.log('insert teetime requests...')
+    return new Promise((resolve, reject) => {
+      pool
+        .query(
+          'insert into teetime_requests(user_id, play_date, course, start_time, end_time, slots, status) \
+                VALUES ($1, $2, $3, $4, $5, $6, $7); ',
+          [userId, dags, courseKey, start, stop, slots, status]
+        )
+        .then((results) => {
+          resolve(results)
+        })
+        .catch((error) => {
+          console.log('db error...')
+          reject(error)
+        })
+    })
+  },
 }

@@ -20,11 +20,10 @@ class TeeTimes extends Component {
   getAllRequests = () => {
     this.setState({ loading: true })
     axios
-      .post('/api/fetchteetimes', { userId: 38 })
+      .post('/api/fetchteetimes', { userId: this.props.userId })
       .then((res) => {
         this.setState({ teetimes: res.data })
         this.setState({ loading: false })
-        console.log(res.data)
       })
       .catch((err) => {
         console.log(err)
@@ -51,9 +50,21 @@ class TeeTimes extends Component {
 
   cancel = () => {
     if (this.state.addingRequest) {
-      console.log('closososo')
       this.setState({ addingRequest: false })
     }
+  }
+
+  deleteRequest = (requestId) => {
+    this.setState({ loading: true })
+    axios
+      .post('/api/deleteteetimerequest', { userId: this.props.userId })
+      .then((res) => {
+        this.getAllRequests()
+        this.setState({ loading: false })
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
   render() {
@@ -123,7 +134,7 @@ class TeeTimes extends Component {
             open={this.state.addingRequest}
             onClose={this.close}
           >
-            <Modal.Header>Add a new tee time request</Modal.Header>
+            <Modal.Header>Tee time request</Modal.Header>
             <Modal.Content>
               {
                 <AddTeeTimeRequest
@@ -131,6 +142,7 @@ class TeeTimes extends Component {
                   addNewTeeTime={this.addNewTeeTime}
                   reloadRequests={this.getAllRequests}
                   cancel={this.cancel}
+                  userId={this.props.userId}
                 />
               }
             </Modal.Content>

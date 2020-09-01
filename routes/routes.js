@@ -883,6 +883,53 @@ router.post('/api/fetchteamgames', (req, res) => {
     })
 })
 
+router.post('/api/addteetimerequest', async (req, res) => {
+  //-----------------------------------------------------------------------------------
+  console.log('about to teetime request...')
+
+  dbdata
+    .insertTeeTimeRequest(
+      req.body.userId,
+      req.body.dags,
+      req.body.courseKey,
+      req.body.start,
+      req.body.stop,
+      req.body.slots
+    )
+    .then((data) => {
+      console.log(JSON.stringify(data))
+      res.json(data.rows[0])
+    })
+    .catch((error) => {
+      console.log('error  :')
+      console.log(error)
+
+      res.status(500).json({
+        status: 'fail',
+        message: error,
+      })
+
+      // res.status(500)
+      // res.json({ error: error })
+    })
+})
+
+router.post('/api/deleteteetimerequest', async (req, res) => {
+  //-----------------------------------------------------------------------------------
+  console.log('about to delete teetime request...')
+
+  dbdata
+    .deleteTeeTimeRequest(req.body.requestId)
+    .then((data) => {
+      res.json('ok')
+    })
+    .catch((error) => {
+      console.log(error)
+      res.status(500)
+      //res.json({ error: error })
+    })
+})
+
 router.post('/api/fetchteetimes', (req, res) => {
   let userId = req.body.userId
   dbdata
