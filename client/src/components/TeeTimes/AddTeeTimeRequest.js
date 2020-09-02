@@ -1,6 +1,6 @@
 // External libs
 import React, { Component } from 'react'
-import { Button, Form, Input, Dropdown } from 'semantic-ui-react'
+import { Button, Form, Input } from 'semantic-ui-react'
 import axios from 'axios'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-balham.css'
@@ -21,10 +21,18 @@ class AddTeeTimeRequest extends Component {
     }
     today = yyyy + '-' + mm + '-' + dd
 
+    console.log(today)
+    var date = new Date()
+
+    // add a day
+    date.setDate(date.getDate() + 3)
+    var mdate = date.toISOString()
+    console.log(mdate)
     super(props)
     this.state = {
       errorText: '',
       play_date: today,
+      max_date: mdate,
       course: '',
       courseKey: '',
       from: '15:00',
@@ -64,9 +72,7 @@ class AddTeeTimeRequest extends Component {
       let dags = play_date.replace(/-/g, '')
       let start = from.replace(/:/g, '')
       let stop = to.replace(/:/g, '')
-      console.log(dags, stop)
       let userId = this.props.userId
-      console.log(courseKey)
 
       axios
         .post('/api/addteetimerequest', {
@@ -83,7 +89,9 @@ class AddTeeTimeRequest extends Component {
           this.props.closeModal()
         })
         .catch((error) => {
-          console.log(error)
+          let msg = error.response.data.error
+          console.log(msg)
+          this.setState({ errorText: msg })
         })
     }
   }
@@ -121,25 +129,29 @@ class AddTeeTimeRequest extends Component {
       <div>
         <h1> Add new tee time monitoring request </h1>
         {this.state.errorText.length > 0 && (
-          <h2 className='errorMessage'>{this.state.errorText}</h2>
+          <h1 style={{ color: 'red' }}>{this.state.errorText}!</h1>
         )}
         <br />
         <br />
         <Form>
           <Form.Group>
             <Form.Field
-              width={4}
+              width={6}
               required
+              closable
+              maxDate={this.state.max_date}
+              minDate={new Date().toISOString}
               control={DateInput}
               iconPosition='left'
               label='Date'
               placeholder='Date'
+              dateFormat='YYYY-MM-DD'
               value={this.state.play_date}
               onChange={this.handleDateChange}
             />
             <Form.Select
               required
-              width={4}
+              width={6}
               label='Course'
               placeholder='Course'
               options={this.state.courseSelection}
@@ -149,7 +161,7 @@ class AddTeeTimeRequest extends Component {
           </Form.Group>
           <Form.Group>
             <Form.Field
-              width={3}
+              width={4}
               required
               control={TimeInput}
               closable
@@ -160,7 +172,7 @@ class AddTeeTimeRequest extends Component {
               onChange={this.handleFromChange}
             />
             <Form.Field
-              width={3}
+              width={4}
               required
               closable
               control={TimeInput}

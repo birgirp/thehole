@@ -57,10 +57,10 @@ class TeeTimes extends Component {
   deleteRequest = (requestId) => {
     this.setState({ loading: true })
     axios
-      .post('/api/deleteteetimerequest', { userId: this.props.userId })
+      .post('/api/deleteteetimerequest', { requestId })
       .then((res) => {
         this.getAllRequests()
-        this.setState({ loading: false })
+        // this.setState({ loading: false })
       })
       .catch((err) => {
         console.log(err)
@@ -135,7 +135,7 @@ class TeeTimes extends Component {
             onClose={this.close}
           >
             <Modal.Header>Tee time request</Modal.Header>
-            <Modal.Content>
+            <Modal.Content scrolling>
               {
                 <AddTeeTimeRequest
                   closeModal={this.close}

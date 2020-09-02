@@ -904,13 +904,19 @@ router.post('/api/addteetimerequest', async (req, res) => {
       console.log('error  :')
       console.log(error)
 
-      res.status(500).json({
-        status: 'fail',
-        message: error,
-      })
+      //   res.status(500).json({
+      //    status: 'fail',
+      //    message: error,
+      //  })
+      let errorMessage = 'Unknown Error'
+      // unique constraint error
+      console.log(error.code)
+      if (error.code === '23505') {
+        errorMessage = 'Request already exists'
+      }
 
-      // res.status(500)
-      // res.json({ error: error })
+      res.status(500)
+      res.json({ error: errorMessage })
     })
 })
 
@@ -926,7 +932,7 @@ router.post('/api/deleteteetimerequest', async (req, res) => {
     .catch((error) => {
       console.log(error)
       res.status(500)
-      //res.json({ error: error })
+      res.json({ error: error })
     })
 })
 

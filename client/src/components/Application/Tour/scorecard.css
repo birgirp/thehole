@@ -1,10 +1,8 @@
-
-  .errorMessage {
-    color: red;
-    font-size: 0.75em;
-    display: relative;
-  }
-  .ag-row-hover {
-    /* putting in !important so it overrides the theme's styling as it hovers the row also */
-    background-color: #dfdfff !important;
+.errorMessage {
+  color: red;
+  display: relative;
+}
+.ag-row-hover {
+  /* putting in !important so it overrides the theme's styling as it hovers the row also */
+  background-color: #dfdfff !important;
 }

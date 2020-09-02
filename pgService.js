@@ -1143,4 +1143,18 @@ module.exports = {
         })
     })
   },
+  deleteTeeTimeRequest: function (id) {
+    console.log('deleting teetime request ')
+    return new Promise((resolve, reject) => {
+      pool
+        .query('DELETE FROM teetime_requests where id = $1;', [id])
+        .then((results) => {
+          resolve(results)
+        })
+        .catch((error) => {
+          console.log('db error...')
+          reject(error)
+        })
+    })
+  },
 }
