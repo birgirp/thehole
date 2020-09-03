@@ -6,6 +6,9 @@
   "private": true,
   "description": "Node.js server",
   "main": "index.js",
+  "engines": {
+    "node": "10.x"
+  },
   "scripts": {
     "devClient": "cd client && npm start",
     "buildClient": "cd client && node scripts/build.js",
