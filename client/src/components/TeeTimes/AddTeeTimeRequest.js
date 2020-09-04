@@ -51,7 +51,7 @@ class AddTeeTimeRequest extends Component {
     let { course, play_date, slots, from, to } = this.state
     let ok = false
     if (course && play_date && slots && from && to) {
-      if (parseInt(to) <= parseInt(from)) {
+      if (parseInt(to.replace(/:/g, '')) <= parseInt(from.replace(/:/g, ''))) {
         this.setState({ errorText: 'To should be larger than from!' })
       } else {
         this.setState({ errorText: '' })
@@ -125,6 +125,7 @@ class AddTeeTimeRequest extends Component {
 
   render() {
     //<div className="ag-theme-balham" style={{ height: '200px', width: '1200px'  }}>
+    const minDate = new Date().toISOString()
     return (
       <div>
         <h1> Add new tee time monitoring request </h1>
@@ -140,7 +141,7 @@ class AddTeeTimeRequest extends Component {
               required
               closable
               maxDate={this.state.max_date}
-              minDate={new Date().toISOString}
+              minDate={minDate}
               control={DateInput}
               iconPosition='left'
               label='Date'

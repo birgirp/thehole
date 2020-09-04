@@ -67,6 +67,43 @@ class TeeTimes extends Component {
       })
   }
 
+  tableBody = () => {
+    let data = this.state.teetimes
+    return (
+      <Table.Body>
+        {data.map((request) => {
+          return (
+            <Table.Row key={request.id}>
+              <Table.Cell>
+                <Icon
+                  name='delete'
+                  link
+                  onClick={() => this.deleteRequest(request.id)}
+                />
+              </Table.Cell>
+
+              <Table.Cell>{request.course}</Table.Cell>
+              <Table.Cell>
+                {request.play_date
+                  .substring(0, 4)
+                  .concat(
+                    '-',
+                    request.play_date.substring(4, 6),
+                    '-',
+                    request.play_date.substring(6)
+                  )}
+              </Table.Cell>
+              <Table.Cell>{request.start_time}</Table.Cell>
+              <Table.Cell>{request.end_time}</Table.Cell>
+              <Table.Cell>{request.slots}</Table.Cell>
+              <Table.Cell>{request.status}</Table.Cell>
+            </Table.Row>
+          )
+        })}
+      </Table.Body>
+    )
+  }
+
   render() {
     if (this.state.loading) {
       return <Loading />
@@ -96,37 +133,7 @@ class TeeTimes extends Component {
               </Table.Row>
             </Table.Header>
 
-            <Table.Body>
-              {data.map((request) => {
-                return (
-                  <Table.Row key={request.id}>
-                    <Table.Cell>
-                      <Icon
-                        name='delete'
-                        link
-                        onClick={() => this.deleteRequest(request.id)}
-                      />
-                    </Table.Cell>
-
-                    <Table.Cell>{request.course}</Table.Cell>
-                    <Table.Cell>
-                      {request.play_date
-                        .substring(0, 4)
-                        .concat(
-                          '-',
-                          request.play_date.substring(4, 6),
-                          '-',
-                          request.play_date.substring(6)
-                        )}
-                    </Table.Cell>
-                    <Table.Cell>{request.start_time}</Table.Cell>
-                    <Table.Cell>{request.end_time}</Table.Cell>
-                    <Table.Cell>{request.slots}</Table.Cell>
-                    <Table.Cell>{request.status}</Table.Cell>
-                  </Table.Row>
-                )
-              })}
-            </Table.Body>
+            {data && this.tableBody()}
           </Table>
 
           <Modal
