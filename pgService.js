@@ -402,9 +402,31 @@ module.exports = {
     return new Promise((resolve, reject) => {
       pool
         .query(
-          'select t.id, tour_name, tour_status, rounds, count(tt.name) as teams from tours t \
+          'select t.id, tour_name, tour_status, rounds, u.full_name, count(tt.name) as teams from tours t \
+          join users u on u.id = t.owner_id \
             left join tour_teams tt on t.id = tt.tour_id \
-            group by t.id, tour_name, tour_status, rounds '
+            group by t.id, tour_name, tour_status, rounds, u.full_name '
+        )
+        .then((results) => {
+          resolve(results)
+        })
+        .catch((error) => {
+          console.log('db error...')
+          reject(error)
+        })
+    })
+  },
+
+  getUserTours: function (userId) {
+    return new Promise((resolve, reject) => {
+      pool
+        .query(
+          'select t.id, tour_name, tour_status, rounds, u.full_name, count(tt.name) as teams from tours t \
+             left join tour_teams tt on t.id = tt.tour_id \
+             join users u on u.id = t.owner_id \
+             where t.owner_id = $1\
+            group by t.id, tour_name, tour_status, rounds, u.full_name ',
+          [userId]
         )
         .then((results) => {
           resolve(results)

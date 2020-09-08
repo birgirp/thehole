@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import { Table } from 'semantic-ui-react'
+import { Table, Button } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import Loading from '../Loading/Loading'
 
@@ -10,6 +10,7 @@ class Home extends Component {
     this.state = {
       tours: [],
       isLoading: false,
+      isAddingTour: false,
       playerId: this.props.userId,
     }
   }
@@ -38,6 +39,16 @@ class Home extends Component {
     } else if (data) {
       return (
         <div>
+          <Link
+            to={{
+              pathname: '/home/mytours',
+              state: {
+                userId: this.props.userId,
+              },
+            }}
+          >
+            Manage my tours
+          </Link>
           <h1>My Tours</h1>
           <Table celled>
             <Table.Header>

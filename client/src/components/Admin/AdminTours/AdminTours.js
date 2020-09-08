@@ -17,16 +17,25 @@ class AdminTours extends Component {
       isEditingTour: false,
       isEditTourTeams: false,
       isLoading: false,
-
-      editingTour: { id: '', name: '', status: '', rounds: '', teams: '' }
+      userId: 34,
+      editingTour: { id: '', name: '', status: '', rounds: '', teams: '' },
     }
   }
 
   componentDidMount() {
     this.setState({ isLoading: true })
+    let userId = null
+    if (this.props.location.state) {
+      userId = this.props.location.state.userId
+      this.setState({ userId: userId })
+    } else {
+      userId = this.state.userId
+    }
+    console.log(userId)
+
     axios
-      .get('/api/getalltours')
-      .then(res => {
+      .post('/api/getalltours', { userId: userId })
+      .then((res) => {
         if (res.lenght === 0) {
           console.log('No tours found')
         } else {
@@ -34,7 +43,7 @@ class AdminTours extends Component {
           this.setState({ tours: res.data, isLoading: false })
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err)
         this.setState({ isLoading: false })
       })
@@ -50,7 +59,7 @@ class AdminTours extends Component {
     this.setState({ isEditTourTeams: false })
   }
 
-  handleAddTour = e => {
+  handleAddTour = (e) => {
     this.setState({ isCreatingTour: true })
   }
 
@@ -73,7 +82,6 @@ class AdminTours extends Component {
     editingTour.status = status
     editingTour.rounds = rounds
     editingTour.teams = teams
-
     this.setState({ editingTour: editingTour })
   }
 
@@ -81,7 +89,7 @@ class AdminTours extends Component {
     let editingTour = this.state.editingTour
     let tour_id = editingTour.id
     let tours = this.state.tours
-    let index = tours.findIndex(obj => parseInt(obj.id) === tour_id)
+    let index = tours.findIndex((obj) => parseInt(obj.id) === tour_id)
     tours[index].teams = 2
     this.setState({ tours: tours })
   }
@@ -131,10 +139,11 @@ class AdminTours extends Component {
                 <Table.HeaderCell width='3'>Tour Name</Table.HeaderCell>
                 <Table.HeaderCell width='2'>Status</Table.HeaderCell>
                 <Table.HeaderCell width='2'>Rounds</Table.HeaderCell>
+                <Table.HeaderCell width='2'>Owner</Table.HeaderCell>
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {data.map(tour => {
+              {data.map((tour) => {
                 return (
                   <Table.Row key={tour.id}>
                     <Table.Cell>
@@ -149,7 +158,7 @@ class AdminTours extends Component {
                             tour.rounds
                           )
                         }
-                      ></Icon>
+                      />
                     </Table.Cell>
                     <Table.Cell>
                       <Icon
@@ -164,11 +173,12 @@ class AdminTours extends Component {
                             tour.teams
                           )
                         }
-                      ></Icon>
+                      />
                     </Table.Cell>
                     <Table.Cell>{tour.tour_name}</Table.Cell>
                     <Table.Cell>{tour.tour_status}</Table.Cell>
                     <Table.Cell>{tour.rounds}</Table.Cell>
+                    <Table.Cell>{tour.full_name}</Table.Cell>
                   </Table.Row>
                 )
               })}

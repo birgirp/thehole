@@ -129,7 +129,7 @@ class App extends Component {
                     <Home {...props} userId={this.state.userId} />
                   )}
                 />
-
+                <Route exact path='/home/mytours' component={AdminTours} />
                 <Route
                   exact
                   path='/teetimes'

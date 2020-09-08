@@ -392,23 +392,31 @@ router.post('/api/updatetour', (req, res) => {
     })
 })
 
-router.get('/api/getalltours', (req, res) => {
-  dbdata
-    .getAllTours()
-    .then((data) => {
-      if (data.rows.length > 0) {
-        tours = data.rows
-        res.json(tours)
-      } else {
-        console.log('No tours found')
-        res.json(null)
-      }
-    })
-    .catch((error) => {
-      console.log(error)
-      res.status(500)
-      res.json({ error: error })
-    })
+router.post('/api/getalltours', async (req, res) => {
+  const userId = req.body.userId
+
+  console.log('Fetching tours for user:')
+  console.log(userId)
+
+  let data = null
+  try {
+    if (userId === 34) {
+      data = await dbdata.getAllTours()
+    } else {
+      data = await dbdata.getUserTours(userId)
+    }
+
+    if (data.rows.length === 0) {
+      console.log('no tours found')
+      res.json(null)
+    } else {
+      res.json(data.rows)
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500)
+    res.json({ error: error })
+  }
 })
 
 router.post('/api/gettourbyid', (req, res) => {
