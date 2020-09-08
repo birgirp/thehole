@@ -43,6 +43,7 @@ class AddTeeTimeRequest extends Component {
         { key: 'grafarholt', text: 'Grafarholt', value: 'Grafarholt' },
         { key: 'korpa9', text: 'Korpa 9h', value: 'Korpa 9h' },
         { key: 'skaginn', text: 'Garðavöllur', value: 'Garðavöllur' },
+        { key: 'kidjaberg', text: 'Kiðjaberg', value: 'Kiðjaberg' },
       ],
     }
   }
