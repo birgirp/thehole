@@ -54,6 +54,7 @@ class CreatTour extends Component {
         courses: this.state.selectedCourses,
         tourName: this.state.tourName,
         rounds: this.state.numberOfRounds,
+        userId: this.props.userId,
       })
       .then((response) => {
         this.setState({ loading: false })

@@ -191,8 +191,13 @@ class AdminTours extends Component {
             onClose={this.closeCreateModal}
           >
             <Modal.Header>Add new Tour</Modal.Header>
-            <Modal.Content scrolling={true}>
-              {<CreateTour closeModal={this.closeCreateModal} />}
+            <Modal.Content scrolling={true} height='100vh'>
+              {
+                <CreateTour
+                  closeModal={this.closeCreateModal}
+                  userId={this.state.userId}
+                />
+              }
             </Modal.Content>
           </Modal>
 

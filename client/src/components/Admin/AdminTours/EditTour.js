@@ -73,7 +73,6 @@ class EditTour extends Component {
         initial.status !== this.state.status ||
         parseInt(initial.rounds) !== parseInt(this.state.rounds)
       ) {
-        console.log('i need to update tour name or status or rounds')
         this.setState({ loading: true })
 
         await axios.post('/api/updatetour', {
@@ -82,25 +81,47 @@ class EditTour extends Component {
           tourName: this.state.name,
           rounds: this.state.rounds,
         })
-
-        this.setState({ loading: false })
-        this.props.closeModal()
       }
       if (
         JSON.stringify(this.state.initialCourses.sort()) !==
         JSON.stringify(this.state.selectedCourses.sort())
       ) {
-        console.log('i need to update courses')
+        let addedCourses = this.state.selectedCourses.filter((item) => {
+          return !this.state.initialCourses.includes(item)
+        })
+        let removedCourses = this.state.initialCourses.filter((item) => {
+          return !this.state.selectedCourses.includes(item)
+        })
+        console.log('addedCourses')
+        console.log(addedCourses)
+        console.log("removedCourses - Can't remove courses from tour!")
+        console.log(removedCourses)
+
+        await axios.post('/api/addtourcourses', {
+          tourId: this.state.id,
+          courses: addedCourses,
+        })
       }
+
       if (
         JSON.stringify(this.state.initialPlayers.sort()) !==
         JSON.stringify(this.state.selectedPlayers.sort())
       ) {
-        console.log('i need to updated players')
+        let addedPlayers = this.state.selectedPlayers.filter((item) => {
+          return !this.state.initialPlayers.includes(item)
+        })
+
+        await axios.post('/api/addtourplayers', {
+          tourId: this.state.id,
+          players: addedPlayers,
+        })
       }
       this.setState({ isLoading: false })
     } catch (error) {
       console.log(error)
+    } finally {
+      this.setState({ loading: false })
+      this.props.closeModal()
     }
   }
 

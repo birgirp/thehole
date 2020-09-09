@@ -6,6 +6,7 @@ var _ = require('underscore')
 const fileLocation = './data/memos.json'
 //const dbdata = require('../oracleService')
 const dbdata = require('../pgService')
+const { response } = require('express')
 
 // ---------------------------------------------------------------------
 // GET ALL MEMOS
@@ -350,9 +351,10 @@ router.post('/api/addtour', (req, res) => {
   const players = req.body.players
   const courses = req.body.courses
   const rounds = req.body.rounds
+  const userId = req.body.userId
   let tour_id = null
   dbdata
-    .insertTour(req.body.tourName, 'Open', rounds)
+    .insertTour(req.body.tourName, 'Open', rounds, userId)
     .then((response) => {
       console.log(
         'after inserting tour : ' + JSON.stringify(response.rows[0].id)
@@ -390,6 +392,33 @@ router.post('/api/updatetour', (req, res) => {
       res.status(500)
       res.json({ error: error })
     })
+})
+
+router.post('/api/addtourcourses', async (req, res) => {
+  let tourId = req.body.tourId
+  let courses = req.body.courses
+
+  try {
+    let response = await dbdata.insertTourCourses(tourId, courses)
+    res.json(response)
+  } catch (error) {
+    console.log(error)
+    res.status(500)
+    res.json({ error: error })
+  }
+})
+
+router.post('/api/addtourplayers', async (req, res) => {
+  let tourId = req.body.tourId
+  let players = req.body.players
+  try {
+    let response = await dbdata.insertTourPlayers(tourId, players)
+    res.json(response)
+  } catch (error) {
+    console.log(error)
+    res.status(500)
+    res.json({ error: error })
+  }
 })
 
 router.post('/api/getalltours', async (req, res) => {
