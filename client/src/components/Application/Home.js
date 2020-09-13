@@ -42,12 +42,10 @@ class Home extends Component {
           <Link
             to={{
               pathname: '/home/mytours',
-              state: {
-                userId: this.props.userId,
-              },
+              state: { userId: this.props.userId },
             }}
           >
-            Manage my tours
+            <Button>Manage my Tours</Button>
           </Link>
           <h1>My Tours</h1>
           <Table celled>
