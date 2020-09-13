@@ -52,7 +52,8 @@ class Home extends Component {
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell width='3'>Tour Name</Table.HeaderCell>
-                <Table.HeaderCell width='2'>Status</Table.HeaderCell>
+                <Table.HeaderCell width='2'>Year</Table.HeaderCell>
+                <Table.HeaderCell width='2'>Owner</Table.HeaderCell>
               </Table.Row>
             </Table.Header>
             <Table.Body>
@@ -62,7 +63,8 @@ class Home extends Component {
                     <Table.Cell>
                       <Link to={`/tour/${tour.id}`}>{tour.tour_name}</Link>
                     </Table.Cell>
-                    <Table.Cell>{tour.tour_status}</Table.Cell>
+                    <Table.Cell>{tour.year}</Table.Cell>
+                    <Table.Cell>{tour.full_name}</Table.Cell>
                   </Table.Row>
                 )
               })}

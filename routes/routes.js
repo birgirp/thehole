@@ -352,6 +352,7 @@ router.post('/api/addtour', (req, res) => {
   const courses = req.body.courses
   const rounds = req.body.rounds
   const userId = req.body.userId
+  console.log('user ID:', userId)
   let tour_id = null
   dbdata
     .insertTour(req.body.tourName, 'Open', rounds, userId)

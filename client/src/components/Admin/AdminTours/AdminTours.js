@@ -112,7 +112,12 @@ class AdminTours extends Component {
           >
             <Modal.Header>Add new Tour</Modal.Header>
             <Modal.Content>
-              {<CreateTour closeModal={this.closeCreateModal} />}
+              {
+                <CreateTour
+                  closeModal={this.closeCreateModal}
+                  userId={this.state.userId}
+                />
+              }
             </Modal.Content>
           </Modal>
         </div>

@@ -1,6 +1,6 @@
 // External libs
-import React, { Component } from 'react'
-import { Button, Form, Input, Dropdown } from 'semantic-ui-react'
+import React, { Component, isValidElement } from 'react'
+import { Button, Form, Input, Dropdown, Checkbox } from 'semantic-ui-react'
 import axios from 'axios'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-balham.css'
@@ -19,6 +19,8 @@ class CreatTour extends Component {
       tourName: '',
       isLoading: false,
       numberOfRounds: 1,
+      bestofRounds: 1,
+      isRanking: false,
     }
   }
 
@@ -31,7 +33,7 @@ class CreatTour extends Component {
         return axios.get('/users/getAllUsers')
       })
       .then((res2) => {
-        console.log(res2.data)
+        // console.log(res2.data)
         this.setState({ players: res2.data })
         this.setState({ isLoading: false })
       })
@@ -47,13 +49,14 @@ class CreatTour extends Component {
 
   handleSubmit = () => {
     this.setState({ loading: true })
-
+    console.log('USER ID', this.props.userId)
     axios
       .post('/api/addtour', {
         players: this.state.selectedPlayers,
         courses: this.state.selectedCourses,
         tourName: this.state.tourName,
         rounds: this.state.numberOfRounds,
+        bestofRounds: this.state.bestofRounds,
         userId: this.props.userId,
       })
       .then((response) => {
@@ -82,6 +85,19 @@ class CreatTour extends Component {
 
   handleNumberChange = (event, value) => {
     this.setState({ numberOfRounds: value.value })
+  }
+
+  handleIsRankingChange = (event, value) => {
+    console.log(value.checked)
+    this.setState({ isRanking: value.checked })
+  }
+
+  handleBestoffChange = (event, value) => {
+    if (value.value > this.state.numberOfRounds) {
+      this.setState({ bestofRounds: this.state.numberOfRounds })
+    } else {
+      this.setState({ bestofRounds: value.value })
+    }
   }
 
   render() {
@@ -116,6 +132,40 @@ class CreatTour extends Component {
                 value={this.state.tourName}
                 onChange={this.handleNameChange}
               />
+
+              <Form.Field
+                width='2'
+                control={Input}
+                min='1'
+                max='20'
+                value={this.state.numberOfRounds}
+                type='Number'
+                label='Rounds'
+                placeholder='#'
+                onChange={this.handleNumberChange}
+              />
+
+              <Form.Field
+                width='2'
+                control={Input}
+                min='1'
+                max={this.state.numberOfRounds}
+                value={this.state.bestofRounds}
+                type='Number'
+                label='Best of Rounds'
+                placeholder='#'
+                onChange={this.handleBestoffChange}
+              />
+              <Form.Field
+                width='2'
+                control={Checkbox}
+                checked={this.state.isRanking}
+                label='Is ranking'
+                onChange={this.handleIsRankingChange}
+              />
+            </Form.Group>
+
+            <Form.Group>
               <Form.Field
                 width='6'
                 control={Dropdown}
@@ -139,17 +189,6 @@ class CreatTour extends Component {
                 placeholder='Select courses'
                 options={cselection}
                 onChange={this.handleCourseChange}
-              />
-              <Form.Field
-                width='2'
-                control={Input}
-                min='1'
-                max='20'
-                value={this.state.numberOfRounds}
-                type='Number'
-                label='Rounds'
-                placeholder='#'
-                onChange={this.handleNumberChange}
               />
             </Form.Group>
           </Form>

@@ -461,7 +461,10 @@ module.exports = {
     return new Promise((resolve, reject) => {
       pool
         .query(
-          'select t.id, t.tour_name, t.tour_status from tours t  join tour_players p on t.id = p.tour_id where p.player_id = $1',
+          'select t.id, t.tour_name, t.tour_status, t.year, u.full_name from tours t \
+           join tour_players p on t.id = p.tour_id \
+           join users u on u.id = t.owner_id\
+           where p.player_id = $1',
           [playerId]
         )
         .then((results) => {

@@ -232,7 +232,7 @@ class EditTour extends Component {
           <br />
 
           <Button primary onClick={this.handleSubmit}>
-            Submit
+            Save
           </Button>
           <Button secondary onClick={this.handleCancel}>
             Cancel
