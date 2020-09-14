@@ -15,6 +15,7 @@ class Tour extends Component {
       name: '',
       status: '',
       rounds: 0,
+      bestof: 0,
       players: [],
       courses: [],
       is_ranking: false,
@@ -46,6 +47,7 @@ class Tour extends Component {
           name: t.tour_name,
           status: t.tour_status,
           rounds: parseInt(t.tour_rounds),
+          bestof: parseInt(t.bestof),
           hasTeams: hasTeams,
           is_ranking: t.is_ranking,
         })
@@ -70,6 +72,7 @@ class Tour extends Component {
                     <TourSummary
                       players={this.state.players}
                       rounds={this.state.rounds}
+                      bestof={this.state.bestof}
                       is_ranking={this.state.is_ranking}
                       tourId={this.props.match.params.id}
                     />

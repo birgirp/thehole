@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Form, Input, Dropdown } from 'semantic-ui-react'
+import { Button, Form, Input, Dropdown, Checkbox } from 'semantic-ui-react'
 import axios from 'axios'
 import Loading from '../../Loading/Loading'
 
@@ -11,6 +11,8 @@ class EditTour extends Component {
       name: '',
       status: '',
       rounds: 0,
+      bestofRounds: 0,
+      isRanking: null,
       players: [],
       courses: [],
       selectedPlayers: [],
@@ -28,7 +30,9 @@ class EditTour extends Component {
       name: t.name,
       status: t.status,
       rounds: parseInt(t.rounds),
+      bestofRounds: parseInt(t.bestof),
       isLoading: true,
+      isRanking: t.isRanking,
     })
 
     axios
@@ -71,7 +75,9 @@ class EditTour extends Component {
       if (
         initial.name !== this.state.name ||
         initial.status !== this.state.status ||
-        parseInt(initial.rounds) !== parseInt(this.state.rounds)
+        parseInt(initial.rounds) !== parseInt(this.state.rounds) ||
+        parseInt(initial.bestof) !== parseInt(this.state.bestofRounds) ||
+        initial.isRanking !== this.state.isRanking
       ) {
         this.setState({ loading: true })
 
@@ -80,6 +86,8 @@ class EditTour extends Component {
           tourStatus: this.state.status,
           tourName: this.state.name,
           rounds: this.state.rounds,
+          bestof: this.state.bestofRounds,
+          isRanking: this.state.isRanking,
         })
       }
       if (
@@ -147,6 +155,19 @@ class EditTour extends Component {
     this.setState({ rounds: value.value })
   }
 
+  handleIsRankingChange = (event, value) => {
+    console.log(value.checked)
+    this.setState({ isRanking: value.checked })
+  }
+
+  handleBestoffChange = (event, value) => {
+    if (value.value > this.state.numberOfRounds) {
+      this.setState({ bestofRounds: this.state.numberOfRounds })
+    } else {
+      this.setState({ bestofRounds: value.value })
+    }
+  }
+
   render() {
     const players = this.state.players
     const courses = this.state.courses
@@ -189,6 +210,40 @@ class EditTour extends Component {
                 value={this.state.status}
                 onChange={this.handleStatusChange}
               />
+
+              <Form.Field
+                width='2'
+                control={Input}
+                min='1'
+                max='20'
+                value={this.state.rounds}
+                type='Number'
+                label='Rounds'
+                placeholder='#'
+                options={cselection}
+                onChange={this.handleNumberChange}
+              />
+              <Form.Field
+                width='2'
+                control={Input}
+                min='1'
+                max={this.state.numberOfRounds}
+                value={this.state.bestofRounds}
+                type='Number'
+                label='Best of Rounds'
+                placeholder='#'
+                onChange={this.handleBestoffChange}
+              />
+              <Form.Field
+                width='2'
+                control={Checkbox}
+                checked={this.state.isRanking}
+                label='Is ranking'
+                onChange={this.handleIsRankingChange}
+              />
+            </Form.Group>
+
+            <Form.Group>
               <Form.Field
                 width='6'
                 control={Dropdown}
@@ -214,18 +269,6 @@ class EditTour extends Component {
                 placeholder='Select courses'
                 options={cselection}
                 onChange={this.handleCourseChange}
-              />
-              <Form.Field
-                width='2'
-                control={Input}
-                min='1'
-                max='20'
-                value={this.state.rounds}
-                type='Number'
-                label='Rounds'
-                placeholder='#'
-                options={cselection}
-                onChange={this.handleNumberChange}
               />
             </Form.Group>
           </Form>

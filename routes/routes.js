@@ -393,8 +393,11 @@ router.post('/api/updatetour', (req, res) => {
   const rounds = req.body.rounds
   const tourStatus = req.body.tourStatus
   const tourName = req.body.tourName
+  const bestof = req.body.bestof
+  const isRanking = req.body.isRanking
+
   dbdata
-    .updateTour(tourId, tourName, tourStatus, rounds)
+    .updateTour(tourId, tourName, tourStatus, rounds, bestof, isRanking)
     .then((response) => {
       res.json(response)
     })

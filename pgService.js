@@ -308,12 +308,20 @@ module.exports = {
     })
   },
 
-  updateTour: function (tourId, tourName, tourStatus, rounds) {
+  updateTour: function (
+    tourId,
+    tourName,
+    tourStatus,
+    rounds,
+    bestof,
+    isRanking
+  ) {
+    console.log('ranking?', isRanking)
     return new Promise((resolve, reject) => {
       pool
         .query(
-          'UPDATE tours set tour_name = $1, tour_status = $2, rounds = $3 where id = $4',
-          [tourName, tourStatus, rounds, tourId]
+          'UPDATE tours set tour_name = $1, tour_status = $2, rounds = $3, bestof = $4, is_ranking = $5 where id = $6',
+          [tourName, tourStatus, rounds, bestof, isRanking, tourId]
         )
         .then((results) => {
           resolve(results)
@@ -411,10 +419,10 @@ module.exports = {
     return new Promise((resolve, reject) => {
       pool
         .query(
-          'select t.id, tour_name, tour_status, rounds, u.full_name, count(tt.name) as teams from tours t \
+          'select t.id, tour_name, tour_status, rounds, u.full_name, t.is_ranking, t.bestof, count(tt.name) as teams from tours t \
           join users u on u.id = t.owner_id \
             left join tour_teams tt on t.id = tt.tour_id \
-            group by t.id, tour_name, tour_status, rounds, u.full_name '
+            group by t.id, tour_name, tour_status, rounds, u.full_name, t.is_ranking, t.bestof, '
         )
         .then((results) => {
           resolve(results)
@@ -430,11 +438,11 @@ module.exports = {
     return new Promise((resolve, reject) => {
       pool
         .query(
-          'select t.id, tour_name, tour_status, rounds, u.full_name, count(tt.name) as teams from tours t \
+          'select t.id, tour_name, tour_status, rounds, u.full_name, t.is_ranking, t.bestof, count(tt.name) as teams from tours t \
              left join tour_teams tt on t.id = tt.tour_id \
              join users u on u.id = t.owner_id \
              where t.owner_id = $1\
-            group by t.id, tour_name, tour_status, rounds, u.full_name ',
+            group by t.id, tour_name, tour_status, rounds, u.full_name, t.is_ranking, t.bestof ',
           [userId]
         )
         .then((results) => {
@@ -451,9 +459,9 @@ module.exports = {
     return new Promise((resolve, reject) => {
       pool
         .query(
-          'select tour_name, tour_status, rounds as tour_rounds, is_ranking, count(tt.name) as hasteams  from tours t \
+          'select tour_name, tour_status, rounds as tour_rounds, is_ranking,  t.bestof, count(tt.name) as hasteams  from tours t \
             left join tour_teams tt on tt.tour_id = t.id where t.id = $1 \
-            group by tour_name, tour_status, rounds, is_ranking',
+            group by tour_name, tour_status, rounds, is_ranking, t.bestof',
           [tourId]
         )
         .then((results) => {

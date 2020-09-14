@@ -109,9 +109,9 @@ class TourSummary extends Component {
     players.forEach((element) => {
       let row = { player_id: element.player_id, player: element.full_name }
       let sum = 0
-      var key
+      let key
 
-      var z
+      let z
       for (z = 1; z < rounds + 1; z++) {
         key = 'r' + z
         row[key] = ''
@@ -120,7 +120,7 @@ class TourSummary extends Component {
 
       scoreData.forEach((item) => {
         if (item.player_id === p_id) {
-          var key2 = 'r' + item.tour_round
+          let key2 = 'r' + item.tour_round
           row[key2] = item.points
           sum = sum + parseInt(item.points)
         }

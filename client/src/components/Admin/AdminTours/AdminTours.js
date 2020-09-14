@@ -41,6 +41,10 @@ class AdminTours extends Component {
     }
     console.log(userId)
 
+    this.fetchData(userId)
+  }
+
+  fetchData = (userId) => {
     axios
       .post('/api/getalltours', { userId: userId })
       .then((res) => {
@@ -58,10 +62,14 @@ class AdminTours extends Component {
   }
 
   closeCreateModal = () => {
-    this.setState({ isCreatingTour: false })
+    this.setState({ isCreatingTour: false, isLoading: true }, () =>
+      this.fetchData(this.state.userId)
+    )
   }
   closeEditModal = () => {
-    this.setState({ isEditingTour: false })
+    this.setState({ isEditingTour: false, isLoading: true }, () =>
+      this.fetchData(this.state.userId)
+    )
   }
   closeEditTourTeams = () => {
     this.setState({ isEditTourTeams: false })
@@ -71,13 +79,15 @@ class AdminTours extends Component {
     this.setState({ isCreatingTour: true })
   }
 
-  handleEditTour = (id, name, status, rounds) => {
+  handleEditTour = (id, name, status, rounds, bestof, isRanking) => {
     this.setState({ isEditingTour: true })
     let editingTour = this.state.editingTour
     editingTour.id = id
     editingTour.name = name
     editingTour.status = status
     editingTour.rounds = rounds
+    editingTour.bestof = bestof
+    editingTour.isRanking = isRanking
 
     this.setState({ editingTour: editingTour })
   }
@@ -152,6 +162,8 @@ class AdminTours extends Component {
                 <Table.HeaderCell width='3'>Tour Name</Table.HeaderCell>
                 <Table.HeaderCell width='2'>Status</Table.HeaderCell>
                 <Table.HeaderCell width='2'>Rounds</Table.HeaderCell>
+                <Table.HeaderCell width='2'>Best of #</Table.HeaderCell>
+                <Table.HeaderCell width='2'>Ranking</Table.HeaderCell>
                 <Table.HeaderCell width='2'>Owner</Table.HeaderCell>
               </Table.Row>
             </Table.Header>
@@ -168,7 +180,9 @@ class AdminTours extends Component {
                             tour.id,
                             tour.tour_name,
                             tour.tour_status,
-                            tour.rounds
+                            tour.rounds,
+                            tour.bestof,
+                            tour.is_ranking
                           )
                         }
                       />
@@ -191,6 +205,8 @@ class AdminTours extends Component {
                     <Table.Cell>{tour.tour_name}</Table.Cell>
                     <Table.Cell>{tour.tour_status}</Table.Cell>
                     <Table.Cell>{tour.rounds}</Table.Cell>
+                    <Table.Cell>{tour.bestof}</Table.Cell>
+                    <Table.Cell>{tour.is_ranking.toString()}</Table.Cell>
                     <Table.Cell>{tour.full_name}</Table.Cell>
                   </Table.Row>
                 )
