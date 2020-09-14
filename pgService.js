@@ -282,12 +282,21 @@ module.exports = {
     })
   },
 
-  insertTour: function (tourName, tourStatus, rounds, userId) {
+  insertTour: function (
+    tourName,
+    tourStatus,
+    rounds,
+    userId,
+    bestof,
+    isRanking,
+    tourYear
+  ) {
     return new Promise((resolve, reject) => {
       pool
         .query(
-          'INSERT INTO tours (tour_name, tour_status, rounds, owner_id) values ($1, $2, $3, $4 ) returning id',
-          [tourName, tourStatus, rounds, userId]
+          'INSERT INTO tours (tour_name, tour_status, rounds, owner_id, bestof, is_ranking, year)\
+           values ($1, $2, $3, $4, $5, $6, $7 ) returning id',
+          [tourName, tourStatus, rounds, userId, bestof, isRanking, tourYear]
         )
         .then((results) => {
           resolve(results)

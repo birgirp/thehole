@@ -21,6 +21,7 @@ class CreatTour extends Component {
       numberOfRounds: 1,
       bestofRounds: 1,
       isRanking: false,
+      tourYear: new Date().getFullYear(),
     }
   }
 
@@ -49,7 +50,7 @@ class CreatTour extends Component {
 
   handleSubmit = () => {
     this.setState({ loading: true })
-    console.log('USER ID', this.props.userId)
+    console.log(this.state.tourYear)
     axios
       .post('/api/addtour', {
         players: this.state.selectedPlayers,
@@ -57,7 +58,9 @@ class CreatTour extends Component {
         tourName: this.state.tourName,
         rounds: this.state.numberOfRounds,
         bestofRounds: this.state.bestofRounds,
+        isRanking: this.state.isRanking,
         userId: this.props.userId,
+        tourYear: this.state.tourYear,
       })
       .then((response) => {
         this.setState({ loading: false })

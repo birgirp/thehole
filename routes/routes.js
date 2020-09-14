@@ -352,10 +352,20 @@ router.post('/api/addtour', (req, res) => {
   const courses = req.body.courses
   const rounds = req.body.rounds
   const userId = req.body.userId
-  console.log('user ID:', userId)
+  const bestof = req.body.bestofRounds
+  const isRanking = req.body.isRanking
+  const tourYear = parseInt(req.body.tourYear)
   let tour_id = null
   dbdata
-    .insertTour(req.body.tourName, 'Open', rounds, userId)
+    .insertTour(
+      req.body.tourName,
+      'Open',
+      rounds,
+      userId,
+      bestof,
+      isRanking,
+      tourYear
+    )
     .then((response) => {
       console.log(
         'after inserting tour : ' + JSON.stringify(response.rows[0].id)

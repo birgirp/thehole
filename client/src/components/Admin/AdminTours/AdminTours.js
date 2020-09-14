@@ -18,7 +18,15 @@ class AdminTours extends Component {
       isEditTourTeams: false,
       isLoading: false,
       userId: 34,
-      editingTour: { id: '', name: '', status: '', rounds: '', teams: '' },
+      editingTour: {
+        id: '',
+        name: '',
+        status: '',
+        rounds: '',
+        teams: '',
+        isRanking: '',
+        bestof: '',
+      },
     }
   }
 
