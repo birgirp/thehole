@@ -895,6 +895,27 @@ module.exports = {
     })
   },
 
+  getTourPointSum: function (tourId, bestof) {
+    // console.log("fetchingf  " + tourId + "  " + round)
+    return new Promise((resolve, reject) => {
+      pool
+        .query(
+          ' SELECT player_id, SUM(points) total FROM ( \
+            SELECT player_id,  points, ROW_NUMBER() OVER(PARTITION BY player_id ORDER BY points DESC) rn \
+            FROM v_scorecards_sum where tour_id = $1 \
+        ) x WHERE rn <= $2 GROUP BY player_id ORDER BY player_id',
+          [tourId, bestof]
+        )
+        .then((results) => {
+          resolve(results)
+        })
+        .catch((error) => {
+          console.log('db error...')
+          reject(error)
+        })
+    })
+  },
+
   getGameTypes: function () {
     console.log('fetching game types  ')
     return new Promise((resolve, reject) => {

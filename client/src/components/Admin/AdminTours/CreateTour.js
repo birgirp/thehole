@@ -1,5 +1,5 @@
 // External libs
-import React, { Component, isValidElement } from 'react'
+import React, { Component } from 'react'
 import { Button, Form, Input, Dropdown, Checkbox } from 'semantic-ui-react'
 import axios from 'axios'
 import 'ag-grid-community/dist/styles/ag-grid.css'

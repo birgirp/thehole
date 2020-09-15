@@ -48,61 +48,70 @@ class TourSummary extends Component {
     return false
   }
 
-  async componentDidMount() {
-    try {
-      console.log('mounting...')
-      let tourId = this.props.tourId
-      let rounds = this.props.rounds
+  componentDidMount() {
+    console.log('mounting...')
+    let tourId = this.props.tourId
+    let rounds = this.props.rounds
+    let bestof = this.props.bestof
+    let is_ranking = this.props.is_ranking
+    this.setState({ isLoading: true })
+    let columnDefs = [
+      { headerName: 'Player', field: 'player', width: 100, pinned: 'left' },
+    ]
+    let sumcol = { headerName: 'Sum', field: 'sum', width: 80 }
+    columnDefs.push(sumcol)
 
-      this.setState({ isLoading: true })
-      let columnDefs = [
-        { headerName: 'Player', field: 'player', width: 100, pinned: 'left' },
-      ]
-      let sumcol = { headerName: 'Sum', field: 'sum', width: 80 }
-      columnDefs.push(sumcol)
-
-      var i
-      for (i = 1; i < rounds + 1; i++) {
-        let col = { headerName: 'Round' + i, field: 'r' + i, width: 80 }
-        columnDefs.push(col)
-      }
-
-      let parscol = { headerName: 'Pars', field: 'pars', width: 80 }
-      columnDefs.push(parscol)
-
-      let birdiescol = { headerName: 'Birdies', field: 'birdies', width: 80 }
-      columnDefs.push(birdiescol)
-
-      let eaglescol = { headerName: 'Eagles', field: 'eagles', width: 80 }
-      columnDefs.push(eaglescol)
-
-      this.setState({ columnDefs: columnDefs })
-
-      let res = await axios.post('/api/gettourscorecards', { tourId: tourId })
-
-      if (!res.data) {
-        throw new Error('No scorecards found')
-      }
-
-      let scoreData = res.data
-
-      await this.createRowData(scoreData)
-    } catch (error) {
-      console.log(error)
-      this.setState({ isLoading: false })
+    var i
+    for (i = 1; i < rounds + 1; i++) {
+      let col = { headerName: 'Round' + i, field: 'r' + i, width: 80 }
+      columnDefs.push(col)
     }
+
+    let parscol = { headerName: 'Pars', field: 'pars', width: 80 }
+    columnDefs.push(parscol)
+
+    let birdiescol = { headerName: 'Birdies', field: 'birdies', width: 80 }
+    columnDefs.push(birdiescol)
+
+    let eaglescol = { headerName: 'Eagles', field: 'eagles', width: 80 }
+    columnDefs.push(eaglescol)
+
+    this.setState({ columnDefs: columnDefs })
+
+    axios
+      .post('/api/gettourscorecards', { tourId: tourId })
+      .then((res) => {
+        if (!res.data) {
+          throw new Error('No scorecards found')
+        }
+        console.log('res.data')
+        console.log(res.data)
+        this.setState(
+          { scoreData: res.data, isRankingCompetion: is_ranking },
+          () => this.createRowData()
+        )
+      })
+      .catch((err) => {
+        console.log(err)
+        this.setState({ isLoading: false })
+      })
   }
 
-  createRowData = async (scoreData) => {
+  createRowData = () => {
     let rounds = this.props.rounds
     //  console.log(rounds)
 
     let players = this.props.players
+    // console.log(players)
 
+    let scoreData = this.state.scoreData
+    //console.log(scoreData)
     let rowData = []
     players.forEach((element) => {
       let row = { player_id: element.player_id, player: element.full_name }
+      let sum = 0
       let key
+
       let z
       for (z = 1; z < rounds + 1; z++) {
         key = 'r' + z
@@ -110,51 +119,33 @@ class TourSummary extends Component {
       }
       let p_id = element.player_id
 
-      scoreData.forEach((item) => {
+      scoreData.forEach((item, index) => {
         if (item.player_id === p_id) {
           let key2 = 'r' + item.tour_round
           row[key2] = item.points
+          sum = sum + parseInt(item.points)
         }
       })
+      row['sum'] = sum
+
       rowData.push(row)
+
+      console.log('rowData')
+      console.log(rowData)
     })
 
-    if (this.props.is_ranking) {
-      await this.fetchRankData(rowData)
-    } else {
-      await this.fetchSumdata(rowData)
-    }
-
-    await this.fetchPars(rowData)
+    this.setState({ rowData: rowData }, () => {
+      if (this.state.isRankingCompetion) {
+        this.fetchRankData()
+      } else {
+        if (this.props.rounds > this.props.bestof) {
+        }
+      }
+    })
+    this.fetchPars()
   }
 
-  fetchSumdata = async (rowData) => {
-    try {
-      let tourId = this.props.tourId
-      let rounds = this.props.rounds
-      let bestof = this.props.bestof
-      // not using rounds
-      let res = await axios.post('/api/getpointsum', {
-        tourId: tourId,
-        rounds: rounds,
-        bestof: bestof,
-      })
-
-      let sumData = res.data
-
-      sumData.forEach((item) => {
-        let index = rowData.findIndex((x) => x.player_id === item.player_id)
-        rowData[index]['sum'] = item.total
-      })
-
-      rowData.sort((a, b) => (parseInt(a.sum) < parseInt(b.sum) ? 1 : -1))
-    } catch (error) {
-      console.log(error)
-      this.setState({ isLoading: false })
-    }
-  }
-
-  fetchPars = async (rowData) => {
+  fetchPars = () => {
     let tourId = this.props.tourId
     axios
       .post('/api/getpars', { tourId: tourId })
@@ -163,28 +154,60 @@ class TourSummary extends Component {
           throw new Error('No pars found')
         }
         let parData = res.data
+        let rowData = this.state.rowData
 
         parData.forEach((item) => {
           let index = rowData.findIndex((x) => x.player_id === item.player_id)
           rowData[index]['pars'] = item.pars
           rowData[index]['birdies'] = item.birdies
           rowData[index]['eagles'] = item.eagles
+          //console.log(index)
         })
-        rowData.sort((a, b) => (parseInt(a.sum) < parseInt(b.sum) ? 1 : -1))
+        rowData.sort((a, b) => (a.sum < b.sum ? 1 : -1))
+        //rowData.sort((a, b) => (a.sum < b.sum ? 1 : -1))
 
         this.setState({ rowData: rowData })
-
-        this.setState({ isLoading: false })
+        if (!this.state.isFetchingRank) {
+          this.setState({ isLoading: false })
+        }
       })
       .catch((err) => {
         console.log(err)
         this.setState({ isLoading: false })
       })
   }
+  /*
+  toggleCheckbox = (e, v) => {
+    this.setState({ isRankingCompetion: v.checked, isLoading: true })
 
-  fetchRankData = async (rowData) => {
+    let rankData = this.state.rankData
     let tourId = this.props.tourId
 
+    if (rankData.length === 0) {
+      console.log('calling rankdata api')
+      axios
+        .post('/api/getranksum', { tourId: tourId })
+        .then((res) => {
+          if (!res.data) {
+            throw new Error('No rankdata found')
+          }
+
+          this.setState({ rankData: res.data, isLoading: false }, () =>
+            this.toggleRowData(true, v.checked)
+          )
+        })
+        .catch((err) => {
+          console.log(err)
+          this.setState({ isLoading: false })
+        })
+    } else {
+      this.toggleRowData(false, v.checked)
+    }
+  }
+*/
+  fetchRankData = async () => {
+    let tourId = this.props.tourId
+    this.setState({ isFetchingRank: true })
     try {
       let res = await axios.post('/api/getranksum', { tourId: tourId })
 
@@ -192,17 +215,32 @@ class TourSummary extends Component {
         throw new Error('No rankdata found')
       }
       let rankData = res.data
+      this.setState(
+        { rankData: rankData }
+        //  () =>        this.toggleRowData(true, true)
+      )
+      let sumData = []
 
+      let rowData = this.state.rowData
+      console.log(rankData)
       rankData.forEach((rank) => {
         let index = rowData.findIndex((row) => row.player_id === rank.player_id)
+
+        sumData.push({
+          player_id: rank.player_id,
+          sum: rowData[index]['sum'],
+        })
 
         rowData[index]['sum'] = parseInt(rank.sum)
       })
 
-      rowData.sort((a, b) => (parseInt(a.sum) < parseInt(b.sum) ? 1 : -1))
+      rowData.sort((a, b) => (a.sum < b.sum ? 1 : -1))
       this.setState(
         {
           rowData: rowData,
+          sumData: sumData,
+          isLoading: false,
+          isFetchingRank: false,
         },
         () => this.gridApi.setRowData(this.state.rowData)
       )
@@ -257,10 +295,9 @@ class TourSummary extends Component {
           <h1>
             {' '}
             Tour Summary:{' '}
-            {this.props.is_ranking
+            {this.state.isRankingCompetion
               ? 'Ranking Competition'
               : 'Stableford Competition'}{' '}
-            - best {this.props.bestof} of {this.props.rounds} rounds
           </h1>
 
           <br />

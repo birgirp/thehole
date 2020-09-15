@@ -744,6 +744,29 @@ router.post('/api/getranksum', (req, res) => {
     })
 })
 
+// /api/gettoursumdata'
+
+router.post('/api/getpointsum', async (req, res) => {
+  try {
+    console.log('fetch ranking data')
+    let tourId = req.body.tourId
+    let rounds = req.body.rounds
+    let bestof = req.body.bestof
+    let data = await dbdata.getTourPointSum(tourId, bestof)
+
+    if (data.rows.length === 0) {
+      console.log('No sum data')
+      res.json(null)
+    } else {
+      res.json(data.rows)
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500)
+    res.json({ error: error })
+  }
+})
+
 router.post('/api/insert_teams', (req, res) => {
   const playersA = req.body.teamA
   const playersB = req.body.teamB
