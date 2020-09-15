@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import { Modal, Checkbox } from 'semantic-ui-react'
+import { Modal, Checkbox, Label } from 'semantic-ui-react'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-balham.css'
@@ -48,6 +48,7 @@ class TourSummary extends Component {
   }
 
   componentDidMount() {
+    console.log('mounting...')
     let tourId = this.props.tourId
     let rounds = this.props.rounds
     let is_ranking = this.props.is_ranking
@@ -162,7 +163,7 @@ class TourSummary extends Component {
         this.setState({ isLoading: false })
       })
   }
-
+  /*
   toggleCheckbox = (e, v) => {
     this.setState({ isRankingCompetion: v.checked, isLoading: true })
 
@@ -190,7 +191,7 @@ class TourSummary extends Component {
       this.toggleRowData(false, v.checked)
     }
   }
-
+*/
   fetchRankData = async () => {
     let tourId = this.props.tourId
 
@@ -200,16 +201,37 @@ class TourSummary extends Component {
       if (!res.data) {
         throw new Error('No rankdata found')
       }
+      let rankData = res.data
+      this.setState(
+        { rankData: rankData }
+        //  () =>        this.toggleRowData(true, true)
+      )
+      let sumData = []
 
-      this.setState({ rankData: res.data }, () =>
-        this.toggleRowData(true, true)
+      let rowData = this.state.rowData
+      console.log(rankData)
+      rankData.forEach((rank) => {
+        let index = rowData.findIndex((row) => row.player_id === rank.player_id)
+
+        sumData.push({
+          player_id: rank.player_id,
+          sum: rowData[index]['sum'],
+        })
+
+        rowData[index]['sum'] = parseInt(rank.sum)
+      })
+
+      rowData.sort((a, b) => (a.sum < b.sum ? 1 : -1))
+      this.setState(
+        { rowData: rowData, sumData: sumData, isLoading: false },
+        () => this.gridApi.setRowData(this.state.rowData)
       )
     } catch (error) {
       console.log(error)
       this.setState({ isLoading: false })
     }
   }
-
+  /* 
   toggleRowData = (isFirstTime, checked) => {
     let sumData = []
     let rankData = this.state.rankData
@@ -253,7 +275,7 @@ class TourSummary extends Component {
       })
     }
   }
-
+*/
   closeViewScorecard = () => {
     this.setState({ isOpenViewScorecard: false })
   }
@@ -296,14 +318,15 @@ class TourSummary extends Component {
     } else {
       return (
         <div>
-          <h1> Tour Summary </h1>
+          <h1>
+            {' '}
+            Tour Summary:{' '}
+            {this.state.isRankingCompetion
+              ? 'Ranking Competition'
+              : 'Stableford Competition'}{' '}
+          </h1>
 
-          <Checkbox
-            label='Ranking Competition'
-            onChange={this.toggleCheckbox}
-            checked={this.state.isRankingCompetion}
-          />
-
+          <br />
           <AgGridReact
             columnDefs={this.state.columnDefs}
             defaultColDef={this.state.defaultColDef}

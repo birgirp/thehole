@@ -134,7 +134,7 @@ class EditTour extends Component {
   }
 
   handleCancel = () => {
-    this.props.closeModal()
+    this.props.cancelModal()
   }
 
   handleNameChange = (event) => {
@@ -152,17 +152,27 @@ class EditTour extends Component {
   }
 
   handleNumberChange = (event, value) => {
-    this.setState({ rounds: value.value })
+    if (this.state.isRanking) {
+      this.setState({ rounds: value.value, bestofRounds: value.value })
+    } else {
+      this.setState({ rounds: value.value }, () => {
+        if (parseInt(this.state.rounds) < parseInt(this.state.bestofRounds)) {
+          this.setState({ bestofRounds: value.value })
+        }
+      })
+    }
   }
 
   handleIsRankingChange = (event, value) => {
-    console.log(value.checked)
-    this.setState({ isRanking: value.checked })
+    this.setState({
+      isRanking: value.checked,
+      bestofRounds: this.state.rounds,
+    })
   }
 
   handleBestoffChange = (event, value) => {
     if (value.value > this.state.numberOfRounds) {
-      this.setState({ bestofRounds: this.state.numberOfRounds })
+      this.setState({ bestofRounds: this.state.rounds })
     } else {
       this.setState({ bestofRounds: value.value })
     }
@@ -226,8 +236,8 @@ class EditTour extends Component {
               <Form.Field
                 width='2'
                 control={Input}
-                min='1'
-                max={this.state.numberOfRounds}
+                min={this.state.isRanking ? this.state.rounds : 1}
+                max={this.state.rounds}
                 value={this.state.bestofRounds}
                 type='Number'
                 label='Best of Rounds'

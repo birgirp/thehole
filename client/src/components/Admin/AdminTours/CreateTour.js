@@ -18,7 +18,7 @@ class CreatTour extends Component {
       selectedCourses: [],
       tourName: '',
       isLoading: false,
-      numberOfRounds: 1,
+      rounds: 1,
       bestofRounds: 1,
       isRanking: false,
       tourYear: new Date().getFullYear(),
@@ -56,7 +56,7 @@ class CreatTour extends Component {
         players: this.state.selectedPlayers,
         courses: this.state.selectedCourses,
         tourName: this.state.tourName,
-        rounds: this.state.numberOfRounds,
+        rounds: this.state.rounds,
         bestofRounds: this.state.bestofRounds,
         isRanking: this.state.isRanking,
         userId: this.props.userId,
@@ -72,7 +72,7 @@ class CreatTour extends Component {
   }
 
   handleCancel = () => {
-    this.props.closeModal()
+    this.props.cancelModal()
   }
 
   handleNameChange = (event) => {
@@ -87,17 +87,28 @@ class CreatTour extends Component {
   }
 
   handleNumberChange = (event, value) => {
-    this.setState({ numberOfRounds: value.value })
+    if (this.state.isRanking) {
+      this.setState({ rounds: value.value, bestofRounds: value.value })
+    } else {
+      this.setState({ rounds: value.value }, () => {
+        if (parseInt(this.state.rounds) < parseInt(this.state.bestofRounds)) {
+          this.setState({ bestofRounds: value.value })
+        }
+      })
+    }
   }
 
   handleIsRankingChange = (event, value) => {
     console.log(value.checked)
-    this.setState({ isRanking: value.checked })
+    this.setState({
+      isRanking: value.checked,
+      bestofRounds: this.state.rounds,
+    })
   }
 
   handleBestoffChange = (event, value) => {
-    if (value.value > this.state.numberOfRounds) {
-      this.setState({ bestofRounds: this.state.numberOfRounds })
+    if (value.value > this.state.rounds) {
+      this.setState({ bestofRounds: this.state.rounds })
     } else {
       this.setState({ bestofRounds: value.value })
     }
@@ -141,7 +152,7 @@ class CreatTour extends Component {
                 control={Input}
                 min='1'
                 max='20'
-                value={this.state.numberOfRounds}
+                value={this.state.rounds}
                 type='Number'
                 label='Rounds'
                 placeholder='#'
@@ -151,8 +162,8 @@ class CreatTour extends Component {
               <Form.Field
                 width='2'
                 control={Input}
-                min='1'
-                max={this.state.numberOfRounds}
+                min={this.state.isRanking ? this.state.rounds : 1}
+                max={this.state.rounds}
                 value={this.state.bestofRounds}
                 type='Number'
                 label='Best of Rounds'

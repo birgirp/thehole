@@ -66,11 +66,20 @@ class AdminTours extends Component {
       this.fetchData(this.state.userId)
     )
   }
+  cancelCreateModal = () => {
+    this.setState({ isCreatingTour: false })
+  }
+
   closeEditModal = () => {
     this.setState({ isEditingTour: false, isLoading: true }, () =>
       this.fetchData(this.state.userId)
     )
   }
+
+  cancelEditModal = () => {
+    this.setState({ isEditingTour: false })
+  }
+
   closeEditTourTeams = () => {
     this.setState({ isEditTourTeams: false })
   }
@@ -133,6 +142,7 @@ class AdminTours extends Component {
               {
                 <CreateTour
                   closeModal={this.closeCreateModal}
+                  cancelModal={this.cancelCreateModal}
                   userId={this.state.userId}
                 />
               }
@@ -224,6 +234,7 @@ class AdminTours extends Component {
               {
                 <CreateTour
                   closeModal={this.closeCreateModal}
+                  cancelModal={this.cancelCreateModal}
                   userId={this.state.userId}
                 />
               }
@@ -242,6 +253,7 @@ class AdminTours extends Component {
               {
                 <EditTour
                   closeModal={this.closeEditModal}
+                  cancelModal={this.cancelEditModal}
                   editingTour={this.state.editingTour}
                 />
               }
