@@ -25,7 +25,6 @@ class EditTour extends Component {
 
   componentDidMount() {
     let t = this.props.editingTour
-    console.log(t)
     this.setState({
       id: t.id,
       name: t.name,

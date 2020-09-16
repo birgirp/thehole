@@ -50,7 +50,6 @@ class TourSummary extends Component {
 
   async componentDidMount() {
     try {
-      console.log('mounting...')
       let tourId = this.props.tourId
       let rounds = this.props.rounds
 
@@ -259,8 +258,12 @@ class TourSummary extends Component {
             Tour Summary:{' '}
             {this.props.is_ranking
               ? 'Ranking Competition'
-              : 'Stableford Competition'}{' '}
-            - best {this.props.bestof} of {this.props.rounds} rounds
+              : 'Stableford Competition' +
+                ' - best ' +
+                this.props.bestof +
+                ' of ' +
+                this.props.rounds +
+                ' rounds'}{' '}
           </h1>
 
           <br />

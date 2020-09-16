@@ -442,7 +442,8 @@ module.exports = {
              left join tour_teams tt on t.id = tt.tour_id \
              join users u on u.id = t.owner_id \
              where t.owner_id = $1\
-            group by t.id, tour_name, tour_status, rounds, u.full_name, t.is_ranking, t.bestof ',
+            group by t.id, tour_name, tour_status, rounds, u.full_name, t.is_ranking, t.bestof \
+            order by id desc ',
           [userId]
         )
         .then((results) => {
@@ -481,7 +482,7 @@ module.exports = {
           'select t.id, t.tour_name, t.tour_status, t.year, u.full_name from tours t \
            join tour_players p on t.id = p.tour_id \
            join users u on u.id = t.owner_id\
-           where p.player_id = $1',
+           where p.player_id = $1 order by t.id desc',
           [playerId]
         )
         .then((results) => {

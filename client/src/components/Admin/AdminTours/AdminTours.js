@@ -39,7 +39,6 @@ class AdminTours extends Component {
     } else {
       userId = this.state.userId
     }
-    console.log(userId)
 
     this.fetchData(userId)
   }
@@ -51,7 +50,6 @@ class AdminTours extends Component {
         if (res.lenght === 0) {
           console.log('No tours found')
         } else {
-          console.log(res.data)
           this.setState({ tours: res.data, isLoading: false })
         }
       })

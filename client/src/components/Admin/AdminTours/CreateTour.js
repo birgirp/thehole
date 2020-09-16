@@ -50,7 +50,7 @@ class CreatTour extends Component {
 
   handleSubmit = () => {
     this.setState({ loading: true })
-    console.log(this.state.tourYear)
+
     axios
       .post('/api/addtour', {
         players: this.state.selectedPlayers,
@@ -99,7 +99,6 @@ class CreatTour extends Component {
   }
 
   handleIsRankingChange = (event, value) => {
-    console.log(value.checked)
     this.setState({
       isRanking: value.checked,
       bestofRounds: this.state.rounds,
