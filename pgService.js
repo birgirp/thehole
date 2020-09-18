@@ -422,7 +422,7 @@ module.exports = {
           'select t.id, tour_name, tour_status, rounds, u.full_name, t.is_ranking, t.bestof, count(tt.name) as teams from tours t \
           join users u on u.id = t.owner_id \
             left join tour_teams tt on t.id = tt.tour_id \
-            group by t.id, tour_name, tour_status, rounds, u.full_name, t.is_ranking, t.bestof, '
+            group by t.id, tour_name, tour_status, rounds, u.full_name, t.is_ranking, t.bestof order by id desc'
         )
         .then((results) => {
           resolve(results)
