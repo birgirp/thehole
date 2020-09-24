@@ -140,7 +140,9 @@ class AdminTours extends Component {
           <Button primary onClick={this.handleAddTour}>
             Add new Tour
           </Button>
-
+          <Button primary onClick={this.handleAddCourse}>
+            Add new Course
+          </Button>
           <Modal
             size='fullscreen'
             open={this.state.isCreatingTour}
@@ -153,6 +155,22 @@ class AdminTours extends Component {
                   closeModal={this.closeCreateModal}
                   cancelModal={this.cancelCreateModal}
                   userId={this.state.userId}
+                />
+              }
+            </Modal.Content>
+          </Modal>
+
+          <Modal
+            size='fullscreen'
+            open={this.state.addingcourse}
+            onClose={this.closeCreateModal}
+          >
+            <Modal.Header>Add new course</Modal.Header>
+            <Modal.Content scrolling>
+              {
+                <CreateCourse
+                  closeModal={this.closeCreateCourseModal}
+                  // addNewCourse={this.addNewCourse}
                 />
               }
             </Modal.Content>

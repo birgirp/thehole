@@ -5,7 +5,7 @@ import axios from 'axios'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-balham.css'
 // Own components...
-//import Loading from "../../Loading/Loading";
+import Loading from '../../Loading/Loading'
 import CourseHoles from './CourseHoles'
 
 class CreatCourse extends Component {
@@ -38,7 +38,10 @@ class CreatCourse extends Component {
             tee: this.state.tee,
             country: this.state.location,
           }
-          this.props.addNewCourse(course)
+          if (typeof this.props.addNewCourse === 'function') {
+            this.props.addNewCourse(course)
+          }
+
           this.setState({ loading: false })
           this.props.closeModal()
         })
@@ -119,54 +122,57 @@ class CreatCourse extends Component {
   }
 
   render() {
-    //<div className="ag-theme-balham" style={{ height: '200px', width: '1200px'  }}>
-    return (
-      <div>
-        <h1> Add new Course </h1>
-        <br />
-        <Form>
-          <Form.Group>
-            <Form.Field
-              required
-              control={Input}
-              label='Name'
-              placeholder='Name'
-              value={this.state.courseName}
-              onChange={this.handleNameChange}
-            />
-            <Form.Field
-              required
-              control={Input}
-              label='Tee'
-              placeholder='Tee'
-              value={this.state.tee}
-              onChange={this.handleTeeChange}
-            />
-            <Form.Field
-              required
-              control={Input}
-              label='Location'
-              placeholder='Location'
-              value={this.state.location}
-              onChange={this.handleCountryChange}
-            />
-          </Form.Group>
-        </Form>
-        <br />
-        <CourseHoles action={this.handler} />
+    if (this.state.isLoading) {
+      return <Loading />
+    } else {
+      return (
+        <div>
+          <h1> Add new Course </h1>
+          <br />
+          <Form>
+            <Form.Group>
+              <Form.Field
+                required
+                control={Input}
+                label='Name'
+                placeholder='Name'
+                value={this.state.courseName}
+                onChange={this.handleNameChange}
+              />
+              <Form.Field
+                required
+                control={Input}
+                label='Tee'
+                placeholder='Tee'
+                value={this.state.tee}
+                onChange={this.handleTeeChange}
+              />
+              <Form.Field
+                required
+                control={Input}
+                label='Location'
+                placeholder='Location'
+                value={this.state.location}
+                onChange={this.handleCountryChange}
+              />
+            </Form.Group>
+          </Form>
+          <br />
+          <CourseHoles action={this.handler} />
 
-        <Button
-          primary
-          onClick={this.handleSubmit}
-          disabled={!this.state.isValid}
-        >
-          Submit
-        </Button>
-        <Button secondary onClick={this.handleCancel}>
-          Cancel
-        </Button>
-      </div>
-    )
+          <Button
+            primary
+            onClick={this.handleSubmit}
+            disabled={!this.state.isValid}
+          >
+            Submit
+          </Button>
+          <Button secondary onClick={this.handleCancel}>
+            Cancel
+          </Button>
+        </div>
+      )
+    }
   }
 }
 
