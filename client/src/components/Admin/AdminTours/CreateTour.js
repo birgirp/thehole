@@ -22,6 +22,7 @@ class CreatTour extends Component {
       bestofRounds: 1,
       isRanking: false,
       tourYear: new Date().getFullYear(),
+      disabled: true,
     }
   }
 
@@ -71,19 +72,30 @@ class CreatTour extends Component {
       })
   }
 
+  validateForm = () => {
+    let playersSize = this.state.selectedPlayers.length
+    let coursesSize = this.state.selectedCourses.length
+    let tourName = this.state.tourName
+    if (playersSize > 0 && coursesSize > 0 && tourName) {
+      this.setState({ disabled: false })
+    } else {
+      this.setState({ disabled: true })
+    }
+  }
+
   handleCancel = () => {
     this.props.cancelModal()
   }
 
   handleNameChange = (event) => {
-    this.setState({ tourName: event.target.value })
+    this.setState({ tourName: event.target.value }, () => this.validateForm())
   }
 
   handlePlayerChange = (event, value) => {
-    this.setState({ selectedPlayers: value.value })
+    this.setState({ selectedPlayers: value.value }, () => this.validateForm())
   }
   handleCourseChange = (event, value) => {
-    this.setState({ selectedCourses: value.value })
+    this.setState({ selectedCourses: value.value }, () => this.validateForm())
   }
 
   handleNumberChange = (event, value) => {
@@ -207,7 +219,11 @@ class CreatTour extends Component {
           </Form>
           <br />
 
-          <Button primary onClick={this.handleSubmit}>
+          <Button
+            primary
+            onClick={this.handleSubmit}
+            disabled={this.state.disabled}
+          >
             Submit
           </Button>
           <Button secondary onClick={this.handleCancel}>

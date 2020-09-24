@@ -39,11 +39,15 @@ export default class NumericEditor extends Component {
 
   focus() {
     setTimeout(() => {
-      this.refs.input.focus()
-      this.refs.input.setSelectionRange(
-        this.state.value.length,
-        this.state.value.length
-      )
+      try {
+        this.refs.input.focus()
+        this.refs.input.setSelectionRange(
+          this.state.value.length,
+          this.state.value.length
+        )
+      } catch (error) {
+        console.log('error')
+      }
     })
   }
 

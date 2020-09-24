@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 import { Button, Modal, Table, Icon } from 'semantic-ui-react'
 import axios from 'axios'
 
@@ -7,12 +8,14 @@ import Loading from '../../Loading/Loading'
 import CreateTour from './CreateTour'
 import EditTour from './EditTour'
 import TourTeams from './TourTeams'
+import CreateCourse from '../AdminCourses/CreateCourse'
 
 class AdminTours extends Component {
   constructor(props) {
     super(props)
     this.state = {
       tours: [],
+      addingcourse: false,
       isCreatingTour: false,
       isEditingTour: false,
       isEditTourTeams: false,
@@ -59,6 +62,10 @@ class AdminTours extends Component {
       })
   }
 
+  closeCreateCourseModal = () => {
+    this.setState({ addingcourse: false })
+  }
+
   closeCreateModal = () => {
     this.setState({ isCreatingTour: false, isLoading: true }, () =>
       this.fetchData(this.state.userId)
@@ -84,6 +91,10 @@ class AdminTours extends Component {
 
   handleAddTour = (e) => {
     this.setState({ isCreatingTour: true })
+  }
+
+  handleAddCourse = (e) => {
+    this.setState({ addingcourse: true })
   }
 
   handleEditTour = (id, name, status, rounds, bestof, isRanking) => {
@@ -159,6 +170,10 @@ class AdminTours extends Component {
           <h1>Admin Tours</h1>
           <Button primary onClick={this.handleAddTour}>
             Add new Tour
+          </Button>
+
+          <Button primary onClick={this.handleAddCourse}>
+            Add new Course
           </Button>
           <br />
           <br />
@@ -272,6 +287,22 @@ class AdminTours extends Component {
                   closeModal={this.closeEditTourTeams}
                   setHasTeams={this.setHasTeams}
                   editingTour={this.state.editingTour}
+                />
+              }
+            </Modal.Content>
+          </Modal>
+
+          <Modal
+            size='fullscreen'
+            open={this.state.addingcourse}
+            onClose={this.closeCreateModal}
+          >
+            <Modal.Header>Add new course</Modal.Header>
+            <Modal.Content scrolling>
+              {
+                <CreateCourse
+                  closeModal={this.closeCreateCourseModal}
+                  // addNewCourse={this.addNewCourse}
                 />
               }
             </Modal.Content>

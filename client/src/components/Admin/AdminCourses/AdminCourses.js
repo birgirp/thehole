@@ -21,6 +21,7 @@ class AdminCourses extends Component {
   }
 
   componentDidMount() {
+    console.log('hi')
     axios
       .get('/api/getallcourses')
       .then((res) => {
@@ -145,7 +146,7 @@ class AdminCourses extends Component {
             onClose={this.closeCreateModal}
           >
             <Modal.Header>Add new course</Modal.Header>
-            <Modal.Content>
+            <Modal.Content scrolling>
               {
                 <CreateCourse
                   closeModal={this.closeCreateModal}
