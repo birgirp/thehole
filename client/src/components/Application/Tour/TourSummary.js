@@ -77,11 +77,16 @@ class TourSummary extends Component {
 
       this.setState({ columnDefs: columnDefs })
 
+      // let pres = await axios.post('/api/gettourplayers', { tourId: tourId })
+      // let players = pres.data
+
+      // console.log(players)
+
       let res = await axios.post('/api/gettourscorecards', { tourId: tourId })
 
-      if (!res.data) {
-        throw new Error('No scorecards found')
-      }
+      // if (!res.data) {
+      //   throw new Error('No scorecards found')
+      // }
 
       let scoreData = res.data
 
@@ -98,6 +103,8 @@ class TourSummary extends Component {
 
     let players = this.props.players
 
+    players.sort((a, b) => b.full_name.localeCompare(a.full_name))
+
     let rowData = []
     players.forEach((element) => {
       let row = { player_id: element.player_id, player: element.full_name }
@@ -109,12 +116,15 @@ class TourSummary extends Component {
       }
       let p_id = element.player_id
 
-      scoreData.forEach((item) => {
-        if (item.player_id === p_id) {
-          let key2 = 'r' + item.tour_round
-          row[key2] = item.points
-        }
-      })
+      if (scoreData) {
+        scoreData.forEach((item) => {
+          if (item.player_id === p_id) {
+            let key2 = 'r' + item.tour_round
+            row[key2] = item.points
+          }
+        })
+      }
+
       rowData.push(row)
     })
 
@@ -140,12 +150,12 @@ class TourSummary extends Component {
       })
 
       let sumData = res.data
-
-      sumData.forEach((item) => {
-        let index = rowData.findIndex((x) => x.player_id === item.player_id)
-        rowData[index]['sum'] = item.total
-      })
-
+      if (sumData) {
+        sumData.forEach((item) => {
+          let index = rowData.findIndex((x) => x.player_id === item.player_id)
+          rowData[index]['sum'] = item.total
+        })
+      }
       rowData.sort((a, b) => (parseInt(a.sum) < parseInt(b.sum) ? 1 : -1))
     } catch (error) {
       console.log(error)

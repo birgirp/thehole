@@ -76,7 +76,7 @@ class CreatCourse extends Component {
     let tee = this.state.tee
     let location = this.state.location
 
-    if (courseName && tee && Location && this.validateHoles()) {
+    if (courseName && tee && location && this.validateHoles()) {
       this.setState({ isValid: true })
     } else {
       this.setState({ isValid: false })
