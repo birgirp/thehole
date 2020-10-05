@@ -103,7 +103,8 @@ class TourSummary extends Component {
 
     let players = this.props.players
 
-    players.sort((a, b) => b.full_name.localeCompare(a.full_name))
+    //players.sort((a, b) => a.full_name.localeCompare(b.full_name))
+    players.sort((a, b) => (a.full_name > b.full_name ? 1 : -1))
 
     let rowData = []
     players.forEach((element) => {
@@ -156,7 +157,7 @@ class TourSummary extends Component {
           rowData[index]['sum'] = item.total
         })
       }
-      rowData.sort((a, b) => (parseInt(a.sum) < parseInt(b.sum) ? 1 : -1))
+      // rowData.sort((a, b) => (parseInt(a.sum) < parseInt(b.sum) ? 1 : -1))
     } catch (error) {
       console.log(error)
       this.setState({ isLoading: false })
@@ -208,7 +209,7 @@ class TourSummary extends Component {
         rowData[index]['sum'] = parseInt(rank.sum)
       })
 
-      rowData.sort((a, b) => (parseInt(a.sum) < parseInt(b.sum) ? 1 : -1))
+      // rowData.sort((a, b) => (parseInt(a.sum) < parseInt(b.sum) ? 1 : -1))
       this.setState(
         {
           rowData: rowData,
