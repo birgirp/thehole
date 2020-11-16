@@ -102,9 +102,10 @@ class TourSummary extends Component {
     //  console.log(rounds)
 
     let players = this.props.players
-
-    //players.sort((a, b) => a.full_name.localeCompare(b.full_name))
-    players.sort((a, b) => (a.full_name > b.full_name ? 1 : -1))
+    // console.log(players)
+    // players.sort((a, b) => b.full_name.localeCompare(a.full_name))
+    // players.sort((a, b) => (a.full_name > b.full_name ? 1 : -1))
+    console.log(players)
 
     let rowData = []
     players.forEach((element) => {
@@ -165,31 +166,31 @@ class TourSummary extends Component {
   }
 
   fetchPars = async (rowData) => {
-    let tourId = this.props.tourId
-    axios
-      .post('/api/getpars', { tourId: tourId })
-      .then((res) => {
-        if (!res.data) {
-          throw new Error('No pars found')
-        }
-        let parData = res.data
+    try {
+      let tourId = this.props.tourId
+      let res = await axios.post('/api/getpars', { tourId: tourId })
 
+      let parData = res.data
+
+      if (!res.data) {
+        console.log('No pars found...')
+      } else {
         parData.forEach((item) => {
           let index = rowData.findIndex((x) => x.player_id === item.player_id)
           rowData[index]['pars'] = item.pars
           rowData[index]['birdies'] = item.birdies
           rowData[index]['eagles'] = item.eagles
         })
-        rowData.sort((a, b) => (parseInt(a.sum) < parseInt(b.sum) ? 1 : -1))
 
-        this.setState({ rowData: rowData })
-
-        this.setState({ isLoading: false })
-      })
-      .catch((err) => {
-        console.log(err)
-        this.setState({ isLoading: false })
-      })
+        rowData.sort((a, b) => b.player.localeCompare(a.player))
+        rowData.sort((a, b) =>
+          parseInt(a.sum) < parseInt(b.sum) || !a.sum ? 1 : -1
+        )
+        this.setState({ rowData: rowData, isLoading: false })
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   fetchRankData = async (rowData) => {
