@@ -99,13 +99,12 @@ class TourSummary extends Component {
 
   createRowData = async (scoreData) => {
     let rounds = this.props.rounds
-    //  console.log(rounds)
+    console.log(rounds)
 
     let players = this.props.players
-    // console.log(players)
+    console.log(players)
     // players.sort((a, b) => b.full_name.localeCompare(a.full_name))
     // players.sort((a, b) => (a.full_name > b.full_name ? 1 : -1))
-    console.log(players)
 
     let rowData = []
     players.forEach((element) => {
@@ -129,7 +128,7 @@ class TourSummary extends Component {
 
       rowData.push(row)
     })
-
+    console.log(rowData)
     if (this.props.is_ranking) {
       await this.fetchRankData(rowData)
     } else {
@@ -182,7 +181,7 @@ class TourSummary extends Component {
           rowData[index]['eagles'] = item.eagles
         })
 
-        rowData.sort((a, b) => b.player.localeCompare(a.player))
+        rowData.sort((a, b) => a.player.localeCompare(b.player))
         rowData.sort((a, b) =>
           parseInt(a.sum) < parseInt(b.sum) || !a.sum ? 1 : -1
         )
