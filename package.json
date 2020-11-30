@@ -1,5 +1,5 @@
 {
-  "name": "biggi_server",
+  "name": "eclectic-server",
   "version": "0.1.0",
   "author": "Birgir Pálsson",
   "license": "UNLICENSED",
@@ -7,7 +7,7 @@
   "description": "Node.js server",
   "main": "index.js",
   "engines": {
-    "node": "10.x"
+    "node": "14.x"
   },
   "scripts": {
     "devClient": "cd client && npm start",
@@ -20,11 +20,10 @@
     "heroku-postbuild": "npm run buildClient"
   },
   "dependencies": {
-    "bcrypt": "^4.0.1",
+    "bcrypt": "*",
     "body-parser": "^1.18.3",
-    "connect-mongo": "^2.0.3",
-    "connect-pg-simple": "^5.0.0",
-    "express": "^4.16.4",
+    "connect-pg-simple": "*",
+    "express": "*",
     "express-session": "^1.15.6",
     "express-validator": "*",
     "json-query": "^2.2.2",
