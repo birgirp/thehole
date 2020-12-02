@@ -20,7 +20,7 @@
     "heroku-postbuild": "npm run buildClient"
   },
   "dependencies": {
-    "bcrypt": "*",
+    "bcryptjs": "2.*.*",
     "body-parser": "^1.18.3",
     "connect-pg-simple": "*",
     "express": "*",

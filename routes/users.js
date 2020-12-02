@@ -1,5 +1,5 @@
 var crypto = require('crypto')
-var bcrypt = require('bcrypt')
+var bcrypt = require('bcryptjs')
 var express = require('express')
 var router = express.Router()
 var passport = require('passport')
