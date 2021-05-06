@@ -38,7 +38,7 @@
     "pg-promise": "^8.6.4",
     "sendgrid": "^5.2.3",
     "session-file-store": "^1.2.0",
-    "underscore": "^1.9.1"
+    "underscore": "^1.12.1"
   },
   "devDependencies": {
     "concurrently": "^4.1.0",
