@@ -29,7 +29,7 @@
     "json-query": "^2.2.2",
     "mongodb": "^3.2.4",
     "mongoose": "^5.5.7",
-    "nodemailer": "^6.4.4",
+    "nodemailer": "^6.4.16",
     "passport": "*",
     "passport-http": "*",
     "passport-local": "*",
